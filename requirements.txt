@@ -1,0 +1,9 @@
+jinja2>=3.0
+pyyaml>=6.0
+jsonschema>=4.0
+
+# optional native parsers (install with pip install -e .[native])
+pefile>=2023.2.7
+# lief>=0.14  # optional
+capstone>=5.0
+pyelftools>=0.29

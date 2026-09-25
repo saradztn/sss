@@ -1,0 +1,2102 @@
+{
+  "method": "capstone",
+  "total_instructions": 50001,
+  "full_gz": "evidence/deep_opcode/opcodes_full.json.gz",
+  "top_mnemonics": [
+    [
+      "mov",
+      12739
+    ],
+    [
+      "push",
+      8970
+    ],
+    [
+      "call",
+      3537
+    ],
+    [
+      "cmp",
+      3409
+    ],
+    [
+      "lea",
+      2637
+    ],
+    [
+      "add",
+      2532
+    ],
+    [
+      "int3",
+      1815
+    ],
+    [
+      "pop",
+      1591
+    ],
+    [
+      "sub",
+      1253
+    ],
+    [
+      "je",
+      1220
+    ],
+    [
+      "test",
+      1063
+    ],
+    [
+      "jmp",
+      849
+    ],
+    [
+      "jne",
+      790
+    ],
+    [
+      "jb",
+      698
+    ],
+    [
+      "xor",
+      697
+    ],
+    [
+      "jbe",
+      682
+    ],
+    [
+      "ja",
+      607
+    ],
+    [
+      "ret",
+      553
+    ],
+    [
+      "movups",
+      426
+    ],
+    [
+      "inc",
+      375
+    ]
+  ],
+  "unique_mnemonics": 150,
+  "categories": {
+    "data": 25953,
+    "control": 9239,
+    "other": 9463,
+    "arith": 5343,
+    "syscall": 3
+  },
+  "basic_blocks": 10626,
+  "avg_block_size": 4.71,
+  "functions": [
+    {
+      "address": "0x401060",
+      "name": "sub_0x401060",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4010a0",
+      "name": "sub_0x4010a0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x401120",
+      "name": "sub_0x401120",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x401150",
+      "name": "sub_0x401150",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x401190",
+      "name": "sub_0x401190",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4011b0",
+      "name": "sub_0x4011b0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4012ec",
+      "name": "sub_0x4012ec",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x401470",
+      "name": "sub_0x401470",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x401490",
+      "name": "sub_0x401490",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4014d0",
+      "name": "sub_0x4014d0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x401520",
+      "name": "sub_0x401520",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40169c",
+      "name": "sub_0x40169c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x401a6c",
+      "name": "sub_0x401a6c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x401ed0",
+      "name": "sub_0x401ed0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x402020",
+      "name": "sub_0x402020",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x402560",
+      "name": "sub_0x402560",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4025a0",
+      "name": "sub_0x4025a0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x402600",
+      "name": "sub_0x402600",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x402680",
+      "name": "sub_0x402680",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x402790",
+      "name": "sub_0x402790",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4027e0",
+      "name": "sub_0x4027e0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x402bb0",
+      "name": "sub_0x402bb0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x402c60",
+      "name": "sub_0x402c60",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x402e60",
+      "name": "sub_0x402e60",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x402f90",
+      "name": "sub_0x402f90",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x403080",
+      "name": "sub_0x403080",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x403180",
+      "name": "sub_0x403180",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40339c",
+      "name": "sub_0x40339c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x4039a0",
+      "name": "sub_0x4039a0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x403aa0",
+      "name": "sub_0x403aa0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x403d2c",
+      "name": "sub_0x403d2c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x403f6c",
+      "name": "sub_0x403f6c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x40438c",
+      "name": "sub_0x40438c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x4046f0",
+      "name": "sub_0x4046f0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4047dc",
+      "name": "sub_0x4047dc",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x404b1c",
+      "name": "sub_0x404b1c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x404e5c",
+      "name": "sub_0x404e5c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x405010",
+      "name": "sub_0x405010",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40526c",
+      "name": "sub_0x40526c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x405b0c",
+      "name": "sub_0x405b0c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x405cc0",
+      "name": "sub_0x405cc0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x405e1c",
+      "name": "sub_0x405e1c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x4069ac",
+      "name": "sub_0x4069ac",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x40717c",
+      "name": "sub_0x40717c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x4077fc",
+      "name": "sub_0x4077fc",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x407e70",
+      "name": "sub_0x407e70",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40836c",
+      "name": "sub_0x40836c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x40880c",
+      "name": "sub_0x40880c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x408c3c",
+      "name": "sub_0x408c3c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x409b00",
+      "name": "sub_0x409b00",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x409da0",
+      "name": "sub_0x409da0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x409ef0",
+      "name": "sub_0x409ef0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x409fc0",
+      "name": "sub_0x409fc0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40a6a0",
+      "name": "sub_0x40a6a0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40a78c",
+      "name": "sub_0x40a78c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x40ac90",
+      "name": "sub_0x40ac90",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40b520",
+      "name": "sub_0x40b520",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40d5e0",
+      "name": "sub_0x40d5e0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40d6b0",
+      "name": "sub_0x40d6b0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40e820",
+      "name": "sub_0x40e820",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40e8c0",
+      "name": "sub_0x40e8c0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40ec10",
+      "name": "sub_0x40ec10",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40eff0",
+      "name": "sub_0x40eff0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40fa60",
+      "name": "sub_0x40fa60",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x40fc10",
+      "name": "sub_0x40fc10",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x410600",
+      "name": "sub_0x410600",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x410f20",
+      "name": "sub_0x410f20",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41104c",
+      "name": "sub_0x41104c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x411260",
+      "name": "sub_0x411260",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x411a40",
+      "name": "sub_0x411a40",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41226c",
+      "name": "sub_0x41226c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x412e80",
+      "name": "sub_0x412e80",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x413bc0",
+      "name": "sub_0x413bc0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x413ccc",
+      "name": "sub_0x413ccc",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x413f8c",
+      "name": "sub_0x413f8c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x414bb0",
+      "name": "sub_0x414bb0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x414e4c",
+      "name": "sub_0x414e4c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x4151ac",
+      "name": "sub_0x4151ac",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x415fcc",
+      "name": "sub_0x415fcc",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x417b0c",
+      "name": "sub_0x417b0c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x41991c",
+      "name": "sub_0x41991c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x419d2c",
+      "name": "sub_0x419d2c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x41abf0",
+      "name": "sub_0x41abf0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41addc",
+      "name": "sub_0x41addc",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x41be20",
+      "name": "sub_0x41be20",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41c680",
+      "name": "sub_0x41c680",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41c750",
+      "name": "sub_0x41c750",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41c860",
+      "name": "sub_0x41c860",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41c920",
+      "name": "sub_0x41c920",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41c940",
+      "name": "sub_0x41c940",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41c9f0",
+      "name": "sub_0x41c9f0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41cae0",
+      "name": "sub_0x41cae0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41cb40",
+      "name": "sub_0x41cb40",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41cc70",
+      "name": "sub_0x41cc70",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41cc90",
+      "name": "sub_0x41cc90",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41cec0",
+      "name": "sub_0x41cec0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41cf30",
+      "name": "sub_0x41cf30",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41d130",
+      "name": "sub_0x41d130",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41d1c0",
+      "name": "sub_0x41d1c0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41d210",
+      "name": "sub_0x41d210",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41d310",
+      "name": "sub_0x41d310",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41d370",
+      "name": "sub_0x41d370",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41d440",
+      "name": "sub_0x41d440",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41d4d0",
+      "name": "sub_0x41d4d0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41d520",
+      "name": "sub_0x41d520",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41d620",
+      "name": "sub_0x41d620",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41d660",
+      "name": "sub_0x41d660",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41d7d0",
+      "name": "sub_0x41d7d0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41d980",
+      "name": "sub_0x41d980",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41dc10",
+      "name": "sub_0x41dc10",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41dd70",
+      "name": "sub_0x41dd70",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41dea0",
+      "name": "sub_0x41dea0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41dfa0",
+      "name": "sub_0x41dfa0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41e030",
+      "name": "sub_0x41e030",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41e0b0",
+      "name": "sub_0x41e0b0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41e210",
+      "name": "sub_0x41e210",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41e380",
+      "name": "sub_0x41e380",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41e400",
+      "name": "sub_0x41e400",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41e610",
+      "name": "sub_0x41e610",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41e710",
+      "name": "sub_0x41e710",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41e850",
+      "name": "sub_0x41e850",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41e940",
+      "name": "sub_0x41e940",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41eb30",
+      "name": "sub_0x41eb30",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41ec90",
+      "name": "sub_0x41ec90",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41edf0",
+      "name": "sub_0x41edf0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41ef90",
+      "name": "sub_0x41ef90",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41f140",
+      "name": "sub_0x41f140",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41f320",
+      "name": "sub_0x41f320",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41f3b0",
+      "name": "sub_0x41f3b0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41f580",
+      "name": "sub_0x41f580",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41f710",
+      "name": "sub_0x41f710",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41f830",
+      "name": "sub_0x41f830",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41f9d0",
+      "name": "sub_0x41f9d0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41fb10",
+      "name": "sub_0x41fb10",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41fb50",
+      "name": "sub_0x41fb50",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41fbd0",
+      "name": "sub_0x41fbd0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41fc00",
+      "name": "sub_0x41fc00",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41fc70",
+      "name": "sub_0x41fc70",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41fcd0",
+      "name": "sub_0x41fcd0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41fd50",
+      "name": "sub_0x41fd50",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x41fec0",
+      "name": "sub_0x41fec0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x420040",
+      "name": "sub_0x420040",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4202b0",
+      "name": "sub_0x4202b0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x420350",
+      "name": "sub_0x420350",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x420380",
+      "name": "sub_0x420380",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4203ec",
+      "name": "sub_0x4203ec",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x4205bc",
+      "name": "sub_0x4205bc",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x4207ec",
+      "name": "sub_0x4207ec",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x420920",
+      "name": "sub_0x420920",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42096c",
+      "name": "sub_0x42096c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x420ad0",
+      "name": "sub_0x420ad0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x420b30",
+      "name": "sub_0x420b30",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x420c40",
+      "name": "sub_0x420c40",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x420d6c",
+      "name": "sub_0x420d6c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x420f9c",
+      "name": "sub_0x420f9c",
+      "source": "heuristic32"
+    },
+    {
+      "address": "0x4211d0",
+      "name": "sub_0x4211d0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421230",
+      "name": "sub_0x421230",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421250",
+      "name": "sub_0x421250",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421260",
+      "name": "sub_0x421260",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421270",
+      "name": "sub_0x421270",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421280",
+      "name": "sub_0x421280",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421289",
+      "name": "sub_0x421289",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4212f5",
+      "name": "sub_0x4212f5",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42131f",
+      "name": "sub_0x42131f",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42135a",
+      "name": "sub_0x42135a",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421375",
+      "name": "sub_0x421375",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42139d",
+      "name": "sub_0x42139d",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421408",
+      "name": "sub_0x421408",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42142f",
+      "name": "sub_0x42142f",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42144c",
+      "name": "sub_0x42144c",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421479",
+      "name": "sub_0x421479",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42151c",
+      "name": "sub_0x42151c",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421551",
+      "name": "sub_0x421551",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421563",
+      "name": "sub_0x421563",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421587",
+      "name": "sub_0x421587",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4215bf",
+      "name": "sub_0x4215bf",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4215dc",
+      "name": "sub_0x4215dc",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421628",
+      "name": "sub_0x421628",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421643",
+      "name": "sub_0x421643",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421662",
+      "name": "sub_0x421662",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42167d",
+      "name": "sub_0x42167d",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421698",
+      "name": "sub_0x421698",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4216b7",
+      "name": "sub_0x4216b7",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4216d7",
+      "name": "sub_0x4216d7",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4216f7",
+      "name": "sub_0x4216f7",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421708",
+      "name": "sub_0x421708",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42172a",
+      "name": "sub_0x42172a",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421856",
+      "name": "sub_0x421856",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42187b",
+      "name": "sub_0x42187b",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4218b9",
+      "name": "sub_0x4218b9",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421914",
+      "name": "sub_0x421914",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42197c",
+      "name": "sub_0x42197c",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4219cd",
+      "name": "sub_0x4219cd",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421a34",
+      "name": "sub_0x421a34",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421b7c",
+      "name": "sub_0x421b7c",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421bf0",
+      "name": "sub_0x421bf0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421c29",
+      "name": "sub_0x421c29",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421d47",
+      "name": "sub_0x421d47",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421d64",
+      "name": "sub_0x421d64",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421d8c",
+      "name": "sub_0x421d8c",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421dba",
+      "name": "sub_0x421dba",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421dd4",
+      "name": "sub_0x421dd4",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421de2",
+      "name": "sub_0x421de2",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x421deb",
+      "name": "sub_0x421deb",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42205c",
+      "name": "sub_0x42205c",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422525",
+      "name": "sub_0x422525",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42254d",
+      "name": "sub_0x42254d",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422648",
+      "name": "sub_0x422648",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4226c5",
+      "name": "sub_0x4226c5",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4227da",
+      "name": "sub_0x4227da",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422860",
+      "name": "sub_0x422860",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4228c1",
+      "name": "sub_0x4228c1",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422a22",
+      "name": "sub_0x422a22",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422a91",
+      "name": "sub_0x422a91",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422af1",
+      "name": "sub_0x422af1",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422bf0",
+      "name": "sub_0x422bf0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422c20",
+      "name": "sub_0x422c20",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422c74",
+      "name": "sub_0x422c74",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422ca5",
+      "name": "sub_0x422ca5",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422cc9",
+      "name": "sub_0x422cc9",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422d11",
+      "name": "sub_0x422d11",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422db0",
+      "name": "sub_0x422db0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422de6",
+      "name": "sub_0x422de6",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422e49",
+      "name": "sub_0x422e49",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422f13",
+      "name": "sub_0x422f13",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422f20",
+      "name": "sub_0x422f20",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422f78",
+      "name": "sub_0x422f78",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422f9e",
+      "name": "sub_0x422f9e",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x422fc3",
+      "name": "sub_0x422fc3",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42370a",
+      "name": "sub_0x42370a",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x423780",
+      "name": "sub_0x423780",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4237c0",
+      "name": "sub_0x4237c0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42393d",
+      "name": "sub_0x42393d",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x423954",
+      "name": "sub_0x423954",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x423990",
+      "name": "sub_0x423990",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x423c77",
+      "name": "sub_0x423c77",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x423cf8",
+      "name": "sub_0x423cf8",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42409b",
+      "name": "sub_0x42409b",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4241d1",
+      "name": "sub_0x4241d1",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42425f",
+      "name": "sub_0x42425f",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424361",
+      "name": "sub_0x424361",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42436a",
+      "name": "sub_0x42436a",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4243a3",
+      "name": "sub_0x4243a3",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4245d3",
+      "name": "sub_0x4245d3",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42461d",
+      "name": "sub_0x42461d",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424723",
+      "name": "sub_0x424723",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4247bd",
+      "name": "sub_0x4247bd",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4247cd",
+      "name": "sub_0x4247cd",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4247e0",
+      "name": "sub_0x4247e0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4247f0",
+      "name": "sub_0x4247f0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424804",
+      "name": "sub_0x424804",
+      "source": "heuristic2"
+    },
+    {
+      "address": "0x42483c",
+      "name": "sub_0x42483c",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42487f",
+      "name": "sub_0x42487f",
+      "source": "heuristic2"
+    },
+    {
+      "address": "0x424960",
+      "name": "sub_0x424960",
+      "source": "heuristic2"
+    },
+    {
+      "address": "0x4249a0",
+      "name": "sub_0x4249a0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424a42",
+      "name": "sub_0x424a42",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424ae2",
+      "name": "sub_0x424ae2",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424b2d",
+      "name": "sub_0x424b2d",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424b68",
+      "name": "sub_0x424b68",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424ba3",
+      "name": "sub_0x424ba3",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424bde",
+      "name": "sub_0x424bde",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424c1c",
+      "name": "sub_0x424c1c",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424c80",
+      "name": "sub_0x424c80",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424c9d",
+      "name": "sub_0x424c9d",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424cd4",
+      "name": "sub_0x424cd4",
+      "source": "heuristic2"
+    },
+    {
+      "address": "0x424ce5",
+      "name": "sub_0x424ce5",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424e68",
+      "name": "sub_0x424e68",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x424fdc",
+      "name": "sub_0x424fdc",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4250a7",
+      "name": "sub_0x4250a7",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x425127",
+      "name": "sub_0x425127",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4251a8",
+      "name": "sub_0x4251a8",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4251dc",
+      "name": "sub_0x4251dc",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42520d",
+      "name": "sub_0x42520d",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42525b",
+      "name": "sub_0x42525b",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42546e",
+      "name": "sub_0x42546e",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x425a70",
+      "name": "sub_0x425a70",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x425bfd",
+      "name": "sub_0x425bfd",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x425d8f",
+      "name": "sub_0x425d8f",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x425f1c",
+      "name": "sub_0x425f1c",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4260ae",
+      "name": "sub_0x4260ae",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42623b",
+      "name": "sub_0x42623b",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4263cd",
+      "name": "sub_0x4263cd",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42642f",
+      "name": "sub_0x42642f",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4264a0",
+      "name": "sub_0x4264a0",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42651f",
+      "name": "sub_0x42651f",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4265b4",
+      "name": "sub_0x4265b4",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x426630",
+      "name": "sub_0x426630",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4266bb",
+      "name": "sub_0x4266bb",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42672f",
+      "name": "sub_0x42672f",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4267af",
+      "name": "sub_0x4267af",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x426841",
+      "name": "sub_0x426841",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4268e6",
+      "name": "sub_0x4268e6",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x42696c",
+      "name": "sub_0x42696c",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x4269fe",
+      "name": "sub_0x4269fe",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x426a65",
+      "name": "sub_0x426a65",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x426ad2",
+      "name": "sub_0x426ad2",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x426b88",
+      "name": "sub_0x426b88",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x426bac",
+      "name": "sub_0x426bac",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x426c16",
+      "name": "sub_0x426c16",
+      "source": "heuristic"
+    },
+    {
+      "address": "0x426c51",
+      "name": "sub_0x426c51",
+      "source": "heuristic"
+    }
+  ],
+  "functions_count": 300,
+  "calls_count": 3537,
+  "calls_sample": [
+    {
+      "address": "0x401005",
+      "addr_int": 4198405,
+      "bytes": "e8b00d0200",
+      "mnemonic": "call",
+      "op_str": "0x421dba",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x401015",
+      "addr_int": 4198421,
+      "bytes": "e8a00d0200",
+      "mnemonic": "call",
+      "op_str": "0x421dba",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x401025",
+      "addr_int": 4198437,
+      "bytes": "e8900d0200",
+      "mnemonic": "call",
+      "op_str": "0x421dba",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x401035",
+      "addr_int": 4198453,
+      "bytes": "e8800d0200",
+      "mnemonic": "call",
+      "op_str": "0x421dba",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x401045",
+      "addr_int": 4198469,
+      "bytes": "e8700d0200",
+      "mnemonic": "call",
+      "op_str": "0x421dba",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x401055",
+      "addr_int": 4198485,
+      "bytes": "e8600d0200",
+      "mnemonic": "call",
+      "op_str": "0x421dba",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x40107e",
+      "addr_int": 4198526,
+      "bytes": "e8631d0200",
+      "mnemonic": "call",
+      "op_str": "0x422de6",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x4010b0",
+      "addr_int": 4198576,
+      "bytes": "e8941d0200",
+      "mnemonic": "call",
+      "op_str": "0x422e49",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x4010c1",
+      "addr_int": 4198593,
+      "bytes": "e80e0d0200",
+      "mnemonic": "call",
+      "op_str": "0x421dd4",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x4010da",
+      "addr_int": 4198618,
+      "bytes": "e86a1d0200",
+      "mnemonic": "call",
+      "op_str": "0x422e49",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x401130",
+      "addr_int": 4198704,
+      "bytes": "e8dbffffff",
+      "mnemonic": "call",
+      "op_str": "0x401110",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x40113a",
+      "addr_int": 4198714,
+      "bytes": "e893790200",
+      "mnemonic": "call",
+      "op_str": "0x428ad2",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x401164",
+      "addr_int": 4198756,
+      "bytes": "e8a7ffffff",
+      "mnemonic": "call",
+      "op_str": "0x401110",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x401172",
+      "addr_int": 4198770,
+      "bytes": "e81a790200",
+      "mnemonic": "call",
+      "op_str": "0x428a91",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x4011a1",
+      "addr_int": 4198817,
+      "bytes": "e8aaffffff",
+      "mnemonic": "call",
+      "op_str": "0x401150",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x401479",
+      "addr_int": 4199545,
+      "bytes": "e872fcffff",
+      "mnemonic": "call",
+      "op_str": "0x4010f0",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x401487",
+      "addr_int": 4199559,
+      "bytes": "e87e220200",
+      "mnemonic": "call",
+      "op_str": "0x42370a",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x4014ae",
+      "addr_int": 4199598,
+      "bytes": "e833190200",
+      "mnemonic": "call",
+      "op_str": "0x422de6",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x4014ee",
+      "addr_int": 4199662,
+      "bytes": "e8f3180200",
+      "mnemonic": "call",
+      "op_str": "0x422de6",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    },
+    {
+      "address": "0x401515",
+      "addr_int": 4199701,
+      "bytes": "e89d010200",
+      "mnemonic": "call",
+      "op_str": "0x4216b7",
+      "size": 5,
+      "group": [
+        "call",
+        "branch_relative",
+        "not64bitmode"
+      ],
+      "category": "control"
+    }
+  ],
+  "string_refs_sample": [
+    {
+      "address": "0x40106d",
+      "addr_int": 4198509,
+      "bytes": "c70664cb4300",
+      "mnemonic": "mov",
+      "op_str": "dword ptr [esi], 0x43cb64",
+      "size": 6,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x401093",
+      "addr_int": 4198547,
+      "bytes": "b804334400",
+      "mnemonic": "mov",
+      "op_str": "eax, 0x443304",
+      "size": 5,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x4010a9",
+      "addr_int": 4198569,
+      "bytes": "c70664cb4300",
+      "mnemonic": "mov",
+      "op_str": "dword ptr [esi], 0x43cb64",
+      "size": 6,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x4010d3",
+      "addr_int": 4198611,
+      "bytes": "c70164cb4300",
+      "mnemonic": "mov",
+      "op_str": "dword ptr [ecx], 0x43cb64",
+      "size": 6,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x4010fa",
+      "addr_int": 4198650,
+      "bytes": "c7410418334400",
+      "mnemonic": "mov",
+      "op_str": "dword ptr [ecx + 4], 0x443318",
+      "size": 7,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x401101",
+      "addr_int": 4198657,
+      "bytes": "c7017ccb4300",
+      "mnemonic": "mov",
+      "op_str": "dword ptr [ecx], 0x43cb7c",
+      "size": 6,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x401110",
+      "addr_int": 4198672,
+      "bytes": "b8e0ce4400",
+      "mnemonic": "mov",
+      "op_str": "eax, 0x44cee0",
+      "size": 5,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x401194",
+      "addr_int": 4198804,
+      "bytes": "8d4514",
+      "mnemonic": "lea",
+      "op_str": "eax, [ebp + 0x14]",
+      "size": 3,
+      "group": [
+        "not64bitmode"
+      ],
+      "category": "data"
+    },
+    {
+      "address": "0x4011bc",
+      "addr_int": 4198844,
+      "bytes": "6689542412",
+      "mnemonic": "mov",
+      "op_str": "word ptr [esp + 0x12], dx",
+      "size": 5,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x4011c3",
+      "addr_int": 4198851,
+      "bytes": "894c2414",
+      "mnemonic": "mov",
+      "op_str": "dword ptr [esp + 0x14], ecx",
+      "size": 4,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x4011df",
+      "addr_int": 4198879,
+      "bytes": "8d4810",
+      "mnemonic": "lea",
+      "op_str": "ecx, [eax + 0x10]",
+      "size": 3,
+      "group": [
+        "not64bitmode"
+      ],
+      "category": "data"
+    },
+    {
+      "address": "0x401216",
+      "addr_int": 4198934,
+      "bytes": "668b542416",
+      "mnemonic": "mov",
+      "op_str": "dx, word ptr [esp + 0x16]",
+      "size": 5,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x40127a",
+      "addr_int": 4199034,
+      "bytes": "8b542418",
+      "mnemonic": "mov",
+      "op_str": "edx, dword ptr [esp + 0x18]",
+      "size": 4,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x401291",
+      "addr_int": 4199057,
+      "bytes": "8b542418",
+      "mnemonic": "mov",
+      "op_str": "edx, dword ptr [esp + 0x18]",
+      "size": 4,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x4012ab",
+      "addr_int": 4199083,
+      "bytes": "8b542418",
+      "mnemonic": "mov",
+      "op_str": "edx, dword ptr [esp + 0x18]",
+      "size": 4,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x4012b2",
+      "addr_int": 4199090,
+      "bytes": "668b542416",
+      "mnemonic": "mov",
+      "op_str": "dx, word ptr [esp + 0x16]",
+      "size": 5,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x40130a",
+      "addr_int": 4199178,
+      "bytes": "8945f0",
+      "mnemonic": "mov",
+      "op_str": "dword ptr [ebp - 0x10], eax",
+      "size": 3,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x40131a",
+      "addr_int": 4199194,
+      "bytes": "8d4810",
+      "mnemonic": "lea",
+      "op_str": "ecx, [eax + 0x10]",
+      "size": 3,
+      "group": [
+        "not64bitmode"
+      ],
+      "category": "data"
+    },
+    {
+      "address": "0x40132c",
+      "addr_int": 4199212,
+      "bytes": "8955f4",
+      "mnemonic": "mov",
+      "op_str": "dword ptr [ebp - 0xc], edx",
+      "size": 3,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x401351",
+      "addr_int": 4199249,
+      "bytes": "894df4",
+      "mnemonic": "mov",
+      "op_str": "dword ptr [ebp - 0xc], ecx",
+      "size": 3,
+      "group": [],
+      "category": "data"
+    },
+    {
+      "address": "0x401358",
+      "addr_int": 4199256,
+      "bytes": "c745f0ffff0000",
+      "mnemonic": "mov",
+      "op_str": "dword ptr [ebp - 0x10], 0xffff",
+      "size": 7,
+      "group": [],
+      "category": "data"
+    }
+  ],
+  "cpp_skeleton_preview": "\n// Function at 0x401060 — original: sub_0x401060\nvoid sub_0x401060() {\n    // 0x401060: 55           push     ebp\n    // 0x401061: 8bec         mov      ebp, esp\n    // 0x401063: 56           push     esi\n    // 0x401064: 8bf1         mov      esi, ecx\n    // 0x401066: 0f57c0       xorps    xmm0, xmm0\n    // 0x401069: 8d4604       lea      eax, [esi + 4]\n    // 0x40106c: 50           push     eax\n    // 0x40106d: c70664cb4300 mov      dword ptr [esi], 0x43cb64\n    // 0x401073: 660fd600     movq     qword ptr [eax], xmm0\n    // 0x401077: 8b4508       mov      eax, dword ptr [ebp + 8]\n    // 0x40107a: 83c004       add      eax, 4\n    // 0x40107d: 50           push     eax\n    // 0x40107e: e8631d0200   call     0x422de6\n    // 0x401083: 83c408       add      esp, 8\n    // 0x401086: 8bc6         mov      eax, esi\n    // TODO: lift to C++ based on opcodes above\n    // calls: ['0x422de6']\n}\n\n\n// Function at 0x4010a0 — original: sub_0x4010a0\nvoid sub_0x4010a0() {\n    // 0x4010a0: 55           push     ebp\n    // 0x4010a1: 8bec         mov      ebp, esp\n    // 0x4010a3: 56           push     esi\n    // 0x4010a4: 8bf1         mov      esi, ecx\n    // 0x4010a6: 8d4604       lea      eax, [esi + 4]\n    // 0x4010a9: c70664cb4300 mov      dword ptr [esi], 0x43cb64\n    // 0x4010af: 50           push     eax\n    // 0x4010b0: e8941d0200   call     0x422e49\n    // 0x4010b5: 83c404       add      esp, 4\n    // 0x4010b8: f6450801     test     byte ptr [ebp + 8], 1\n    // 0x4010bc: 740b         je       0x4010c9\n    // 0x4010be: 6a0c         push     0xc\n    // 0x4010c0: 56           push     esi\n    // 0x4010c1: e80e0d0200   call     0x421dd4\n    // 0x4010c6: 83c408       add      esp, 8\n    // TODO: lift to C++ based on opcodes above\n    // calls: ['0x422e49', '0x421dd4', '0x422e49']\n}\n"
+}

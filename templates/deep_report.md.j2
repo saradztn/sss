@@ -1,0 +1,103 @@
+# تقرير التفكيك العميق — Opcodes
+
+> هذا التقرير يكتب **كل شيء** عن البرنامج كأنه opcodes (jump, push, mov…) لتتمكن من إرساله لـ AI يعيد بناءه في C++.
+
+**العينة:** `{{ result.sample.filename }}` | **الحجم:** {{ result.sample.size_bytes }} | **SHA256:** `{{ result.sample.sha256 }}`
+
+---
+
+## 1) ملخص Opcodes
+
+- **الطريقة:** {{ deep.method }} (capstone > objdump)
+- **إجمالي التعليمات:** {{ deep.total_instructions }}
+- **Basic Blocks:** {{ deep.basic_blocks }} (متوسط {{ deep.avg_block_size }} تعليمة/block)
+- **Functions:** {{ deep.functions_count }}
+- **Calls:** {{ deep.calls_count }}
+
+**أكثر 20 mnemonic:**
+{% for k,v in deep.top_mnemonics %}
+- `{{k}}`: {{v}}
+{% endfor %}
+
+**التصنيف:**
+{% for k,v in deep.categories.items() %}
+- {{k}}: {{v}}
+{% endfor %}
+
+---
+
+## 2) Functions
+
+{% for f in deep.functions[:30] %}
+- `{{f.address}}` — `{{f.name}}` ({{f.source}})
+{% endfor %}
+{% if deep.functions_count > 30 %}
+... و {{ deep.functions_count - 30 }} أخرى في `ai_report.json`
+{% endif %}
+
+---
+
+## 3) عينة Opcodes (أول 100)
+
+```asm
+{% for ins in opcodes[:100] %}
+{{ins.address}}: {{ins.bytes}}  {{ins.mnemonic}} {{ins.op_str}}
+{% endfor %}
+```
+
+**الكامل:** `evidence/deep_opcode/opcodes_full.json.gz` (gzip, كل التعليمات)
+
+---
+
+## 4) Control Flow Graph (CFG)
+
+- كل `jmp`/`je`/`jne`/`call`/`ret` ينهي block
+- ملف DOT في `evidence/deep_opcode/cfg.dot` (يمكن فتحه بـ Graphviz)
+
+```dot
+{{ dot_preview }}
+```
+
+---
+
+## 5) Calls و Imports
+
+{% for c in deep.calls_sample %}
+- {{c.address}}: `{{c.mnemonic}} {{c.op_str}}`
+{% endfor %}
+
+قارن مع `imports` في التقرير العام لمعرفة أي `call` يذهب لأي DLL.
+
+---
+
+## 6) Strings References
+
+{% for s in deep.string_refs_sample %}
+- {{s.address}}: `{{s.mnemonic}} {{s.op_str}}`  — احتمال يحمل عنوان نص
+{% endfor %}
+
+---
+
+## 7) C++ Skeleton (لـ AI)
+
+هذا الهيكل يحول كل function إلى `void` مع تعليقات assembly — على AI ملؤه:
+
+```cpp
+{{ cpp_preview }}
+```
+
+**الملف الكامل:** `evidence/deep_opcode/skeleton.cpp`
+
+---
+
+## 8) كيف ترسل لـ AI ليبني C++؟
+
+1. أرسل `evidence/deep_opcode/ai_report.json` (أول 200 تعليمة + ملخص + skeleton)
+2. أرسل `prompts/cpp_rebuild_prompt.md` (يشرح كيف يحوّل opcodes إلى C++)
+3. إذا كان البرنامج كبير، أرسل أيضاً `opcodes_full.json.gz`
+
+الـ AI سيعيد بناء **نفس التدفق**: نفس الـ jumps, pushes, calls, واستهداف نفس الـ imports.
+
+---
+
+*تم عبر RevSpec Deep v{{ result.schema_version }} — {{ result.finished_at }}*

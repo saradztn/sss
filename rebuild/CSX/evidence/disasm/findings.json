@@ -1,0 +1,50 @@
+{
+  "findings": [
+    {
+      "id": "disasm.objdump_ok",
+      "category": "disasm",
+      "title": "Disassembly عبر objdump",
+      "description": "تم تفكيك 74673 سطر، 2 دالة محتملة",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "disasm:objdump -d",
+      "method": "objdump -d -M intel",
+      "evidence_refs": [],
+      "data": {
+        "lines": 74673,
+        "funcs": [
+          ".text",
+          ".mmap"
+        ],
+        "total_funcs": 2
+      },
+      "tags": []
+    },
+    {
+      "id": "disasm.capstone_available",
+      "category": "disasm",
+      "title": "Capstone متاح",
+      "description": "يمكن استخدام capstone للتحليل البرمجي لاحقًا",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "disasm:capstone import",
+      "method": "import capstone",
+      "evidence_refs": [],
+      "data": {},
+      "tags": []
+    },
+    {
+      "id": "disasm.decompilation_limitation",
+      "category": "disasm",
+      "title": "قيود الاستعادة",
+      "description": "لا يمكن استعادة المصدر الأصلي حرفيًا من binary؛ ما نستعيده هو سلوك مكافئ عبر الملاحظة والتفكيك. Decompilation الحقيقي يتطلب Ghidra/IDA غير مضمنة هنا.",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "disasm:disclaimer",
+      "method": "design principle",
+      "evidence_refs": [],
+      "data": {},
+      "tags": []
+    }
+  ]
+}

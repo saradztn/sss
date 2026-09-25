@@ -1,0 +1,4855 @@
+{
+  "schema_version": "1.0.0",
+  "sample": {
+    "path": "/tmp/CSX.exe",
+    "filename": "CSX.exe",
+    "size_bytes": 6175744,
+    "sha256": "683520631b81a7283e9d7c0870115867ed29630a782348119308d22eae1b6f31",
+    "sha1": "2d0de7e0919b2f2f72dd9388d7c6510513acd132",
+    "md5": "d1e7416fa2ef5031f963cb0585a97629",
+    "mime_type": null,
+    "collected_at": "2026-09-25T17:18:52.986118Z"
+  },
+  "host": {
+    "os": "Linux-6.1.158+-x86_64-with-glibc2.36",
+    "arch": "x86_64",
+    "python_version": "3.11.2",
+    "hostname": "e2b.local",
+    "tool_versions": {
+      "readelf": "GNU readelf (GNU Binutils for Debian) 2.40",
+      "objdump": "GNU objdump (GNU Binutils for Debian) 2.40",
+      "nm": "GNU nm (GNU Binutils for Debian) 2.40",
+      "strings": "GNU strings (GNU Binutils for Debian) 2.40",
+      "ldd": "ldd (Debian GLIBC 2.36-9+deb12u14) 2.36",
+      "unzip": "caution:  both -n and -o specified; ignoring -o",
+      "jinja2": "3.1.6",
+      "jsonschema": "4.26.0",
+      "pefile": "2024.8.26",
+      "capstone": "5.0.9"
+    }
+  },
+  "started_at": "2026-09-25T17:18:53.016328Z",
+  "finished_at": "2026-09-25T17:18:56.529213Z",
+  "analyzers": [
+    {
+      "analyzer": "metadata",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T17:18:53.020564Z",
+      "finished_at": "2026-09-25T17:18:53.044665Z",
+      "duration_ms": 24,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "meta.hash.sha256",
+          "category": "metadata",
+          "title": "SHA256",
+          "description": "SHA256 للعينة = 683520631b81a7283e9d7c0870115867ed29630a782348119308d22eae1b6f31",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "metadata:hashlib.sha256",
+          "method": "hashlib.sha256 over file bytes",
+          "evidence_refs": [],
+          "data": {
+            "sha256": "683520631b81a7283e9d7c0870115867ed29630a782348119308d22eae1b6f31"
+          },
+          "tags": []
+        },
+        {
+          "id": "meta.size",
+          "category": "metadata",
+          "title": "حجم الملف",
+          "description": "حجم الملف 6175744 بايت",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "metadata:stat",
+          "method": "stat.st_size",
+          "evidence_refs": [],
+          "data": {
+            "size_bytes": 6175744
+          },
+          "tags": []
+        },
+        {
+          "id": "meta.timestamps",
+          "category": "metadata",
+          "title": "طوابع زمنية لنظام الملفات",
+          "description": "mtime/ctime من نظام الملفات (قد لا تعكس وقت البناء)",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "metadata:stat",
+          "method": "stat.st_mtime/ctime",
+          "evidence_refs": [],
+          "data": {
+            "mtime": "2026-09-25T17:18:40.926354Z",
+            "ctime": "2026-09-25T17:18:40.926354Z",
+            "mode": "0o644"
+          },
+          "tags": []
+        },
+        {
+          "id": "meta.magic_bytes",
+          "category": "metadata",
+          "title": "Magic bytes",
+          "description": "أول 16 بايت hex: 4d5a90000300000004000000ffff0000",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "metadata:read",
+          "method": "read first 16 bytes",
+          "evidence_refs": [],
+          "data": {
+            "magic_hex": "4d5a90000300000004000000ffff0000"
+          },
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "sha256": "683520631b81a7283e9d7c0870115867ed29630a782348119308d22eae1b6f31",
+        "size": 6175744,
+        "file": "",
+        "mime": null
+      }
+    },
+    {
+      "analyzer": "platform",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T17:18:53.044973Z",
+      "finished_at": "2026-09-25T17:18:53.117350Z",
+      "duration_ms": 72,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "platform.format",
+          "category": "platform",
+          "title": "صيغة الملف / المنصة",
+          "description": "الصيغة المكتشفة: PE | المعمارية: x86 | البت: unknown",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "platform:pe_magic",
+          "method": "pe_magic",
+          "evidence_refs": [],
+          "data": {
+            "format": "PE",
+            "arch": "x86",
+            "machine": 332
+          },
+          "tags": []
+        },
+        {
+          "id": "platform.runtime_hints",
+          "category": "platform",
+          "title": "تلميحات Runtime / اللغة",
+          "description": "تلميحات لغوية/تقنية مستنتجة من strings و readelf",
+          "confidence": "low",
+          "provenance": "inferred",
+          "source": "platform:strings+readelf",
+          "method": "keyword search in strings",
+          "evidence_refs": [],
+          "data": {
+            "hints": [
+              "JVM",
+              "Rust",
+              "Node.js",
+              "Python"
+            ]
+          },
+          "tags": [
+            "heuristic"
+          ]
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "format": "PE",
+        "arch": "x86",
+        "machine": 332,
+        "detector": "pe_magic",
+        "strings_hints": [
+          "JVM",
+          "Rust",
+          "Node.js",
+          "Python"
+        ]
+      }
+    },
+    {
+      "analyzer": "structure",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T17:18:53.117739Z",
+      "finished_at": "2026-09-25T17:18:53.326199Z",
+      "duration_ms": 208,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "struct.pe.sections",
+          "category": "structure",
+          "title": "PE Sections",
+          "description": "PE entry 0x22052 base 0x400000 sections=7",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "structure:pefile",
+          "method": "pefile.PE",
+          "evidence_refs": [],
+          "data": {
+            "pe_sections": [
+              {
+                "Name": ".text",
+                "VirtualAddress": "0x1000",
+                "Misc_VirtualSize": 227065,
+                "SizeOfRawData": 227328
+              },
+              {
+                "Name": ".mmap",
+                "VirtualAddress": "0x39000",
+                "Misc_VirtualSize": 581,
+                "SizeOfRawData": 1024
+              },
+              {
+                "Name": ".rdata",
+                "VirtualAddress": "0x3a000",
+                "Misc_VirtualSize": 68000,
+                "SizeOfRawData": 68096
+              },
+              {
+                "Name": ".data",
+                "VirtualAddress": "0x4b000",
+                "Misc_VirtualSize": 7944,
+                "SizeOfRawData": 3584
+              },
+              {
+                "Name": ".fptable",
+                "VirtualAddress": "0x4d000",
+                "Misc_VirtualSize": 128,
+                "SizeOfRawData": 512
+              },
+              {
+                "Name": ".rsrc",
+                "VirtualAddress": "0x4e000",
+                "Misc_VirtualSize": 5862968,
+                "SizeOfRawData": 5863424
+              },
+              {
+                "Name": ".reloc",
+                "VirtualAddress": "0x5e6000",
+                "Misc_VirtualSize": 10452,
+                "SizeOfRawData": 10752
+              }
+            ],
+            "pe_entry": "0x22052",
+            "pe_image_base": "0x400000"
+          },
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "pe_sections": [
+          {
+            "Name": ".text",
+            "VirtualAddress": "0x1000",
+            "Misc_VirtualSize": 227065,
+            "SizeOfRawData": 227328
+          },
+          {
+            "Name": ".mmap",
+            "VirtualAddress": "0x39000",
+            "Misc_VirtualSize": 581,
+            "SizeOfRawData": 1024
+          },
+          {
+            "Name": ".rdata",
+            "VirtualAddress": "0x3a000",
+            "Misc_VirtualSize": 68000,
+            "SizeOfRawData": 68096
+          },
+          {
+            "Name": ".data",
+            "VirtualAddress": "0x4b000",
+            "Misc_VirtualSize": 7944,
+            "SizeOfRawData": 3584
+          },
+          {
+            "Name": ".fptable",
+            "VirtualAddress": "0x4d000",
+            "Misc_VirtualSize": 128,
+            "SizeOfRawData": 512
+          },
+          {
+            "Name": ".rsrc",
+            "VirtualAddress": "0x4e000",
+            "Misc_VirtualSize": 5862968,
+            "SizeOfRawData": 5863424
+          },
+          {
+            "Name": ".reloc",
+            "VirtualAddress": "0x5e6000",
+            "Misc_VirtualSize": 10452,
+            "SizeOfRawData": 10752
+          }
+        ],
+        "pe_entry": "0x22052",
+        "pe_image_base": "0x400000"
+      }
+    },
+    {
+      "analyzer": "strings",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T17:18:53.326366Z",
+      "finished_at": "2026-09-25T17:18:53.562404Z",
+      "duration_ms": 236,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "strings.summary",
+          "category": "strings",
+          "title": "ملخص السلاسل",
+          "description": "إجمالي 137384 سلسلة ascii (+ 833 utf16)",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "strings:strings(1)",
+          "method": "strings -a -n 4",
+          "evidence_refs": [],
+          "data": {
+            "ascii": 137384,
+            "utf16": 833
+          },
+          "tags": []
+        },
+        {
+          "id": "strings.urls",
+          "category": "strings",
+          "title": "URLs مكتشفة",
+          "description": "عناوين URL مستخرجة من السلاسل",
+          "confidence": "high",
+          "provenance": "observed",
+          "source": "strings:regex",
+          "method": "regex https?://",
+          "evidence_refs": [],
+          "data": {
+            "urls": [
+              "https://discord.gg/ehXCwMMFrM"
+            ]
+          },
+          "tags": [
+            "network",
+            "ioc"
+          ]
+        },
+        {
+          "id": "strings.ips",
+          "category": "strings",
+          "title": "عناوين IP",
+          "description": "عناوين IP محتملة",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "strings:regex",
+          "method": "ipv4 regex",
+          "evidence_refs": [],
+          "data": {
+            "ips": [
+              "127.0.0.1",
+              "2.56.246.128"
+            ]
+          },
+          "tags": [
+            "network"
+          ]
+        },
+        {
+          "id": "strings.emails",
+          "category": "strings",
+          "title": "عناوين بريد",
+          "description": "عناوين بريد مستخرجة",
+          "confidence": "high",
+          "provenance": "observed",
+          "source": "strings:regex",
+          "method": "email regex",
+          "evidence_refs": [],
+          "data": {
+            "emails": [
+              "f@PX.BQ",
+              "q@ub.q",
+              "W@0.R",
+              "W0@6.5",
+              "N@TmS.T",
+              "L@7.LeW",
+              "N@oSD.Z",
+              "MGj@RY.G",
+              "3@0vq.a",
+              "D@8.B",
+              "hq0k2c@3x.P",
+              "r@p.9",
+              "L@CAE.W"
+            ]
+          },
+          "tags": []
+        },
+        {
+          "id": "strings.keywords",
+          "category": "strings",
+          "title": "كلمات مفتاحية مثيرة",
+          "description": "كلمات دلالية قد تشير لوظائف حساسة",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "strings:keyword search",
+          "method": "case-insensitive substring count",
+          "evidence_refs": [],
+          "data": {
+            "keywords": {
+              "db_": 5,
+              "sql": 2,
+              "http": 11,
+              "debug": 8,
+              "error": 25,
+              "fail": 15,
+              "success": 2,
+              "admin": 1,
+              "root": 1,
+              "key": 19,
+              "auth": 1,
+              "user": 19,
+              "AES": 1,
+              "RSA": 1,
+              "DES": 16
+            }
+          },
+          "tags": [
+            "heuristic"
+          ]
+        },
+        {
+          "id": "strings.paths",
+          "category": "strings",
+          "title": "مسارات ملفات",
+          "description": "مسارات ملفات مستخرجة (عينة من 50)",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "strings:regex",
+          "method": "path regex",
+          "evidence_refs": [],
+          "data": {
+            "paths": [
+              "/1U",
+              "/trustInfo",
+              "/Gzm",
+              "/Pma",
+              "/B-",
+              "/D_b",
+              "/cgHc",
+              "/2j2",
+              "/api/event",
+              "/M_",
+              "/M2026",
+              "/K4",
+              "/302",
+              "/Av",
+              "/gE",
+              "/Ay",
+              "/imu1w2",
+              "/nD",
+              "/m-",
+              "/7n",
+              "/w.",
+              "/r5",
+              "/l",
+              "/6B",
+              "/gb",
+              "/V2",
+              "/DY",
+              "/3zikim",
+              "/B_",
+              "/T5",
+              "/UncnHq",
+              "/O8",
+              "/Ap",
+              "/42",
+              "/zYy",
+              "/Zd",
+              "/_g",
+              "/pMs",
+              "/9ea",
+              "/Pn",
+              "/nb",
+              "/ZSj",
+              "/dj",
+              "/Tk",
+              "/D1",
+              "/9yQ",
+              "/6q",
+              "/UP",
+              "/s-1",
+              "/5Zu"
+            ]
+          },
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "strings_ascii_lines": 137384,
+        "strings_utf16_lines": 833,
+        "urls": [
+          "https://discord.gg/ehXCwMMFrM"
+        ],
+        "ips": [
+          "127.0.0.1",
+          "2.56.246.128"
+        ],
+        "emails": [
+          "f@PX.BQ",
+          "q@ub.q",
+          "W@0.R",
+          "W0@6.5",
+          "N@TmS.T",
+          "L@7.LeW",
+          "N@oSD.Z",
+          "MGj@RY.G",
+          "3@0vq.a",
+          "D@8.B",
+          "hq0k2c@3x.P",
+          "r@p.9",
+          "L@CAE.W"
+        ],
+        "paths_sample": [
+          "/1U",
+          "/trustInfo",
+          "/Gzm",
+          "/Pma",
+          "/B-",
+          "/D_b",
+          "/cgHc",
+          "/2j2",
+          "/api/event",
+          "/M_",
+          "/M2026",
+          "/K4",
+          "/302",
+          "/Av",
+          "/gE",
+          "/Ay",
+          "/imu1w2",
+          "/nD",
+          "/m-",
+          "/7n",
+          "/w.",
+          "/r5",
+          "/l",
+          "/6B",
+          "/gb",
+          "/V2",
+          "/DY",
+          "/3zikim",
+          "/B_",
+          "/T5",
+          "/UncnHq",
+          "/O8",
+          "/Ap",
+          "/42",
+          "/zYy",
+          "/Zd",
+          "/_g",
+          "/pMs",
+          "/9ea",
+          "/Pn",
+          "/nb",
+          "/ZSj",
+          "/dj",
+          "/Tk",
+          "/D1",
+          "/9yQ",
+          "/6q",
+          "/UP",
+          "/s-1",
+          "/5Zu"
+        ],
+        "regs": [],
+        "keywords": {
+          "db_": 5,
+          "sql": 2,
+          "http": 11,
+          "debug": 8,
+          "error": 25,
+          "fail": 15,
+          "success": 2,
+          "admin": 1,
+          "root": 1,
+          "key": 19,
+          "auth": 1,
+          "user": 19,
+          "AES": 1,
+          "RSA": 1,
+          "DES": 16
+        },
+        "total_strings": 138218
+      }
+    },
+    {
+      "analyzer": "imports_exports",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T17:18:53.562665Z",
+      "finished_at": "2026-09-25T17:18:53.849935Z",
+      "duration_ms": 287,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "deps.needed_libs",
+          "category": "dependencies",
+          "title": "المكتبات المطلوبة (NEEDED / DLL)",
+          "description": "عدد 10 مكتبة معتمدة",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "imports_exports:readelf/pefile",
+          "method": "readelf -d / pefile",
+          "evidence_refs": [],
+          "data": {
+            "needed_libs": [
+              "ADVAPI32.dll",
+              "GDI32.dll",
+              "USER32.dll",
+              "WINHTTP.dll",
+              "ole32.dll",
+              "OLEAUT32.dll",
+              "KERNEL32.dll",
+              "SHELL32.dll",
+              "gdiplus.dll",
+              "NETAPI32.dll"
+            ]
+          },
+          "tags": []
+        },
+        {
+          "id": "deps.imports",
+          "category": "dependencies",
+          "title": "الرموز المستوردة",
+          "description": "عدد 269 رمز مستورد (عينة 100 أولى محفوظة)",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "imports_exports:nm/objdump/pefile",
+          "method": "nm -D / objdump",
+          "evidence_refs": [],
+          "data": {
+            "imports_sample": [
+              "ADVAPI32.dll!RegEnumKeyExA",
+              "ADVAPI32.dll!RegQueryValueExW",
+              "ADVAPI32.dll!CredDeleteW",
+              "ADVAPI32.dll!GetUserNameW",
+              "ADVAPI32.dll!RegOpenKeyExW",
+              "ADVAPI32.dll!RegOpenKeyExA",
+              "ADVAPI32.dll!RegSetValueExA",
+              "ADVAPI32.dll!GetUserNameA",
+              "ADVAPI32.dll!RegDeleteKeyA",
+              "ADVAPI32.dll!RegCloseKey",
+              "GDI32.dll!CreateSolidBrush",
+              "GDI32.dll!DeleteObject",
+              "GDI32.dll!SetBkColor",
+              "GDI32.dll!SetTextColor",
+              "GDI32.dll!DeleteDC",
+              "GDI32.dll!CreateRoundRectRgn",
+              "GDI32.dll!CreateFontW",
+              "GDI32.dll!CreateCompatibleDC",
+              "GDI32.dll!SelectObject",
+              "GDI32.dll!CreateCompatibleBitmap",
+              "GDI32.dll!BitBlt",
+              "USER32.dll!GetClientRect",
+              "USER32.dll!SetClipboardData",
+              "USER32.dll!SetCapture",
+              "USER32.dll!LoadCursorW",
+              "USER32.dll!LoadIconW",
+              "USER32.dll!TranslateMessage",
+              "USER32.dll!DestroyMenu",
+              "USER32.dll!EnumWindows",
+              "USER32.dll!TrackMouseEvent",
+              "USER32.dll!RegisterClassW",
+              "USER32.dll!EmptyClipboard",
+              "USER32.dll!CloseClipboard",
+              "USER32.dll!ClientToScreen",
+              "USER32.dll!DispatchMessageW",
+              "USER32.dll!GetCapture",
+              "USER32.dll!OpenClipboard",
+              "USER32.dll!IsWindow",
+              "USER32.dll!ShowWindow",
+              "USER32.dll!TrackPopupMenu",
+              "USER32.dll!CreatePopupMenu",
+              "USER32.dll!SendMessageW",
+              "USER32.dll!GetWindowTextW",
+              "USER32.dll!ScreenToClient",
+              "USER32.dll!CreateWindowExW",
+              "USER32.dll!SetWindowRgn",
+              "USER32.dll!MessageBoxW",
+              "USER32.dll!SetWindowPos",
+              "USER32.dll!IsWindowVisible",
+              "USER32.dll!GetDC",
+              "USER32.dll!DestroyWindow",
+              "USER32.dll!GetWindow",
+              "USER32.dll!PostMessageW",
+              "USER32.dll!DefWindowProcW",
+              "USER32.dll!GetMessageW",
+              "USER32.dll!InvalidateRect",
+              "USER32.dll!IsIconic",
+              "USER32.dll!ReleaseDC",
+              "USER32.dll!BeginPaint",
+              "USER32.dll!EndPaint",
+              "USER32.dll!UpdateWindow",
+              "USER32.dll!PostQuitMessage",
+              "USER32.dll!SystemParametersInfoW",
+              "USER32.dll!AppendMenuW",
+              "USER32.dll!PtInRect",
+              "USER32.dll!SetWindowTextW",
+              "USER32.dll!ReleaseCapture",
+              "WINHTTP.dll!WinHttpSetTimeouts",
+              "WINHTTP.dll!WinHttpSendRequest",
+              "WINHTTP.dll!WinHttpCloseHandle",
+              "WINHTTP.dll!WinHttpOpenRequest",
+              "WINHTTP.dll!WinHttpReadData",
+              "WINHTTP.dll!WinHttpQueryHeaders",
+              "WINHTTP.dll!WinHttpOpen",
+              "WINHTTP.dll!WinHttpReceiveResponse",
+              "WINHTTP.dll!WinHttpConnect",
+              "ole32.dll!CoSetProxyBlanket",
+              "ole32.dll!CoInitializeEx",
+              "ole32.dll!CreateStreamOnHGlobal",
+              "ole32.dll!CoCreateInstance",
+              "ole32.dll!CoUninitialize",
+              "OLEAUT32.dll!SysFreeString",
+              "OLEAUT32.dll!SysAllocString",
+              "OLEAUT32.dll!VariantClear",
+              "KERNEL32.dll!DecodePointer",
+              "KERNEL32.dll!HeapReAlloc",
+              "KERNEL32.dll!HeapSize",
+              "KERNEL32.dll!GetConsoleMode",
+              "KERNEL32.dll!GetConsoleOutputCP",
+              "KERNEL32.dll!FlushFileBuffers",
+              "KERNEL32.dll!GetStringTypeW",
+              "KERNEL32.dll!SetStdHandle",
+              "KERNEL32.dll!GetProcessHeap",
+              "KERNEL32.dll!FreeEnvironmentStringsW",
+              "KERNEL32.dll!GetEnvironmentStringsW",
+              "KERNEL32.dll!GetCommandLineW",
+              "KERNEL32.dll!GetCommandLineA",
+              "KERNEL32.dll!GetCPInfo",
+              "KERNEL32.dll!GetOEMCP",
+              "KERNEL32.dll!GetACP"
+            ],
+            "total": 269
+          },
+          "tags": []
+        },
+        {
+          "id": "deps.suspicious_imports",
+          "category": "behavior",
+          "title": "استيرادات مثيرة للانتباه",
+          "description": "استيرادات قد تشير لقدرات حساسة (لا تعني خبثًا بحد ذاتها)",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "imports_exports:heuristic",
+          "method": "keyword match against imports",
+          "evidence_refs": [],
+          "data": {
+            "suspicious": [
+              "USER32.dll!SystemParametersInfoW",
+              "WINHTTP.dll!WinHttpOpenRequest",
+              "WINHTTP.dll!WinHttpOpen",
+              "WINHTTP.dll!WinHttpConnect",
+              "KERNEL32.dll!WriteProcessMemory",
+              "KERNEL32.dll!VirtualAllocEx",
+              "KERNEL32.dll!CreateRemoteThread",
+              "KERNEL32.dll!GetSystemTimeAsFileTime"
+            ]
+          },
+          "tags": [
+            "heuristic",
+            "behavior"
+          ]
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "needed": [
+          "ADVAPI32.dll",
+          "GDI32.dll",
+          "USER32.dll",
+          "WINHTTP.dll",
+          "ole32.dll",
+          "OLEAUT32.dll",
+          "KERNEL32.dll",
+          "SHELL32.dll",
+          "gdiplus.dll",
+          "NETAPI32.dll"
+        ],
+        "imports_total": 269,
+        "exports_total": 0
+      }
+    },
+    {
+      "analyzer": "resources",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T17:18:53.850269Z",
+      "finished_at": "2026-09-25T17:18:53.943114Z",
+      "duration_ms": 92,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "res.no_obvious",
+          "category": "resources",
+          "title": "لا توجد موارد ظاهرة بالطرق المتاحة",
+          "description": "لم يتم العثور على موارد مضمنة واضحة؛ قد تكون مضمنة كـ blobs أو مشفرة",
+          "confidence": "unknown",
+          "provenance": "undetermined",
+          "source": "resources:negation",
+          "method": "no zip / no version",
+          "evidence_refs": [],
+          "data": {
+            "is_zip": false,
+            "config_hints": [],
+            "version_strings": []
+          },
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "is_zip": false,
+        "config_hints": [],
+        "version_strings": []
+      }
+    },
+    {
+      "analyzer": "crypto",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T17:18:53.943270Z",
+      "finished_at": "2026-09-25T17:18:54.490953Z",
+      "duration_ms": 547,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "crypto.high_entropy",
+          "category": "crypto",
+          "title": "إنتروبي عالي — محتمل تشفير/ضغط/حزم",
+          "description": "إنتروبي كلي 7.95 (>7.2) يشير لاحتمال تشفير أو ضغط أو packer",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "crypto:entropy",
+          "method": "shannon entropy",
+          "evidence_refs": [],
+          "data": {
+            "overall_entropy": 7.9478064199225855,
+            "high_windows": 4276
+          },
+          "tags": [
+            "heuristic"
+          ]
+        },
+        {
+          "id": "crypto.packed_sections",
+          "category": "crypto",
+          "title": "نوافذ عالية الإنتروبي كثيرة",
+          "description": "4276/6031 نوافذ بإنتروبي >7.5 — قد تشير لمقاطع مشفرة/مضغوطة",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "crypto:window_entropy",
+          "method": "1KB sliding window",
+          "evidence_refs": [],
+          "data": {
+            "high_windows": 4276,
+            "total": 6031
+          },
+          "tags": []
+        },
+        {
+          "id": "crypto.no_constants",
+          "category": "crypto",
+          "title": "لا توجد ثوابت تشفير واضحة",
+          "description": "لم يتم العثور على S-box أو PEM markers أو base64 alphabet كامل",
+          "confidence": "medium",
+          "provenance": "observed",
+          "source": "crypto:constant search",
+          "method": "byte pattern search",
+          "evidence_refs": [],
+          "data": {},
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "overall_entropy": 7.9478,
+        "size": 6175744,
+        "high_entropy_windows": 4276,
+        "total_windows": 6031,
+        "avg_window_entropy": 7.44,
+        "max_window_entropy": 7.8618,
+        "constants_found": []
+      }
+    },
+    {
+      "analyzer": "disasm",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T17:18:54.491142Z",
+      "finished_at": "2026-09-25T17:18:54.665398Z",
+      "duration_ms": 174,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "disasm.objdump_ok",
+          "category": "disasm",
+          "title": "Disassembly عبر objdump",
+          "description": "تم تفكيك 74673 سطر، 2 دالة محتملة",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "disasm:objdump -d",
+          "method": "objdump -d -M intel",
+          "evidence_refs": [],
+          "data": {
+            "lines": 74673,
+            "funcs": [
+              ".text",
+              ".mmap"
+            ],
+            "total_funcs": 2
+          },
+          "tags": []
+        },
+        {
+          "id": "disasm.capstone_available",
+          "category": "disasm",
+          "title": "Capstone متاح",
+          "description": "يمكن استخدام capstone للتحليل البرمجي لاحقًا",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "disasm:capstone import",
+          "method": "import capstone",
+          "evidence_refs": [],
+          "data": {},
+          "tags": []
+        },
+        {
+          "id": "disasm.decompilation_limitation",
+          "category": "disasm",
+          "title": "قيود الاستعادة",
+          "description": "لا يمكن استعادة المصدر الأصلي حرفيًا من binary؛ ما نستعيده هو سلوك مكافئ عبر الملاحظة والتفكيك. Decompilation الحقيقي يتطلب Ghidra/IDA غير مضمنة هنا.",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "disasm:disclaimer",
+          "method": "design principle",
+          "evidence_refs": [],
+          "data": {},
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "objdump_returncode": 0,
+        "objdump_lines": 74673,
+        "objdump_stderr_preview": "",
+        "functions_found": [
+          ".text",
+          ".mmap"
+        ],
+        "functions_count": 2,
+        "interesting_mnemonics": []
+      }
+    },
+    {
+      "analyzer": "behavior",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T17:18:54.665626Z",
+      "finished_at": "2026-09-25T17:18:54.720032Z",
+      "duration_ms": 54,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "behavior.network",
+          "category": "behavior",
+          "title": "سلوك محتمل: عمليات شبكة",
+          "description": "تم العثور على ['socket', 'send'] مطابقة للنمط \\b(socket|connect|bind|listen|accept|send|recv)\\b",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "behavior:regex over imports+strings",
+          "method": "regex \\b(socket|connect|bind|listen|accept|send|recv)\\b",
+          "evidence_refs": [],
+          "data": {
+            "tag": "network",
+            "description": "عمليات شبكة",
+            "hits": [
+              "socket",
+              "send"
+            ],
+            "pattern": "\\b(socket|connect|bind|listen|accept|send|recv)\\b"
+          },
+          "tags": [
+            "network",
+            "heuristic"
+          ]
+        },
+        {
+          "id": "behavior.file-io",
+          "category": "behavior",
+          "title": "سلوك محتمل: عمليات ملفات",
+          "description": "تم العثور على ['read', 'open'] مطابقة للنمط \\b(open|read|write|fopen|fwrite|fread|creat)\\b",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "behavior:regex over imports+strings",
+          "method": "regex \\b(open|read|write|fopen|fwrite|fread|creat)\\b",
+          "evidence_refs": [],
+          "data": {
+            "tag": "file-io",
+            "description": "عمليات ملفات",
+            "hits": [
+              "read",
+              "open"
+            ],
+            "pattern": "\\b(open|read|write|fopen|fwrite|fread|creat)\\b"
+          },
+          "tags": [
+            "file-io",
+            "heuristic"
+          ]
+        },
+        {
+          "id": "behavior.process",
+          "category": "behavior",
+          "title": "سلوك محتمل: إنشاء عمليات",
+          "description": "تم العثور على ['system'] مطابقة للنمط \\b(execve|execvp|system|popen|fork|clone)\\b",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "behavior:regex over imports+strings",
+          "method": "regex \\b(execve|execvp|system|popen|fork|clone)\\b",
+          "evidence_refs": [],
+          "data": {
+            "tag": "process",
+            "description": "إنشاء عمليات",
+            "hits": [
+              "system"
+            ],
+            "pattern": "\\b(execve|execvp|system|popen|fork|clone)\\b"
+          },
+          "tags": [
+            "process",
+            "heuristic"
+          ]
+        },
+        {
+          "id": "behavior.memory",
+          "category": "behavior",
+          "title": "سلوك محتمل: تلاعب بالذاكرة / حقن محتمل",
+          "description": "تم العثور على ['mmap', 'VirtualProtect'] مطابقة للنمط \\b(mmap|mprotect|VirtualAlloc|VirtualProtect)\\b",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "behavior:regex over imports+strings",
+          "method": "regex \\b(mmap|mprotect|VirtualAlloc|VirtualProtect)\\b",
+          "evidence_refs": [],
+          "data": {
+            "tag": "memory",
+            "description": "تلاعب بالذاكرة / حقن محتمل",
+            "hits": [
+              "mmap",
+              "VirtualProtect"
+            ],
+            "pattern": "\\b(mmap|mprotect|VirtualAlloc|VirtualProtect)\\b"
+          },
+          "tags": [
+            "memory",
+            "heuristic"
+          ]
+        },
+        {
+          "id": "behavior.injection",
+          "category": "behavior",
+          "title": "سلوك محتمل: حقن/تتبع عمليات",
+          "description": "تم العثور على ['CreateRemoteThread', 'WriteProcessMemory'] مطابقة للنمط \\b(ptrace|CreateRemoteThread|WriteProcessMemory)\\b",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "behavior:regex over imports+strings",
+          "method": "regex \\b(ptrace|CreateRemoteThread|WriteProcessMemory)\\b",
+          "evidence_refs": [],
+          "data": {
+            "tag": "injection",
+            "description": "حقن/تتبع عمليات",
+            "hits": [
+              "CreateRemoteThread",
+              "WriteProcessMemory"
+            ],
+            "pattern": "\\b(ptrace|CreateRemoteThread|WriteProcessMemory)\\b"
+          },
+          "tags": [
+            "injection",
+            "heuristic"
+          ]
+        },
+        {
+          "id": "behavior.crypto",
+          "category": "behavior",
+          "title": "سلوك محتمل: عمليات تشفير",
+          "description": "تم العثور على ['RSA', 'AES'] مطابقة للنمط \\b(crypt|encrypt|decrypt|AES|RSA|EVP_)\\b",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "behavior:regex over imports+strings",
+          "method": "regex \\b(crypt|encrypt|decrypt|AES|RSA|EVP_)\\b",
+          "evidence_refs": [],
+          "data": {
+            "tag": "crypto",
+            "description": "عمليات تشفير",
+            "hits": [
+              "RSA",
+              "AES"
+            ],
+            "pattern": "\\b(crypt|encrypt|decrypt|AES|RSA|EVP_)\\b"
+          },
+          "tags": [
+            "crypto",
+            "heuristic"
+          ]
+        },
+        {
+          "id": "behavior.cli_hints",
+          "category": "interfaces",
+          "title": "تلميحات واجهة سطر الأوامر",
+          "description": "سلاسل تشبه خيارات CLI",
+          "confidence": "low",
+          "provenance": "inferred",
+          "source": "behavior:strings scan",
+          "method": "lines starting with -",
+          "evidence_refs": [],
+          "data": {
+            "cli_hints": [
+              "-jd_;",
+              "-h%D",
+              "-t%D",
+              "-J0D",
+              "-@0D",
+              "-^0D",
+              "-gqdt",
+              "-]q}",
+              "-+HC[",
+              "-e@f",
+              "-[bU'*",
+              "-tON",
+              "-}\t/",
+              "-RHj=",
+              "-fa0o",
+              "-%k0",
+              "-{'wb",
+              "R--Plk",
+              "-( ,",
+              "-bH)",
+              "-lh!20",
+              "-ph!20",
+              "-lth!20",
+              "-U026C5x",
+              "-lth!20=a",
+              "-lth!20T",
+              "-<86",
+              "-O|{",
+              "-uh!",
+              "-A~S",
+              "-v'}",
+              "-Pte",
+              "-%th!",
+              "-D>\"",
+              "-Xh!20",
+              "-+lt",
+              "-002",
+              "-p8p",
+              "-!G4",
+              "-uh!3",
+              "-302",
+              "-mth",
+              "-Keam",
+              "-#!20mh6'",
+              "-lth.",
+              "-102",
+              "-y6C5",
+              "-lth",
+              "-y024Lb",
+              "-lti"
+            ]
+          },
+          "tags": [
+            "interface"
+          ]
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "network": [
+          "socket",
+          "send"
+        ],
+        "file-io": [
+          "read",
+          "open"
+        ],
+        "process": [
+          "system"
+        ],
+        "memory": [
+          "mmap",
+          "VirtualProtect"
+        ],
+        "injection": [
+          "CreateRemoteThread",
+          "WriteProcessMemory"
+        ],
+        "crypto": [
+          "RSA",
+          "AES"
+        ],
+        "cli_hints": [
+          "-jd_;",
+          "-h%D",
+          "-t%D",
+          "-J0D",
+          "-@0D",
+          "-^0D",
+          "-gqdt",
+          "-]q}",
+          "-+HC[",
+          "-e@f",
+          "-[bU'*",
+          "-tON",
+          "-}\t/",
+          "-RHj=",
+          "-fa0o",
+          "-%k0",
+          "-{'wb",
+          "R--Plk",
+          "-( ,",
+          "-bH)",
+          "-lh!20",
+          "-ph!20",
+          "-lth!20",
+          "-U026C5x",
+          "-lth!20=a",
+          "-lth!20T",
+          "-<86",
+          "-O|{",
+          "-uh!",
+          "-A~S",
+          "-v'}",
+          "-Pte",
+          "-%th!",
+          "-D>\"",
+          "-Xh!20",
+          "-+lt",
+          "-002",
+          "-p8p",
+          "-!G4",
+          "-uh!3",
+          "-302",
+          "-mth",
+          "-Keam",
+          "-#!20mh6'",
+          "-lth.",
+          "-102",
+          "-y6C5",
+          "-lth",
+          "-y024Lb",
+          "-lti"
+        ]
+      }
+    },
+    {
+      "analyzer": "dynamic",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T17:18:54.720433Z",
+      "finished_at": "2026-09-25T17:18:54.720448Z",
+      "duration_ms": 0,
+      "status": "skipped",
+      "findings": [
+        {
+          "id": "dynamic.skipped",
+          "category": "dynamic",
+          "title": "تم تخطي التحليل الديناميكي",
+          "description": "التحليل الديناميكي معطل افتراضياً لتجنب تنفيذ كود غير موثوق. فعّله صراحة مع --enable-dynamic بعد التأكد من العزل.",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "dynamic:opt-in",
+          "method": "ctx.options.enable_dynamic == False",
+          "evidence_refs": [],
+          "data": {},
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [
+        "Dynamic analysis disabled (enable with --enable-dynamic)."
+      ],
+      "raw": {}
+    },
+    {
+      "analyzer": "compare",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T17:18:54.720598Z",
+      "finished_at": "2026-09-25T17:18:54.720798Z",
+      "duration_ms": 0,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "compare.methodology",
+          "category": "comparison",
+          "title": "منهجية المقارنة",
+          "description": "المقارنة تزيد الثقة عند التوافق وتخفضها عند التعارض؛ كل تعارض يجب التحقيق بمدخلات إضافية.",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "compare:disclaimer",
+          "method": "design",
+          "evidence_refs": [],
+          "data": {
+            "static_network_hint": true,
+            "dynamic_network_observed": false,
+            "static_paths_sample": [
+              "/1U",
+              "/trustInfo",
+              "/Gzm",
+              "/Pma",
+              "/B-",
+              "/D_b",
+              "/cgHc",
+              "/2j2",
+              "/api/event",
+              "/Av"
+            ],
+            "dynamic_files_sample": [],
+            "overlap": []
+          },
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "static_network_hint": true,
+        "dynamic_network_observed": false,
+        "static_paths_sample": [
+          "/1U",
+          "/trustInfo",
+          "/Gzm",
+          "/Pma",
+          "/B-",
+          "/D_b",
+          "/cgHc",
+          "/2j2",
+          "/api/event",
+          "/Av"
+        ],
+        "dynamic_files_sample": [],
+        "overlap": []
+      }
+    },
+    {
+      "analyzer": "deep_opcode",
+      "version": "2.0.0",
+      "started_at": "2026-09-25T17:18:54.720895Z",
+      "finished_at": "2026-09-25T17:18:56.528784Z",
+      "duration_ms": 1807,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "deep.opcodes_summary",
+          "category": "disasm",
+          "title": "Opcodes (capstone) — 50001 تعليمة",
+          "description": "تم تفكيك 50001 تعليمة عبر capstone. أهمها: mov:12739, push:8970, call:3537, cmp:3409, lea:2637 | Blocks: 10626 | Functions: 300",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "deep:capstone",
+          "method": "capstone disassembly",
+          "evidence_refs": [],
+          "data": {
+            "total": 50001,
+            "top": [
+              [
+                "mov",
+                12739
+              ],
+              [
+                "push",
+                8970
+              ],
+              [
+                "call",
+                3537
+              ],
+              [
+                "cmp",
+                3409
+              ],
+              [
+                "lea",
+                2637
+              ],
+              [
+                "add",
+                2532
+              ],
+              [
+                "int3",
+                1815
+              ],
+              [
+                "pop",
+                1591
+              ],
+              [
+                "sub",
+                1253
+              ],
+              [
+                "je",
+                1220
+              ]
+            ],
+            "blocks": 10626,
+            "funcs": 300,
+            "cats": {
+              "data": 25953,
+              "control": 9239,
+              "other": 9463,
+              "arith": 5343,
+              "syscall": 3
+            }
+          },
+          "tags": []
+        },
+        {
+          "id": "deep.functions",
+          "category": "structure",
+          "title": "Functions مكتشفة: 300",
+          "description": "دوال عبر symbols أو prologue heuristics (push rbp; mov rbp,rsp)",
+          "confidence": "medium",
+          "provenance": "observed",
+          "source": "deep:nm+heuristic",
+          "method": "nm -S + prologue pattern",
+          "evidence_refs": [],
+          "data": {
+            "functions": [
+              {
+                "address": "0x401060",
+                "name": "sub_0x401060",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x4010a0",
+                "name": "sub_0x4010a0",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x401120",
+                "name": "sub_0x401120",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x401150",
+                "name": "sub_0x401150",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x401190",
+                "name": "sub_0x401190",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x4011b0",
+                "name": "sub_0x4011b0",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x4012ec",
+                "name": "sub_0x4012ec",
+                "source": "heuristic32"
+              },
+              {
+                "address": "0x401470",
+                "name": "sub_0x401470",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x401490",
+                "name": "sub_0x401490",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x4014d0",
+                "name": "sub_0x4014d0",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x401520",
+                "name": "sub_0x401520",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x40169c",
+                "name": "sub_0x40169c",
+                "source": "heuristic32"
+              },
+              {
+                "address": "0x401a6c",
+                "name": "sub_0x401a6c",
+                "source": "heuristic32"
+              },
+              {
+                "address": "0x401ed0",
+                "name": "sub_0x401ed0",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x402020",
+                "name": "sub_0x402020",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x402560",
+                "name": "sub_0x402560",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x4025a0",
+                "name": "sub_0x4025a0",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x402600",
+                "name": "sub_0x402600",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x402680",
+                "name": "sub_0x402680",
+                "source": "heuristic"
+              },
+              {
+                "address": "0x402790",
+                "name": "sub_0x402790",
+                "source": "heuristic"
+              }
+            ],
+            "total": 300
+          },
+          "tags": []
+        },
+        {
+          "id": "deep.cfg",
+          "category": "behavior",
+          "title": "Control Flow — 10626 basic blocks",
+          "description": "متوسط 4.71 تعليمة لكل block. Jumps/Calls تحدد التدفق.",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "deep:cfg",
+          "method": "split on jmp/call/ret",
+          "evidence_refs": [],
+          "data": {
+            "blocks": 10626,
+            "avg": 4.71
+          },
+          "tags": []
+        },
+        {
+          "id": "deep.ai_ready",
+          "category": "disasm",
+          "title": "تقرير جاهز لإعادة البناء في C++",
+          "description": "يحتوي opcodes_full.json.gz + skeleton.cpp + ai_report.json — يمكن إرسالها لنموذج AI لبناء C++ مكافئ.",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "deep:export",
+          "method": "capstone + skeleton gen",
+          "evidence_refs": [],
+          "data": {
+            "files": [
+              "opcodes_full.json.gz",
+              "skeleton.cpp",
+              "ai_report.json",
+              "cfg.dot"
+            ]
+          },
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "method": "capstone",
+        "total_instructions": 50001,
+        "full_gz": "evidence/deep_opcode/opcodes_full.json.gz",
+        "top_mnemonics": [
+          [
+            "mov",
+            12739
+          ],
+          [
+            "push",
+            8970
+          ],
+          [
+            "call",
+            3537
+          ],
+          [
+            "cmp",
+            3409
+          ],
+          [
+            "lea",
+            2637
+          ],
+          [
+            "add",
+            2532
+          ],
+          [
+            "int3",
+            1815
+          ],
+          [
+            "pop",
+            1591
+          ],
+          [
+            "sub",
+            1253
+          ],
+          [
+            "je",
+            1220
+          ],
+          [
+            "test",
+            1063
+          ],
+          [
+            "jmp",
+            849
+          ],
+          [
+            "jne",
+            790
+          ],
+          [
+            "jb",
+            698
+          ],
+          [
+            "xor",
+            697
+          ],
+          [
+            "jbe",
+            682
+          ],
+          [
+            "ja",
+            607
+          ],
+          [
+            "ret",
+            553
+          ],
+          [
+            "movups",
+            426
+          ],
+          [
+            "inc",
+            375
+          ]
+        ],
+        "unique_mnemonics": 150,
+        "categories": {
+          "data": 25953,
+          "control": 9239,
+          "other": 9463,
+          "arith": 5343,
+          "syscall": 3
+        },
+        "basic_blocks": 10626,
+        "avg_block_size": 4.71,
+        "functions": [
+          {
+            "address": "0x401060",
+            "name": "sub_0x401060",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4010a0",
+            "name": "sub_0x4010a0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401120",
+            "name": "sub_0x401120",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401150",
+            "name": "sub_0x401150",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401190",
+            "name": "sub_0x401190",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4011b0",
+            "name": "sub_0x4011b0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4012ec",
+            "name": "sub_0x4012ec",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x401470",
+            "name": "sub_0x401470",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401490",
+            "name": "sub_0x401490",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4014d0",
+            "name": "sub_0x4014d0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401520",
+            "name": "sub_0x401520",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40169c",
+            "name": "sub_0x40169c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x401a6c",
+            "name": "sub_0x401a6c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x401ed0",
+            "name": "sub_0x401ed0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402020",
+            "name": "sub_0x402020",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402560",
+            "name": "sub_0x402560",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4025a0",
+            "name": "sub_0x4025a0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402600",
+            "name": "sub_0x402600",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402680",
+            "name": "sub_0x402680",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402790",
+            "name": "sub_0x402790",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4027e0",
+            "name": "sub_0x4027e0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402bb0",
+            "name": "sub_0x402bb0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402c60",
+            "name": "sub_0x402c60",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402e60",
+            "name": "sub_0x402e60",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402f90",
+            "name": "sub_0x402f90",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x403080",
+            "name": "sub_0x403080",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x403180",
+            "name": "sub_0x403180",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40339c",
+            "name": "sub_0x40339c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x4039a0",
+            "name": "sub_0x4039a0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x403aa0",
+            "name": "sub_0x403aa0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x403d2c",
+            "name": "sub_0x403d2c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x403f6c",
+            "name": "sub_0x403f6c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x40438c",
+            "name": "sub_0x40438c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x4046f0",
+            "name": "sub_0x4046f0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4047dc",
+            "name": "sub_0x4047dc",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x404b1c",
+            "name": "sub_0x404b1c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x404e5c",
+            "name": "sub_0x404e5c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x405010",
+            "name": "sub_0x405010",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40526c",
+            "name": "sub_0x40526c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x405b0c",
+            "name": "sub_0x405b0c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x405cc0",
+            "name": "sub_0x405cc0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x405e1c",
+            "name": "sub_0x405e1c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x4069ac",
+            "name": "sub_0x4069ac",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x40717c",
+            "name": "sub_0x40717c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x4077fc",
+            "name": "sub_0x4077fc",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x407e70",
+            "name": "sub_0x407e70",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40836c",
+            "name": "sub_0x40836c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x40880c",
+            "name": "sub_0x40880c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x408c3c",
+            "name": "sub_0x408c3c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x409b00",
+            "name": "sub_0x409b00",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x409da0",
+            "name": "sub_0x409da0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x409ef0",
+            "name": "sub_0x409ef0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x409fc0",
+            "name": "sub_0x409fc0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40a6a0",
+            "name": "sub_0x40a6a0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40a78c",
+            "name": "sub_0x40a78c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x40ac90",
+            "name": "sub_0x40ac90",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40b520",
+            "name": "sub_0x40b520",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40d5e0",
+            "name": "sub_0x40d5e0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40d6b0",
+            "name": "sub_0x40d6b0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40e820",
+            "name": "sub_0x40e820",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40e8c0",
+            "name": "sub_0x40e8c0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40ec10",
+            "name": "sub_0x40ec10",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40eff0",
+            "name": "sub_0x40eff0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40fa60",
+            "name": "sub_0x40fa60",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40fc10",
+            "name": "sub_0x40fc10",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x410600",
+            "name": "sub_0x410600",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x410f20",
+            "name": "sub_0x410f20",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41104c",
+            "name": "sub_0x41104c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x411260",
+            "name": "sub_0x411260",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x411a40",
+            "name": "sub_0x411a40",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41226c",
+            "name": "sub_0x41226c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x412e80",
+            "name": "sub_0x412e80",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x413bc0",
+            "name": "sub_0x413bc0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x413ccc",
+            "name": "sub_0x413ccc",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x413f8c",
+            "name": "sub_0x413f8c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x414bb0",
+            "name": "sub_0x414bb0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x414e4c",
+            "name": "sub_0x414e4c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x4151ac",
+            "name": "sub_0x4151ac",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x415fcc",
+            "name": "sub_0x415fcc",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x417b0c",
+            "name": "sub_0x417b0c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x41991c",
+            "name": "sub_0x41991c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x419d2c",
+            "name": "sub_0x419d2c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x41abf0",
+            "name": "sub_0x41abf0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41addc",
+            "name": "sub_0x41addc",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x41be20",
+            "name": "sub_0x41be20",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41c680",
+            "name": "sub_0x41c680",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41c750",
+            "name": "sub_0x41c750",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41c860",
+            "name": "sub_0x41c860",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41c920",
+            "name": "sub_0x41c920",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41c940",
+            "name": "sub_0x41c940",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41c9f0",
+            "name": "sub_0x41c9f0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41cae0",
+            "name": "sub_0x41cae0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41cb40",
+            "name": "sub_0x41cb40",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41cc70",
+            "name": "sub_0x41cc70",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41cc90",
+            "name": "sub_0x41cc90",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41cec0",
+            "name": "sub_0x41cec0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41cf30",
+            "name": "sub_0x41cf30",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41d130",
+            "name": "sub_0x41d130",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41d1c0",
+            "name": "sub_0x41d1c0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41d210",
+            "name": "sub_0x41d210",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41d310",
+            "name": "sub_0x41d310",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41d370",
+            "name": "sub_0x41d370",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41d440",
+            "name": "sub_0x41d440",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41d4d0",
+            "name": "sub_0x41d4d0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41d520",
+            "name": "sub_0x41d520",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41d620",
+            "name": "sub_0x41d620",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41d660",
+            "name": "sub_0x41d660",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41d7d0",
+            "name": "sub_0x41d7d0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41d980",
+            "name": "sub_0x41d980",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41dc10",
+            "name": "sub_0x41dc10",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41dd70",
+            "name": "sub_0x41dd70",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41dea0",
+            "name": "sub_0x41dea0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41dfa0",
+            "name": "sub_0x41dfa0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41e030",
+            "name": "sub_0x41e030",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41e0b0",
+            "name": "sub_0x41e0b0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41e210",
+            "name": "sub_0x41e210",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41e380",
+            "name": "sub_0x41e380",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41e400",
+            "name": "sub_0x41e400",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41e610",
+            "name": "sub_0x41e610",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41e710",
+            "name": "sub_0x41e710",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41e850",
+            "name": "sub_0x41e850",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41e940",
+            "name": "sub_0x41e940",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41eb30",
+            "name": "sub_0x41eb30",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41ec90",
+            "name": "sub_0x41ec90",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41edf0",
+            "name": "sub_0x41edf0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41ef90",
+            "name": "sub_0x41ef90",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41f140",
+            "name": "sub_0x41f140",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41f320",
+            "name": "sub_0x41f320",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41f3b0",
+            "name": "sub_0x41f3b0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41f580",
+            "name": "sub_0x41f580",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41f710",
+            "name": "sub_0x41f710",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41f830",
+            "name": "sub_0x41f830",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41f9d0",
+            "name": "sub_0x41f9d0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41fb10",
+            "name": "sub_0x41fb10",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41fb50",
+            "name": "sub_0x41fb50",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41fbd0",
+            "name": "sub_0x41fbd0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41fc00",
+            "name": "sub_0x41fc00",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41fc70",
+            "name": "sub_0x41fc70",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41fcd0",
+            "name": "sub_0x41fcd0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41fd50",
+            "name": "sub_0x41fd50",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x41fec0",
+            "name": "sub_0x41fec0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x420040",
+            "name": "sub_0x420040",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4202b0",
+            "name": "sub_0x4202b0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x420350",
+            "name": "sub_0x420350",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x420380",
+            "name": "sub_0x420380",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4203ec",
+            "name": "sub_0x4203ec",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x4205bc",
+            "name": "sub_0x4205bc",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x4207ec",
+            "name": "sub_0x4207ec",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x420920",
+            "name": "sub_0x420920",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42096c",
+            "name": "sub_0x42096c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x420ad0",
+            "name": "sub_0x420ad0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x420b30",
+            "name": "sub_0x420b30",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x420c40",
+            "name": "sub_0x420c40",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x420d6c",
+            "name": "sub_0x420d6c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x420f9c",
+            "name": "sub_0x420f9c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x4211d0",
+            "name": "sub_0x4211d0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421230",
+            "name": "sub_0x421230",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421250",
+            "name": "sub_0x421250",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421260",
+            "name": "sub_0x421260",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421270",
+            "name": "sub_0x421270",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421280",
+            "name": "sub_0x421280",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421289",
+            "name": "sub_0x421289",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4212f5",
+            "name": "sub_0x4212f5",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42131f",
+            "name": "sub_0x42131f",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42135a",
+            "name": "sub_0x42135a",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421375",
+            "name": "sub_0x421375",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42139d",
+            "name": "sub_0x42139d",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421408",
+            "name": "sub_0x421408",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42142f",
+            "name": "sub_0x42142f",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42144c",
+            "name": "sub_0x42144c",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421479",
+            "name": "sub_0x421479",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42151c",
+            "name": "sub_0x42151c",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421551",
+            "name": "sub_0x421551",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421563",
+            "name": "sub_0x421563",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421587",
+            "name": "sub_0x421587",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4215bf",
+            "name": "sub_0x4215bf",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4215dc",
+            "name": "sub_0x4215dc",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421628",
+            "name": "sub_0x421628",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421643",
+            "name": "sub_0x421643",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421662",
+            "name": "sub_0x421662",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42167d",
+            "name": "sub_0x42167d",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421698",
+            "name": "sub_0x421698",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4216b7",
+            "name": "sub_0x4216b7",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4216d7",
+            "name": "sub_0x4216d7",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4216f7",
+            "name": "sub_0x4216f7",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421708",
+            "name": "sub_0x421708",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42172a",
+            "name": "sub_0x42172a",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421856",
+            "name": "sub_0x421856",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42187b",
+            "name": "sub_0x42187b",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4218b9",
+            "name": "sub_0x4218b9",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421914",
+            "name": "sub_0x421914",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42197c",
+            "name": "sub_0x42197c",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4219cd",
+            "name": "sub_0x4219cd",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421a34",
+            "name": "sub_0x421a34",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421b7c",
+            "name": "sub_0x421b7c",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421bf0",
+            "name": "sub_0x421bf0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421c29",
+            "name": "sub_0x421c29",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421d47",
+            "name": "sub_0x421d47",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421d64",
+            "name": "sub_0x421d64",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421d8c",
+            "name": "sub_0x421d8c",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421dba",
+            "name": "sub_0x421dba",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421dd4",
+            "name": "sub_0x421dd4",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421de2",
+            "name": "sub_0x421de2",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x421deb",
+            "name": "sub_0x421deb",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42205c",
+            "name": "sub_0x42205c",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422525",
+            "name": "sub_0x422525",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42254d",
+            "name": "sub_0x42254d",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422648",
+            "name": "sub_0x422648",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4226c5",
+            "name": "sub_0x4226c5",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4227da",
+            "name": "sub_0x4227da",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422860",
+            "name": "sub_0x422860",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4228c1",
+            "name": "sub_0x4228c1",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422a22",
+            "name": "sub_0x422a22",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422a91",
+            "name": "sub_0x422a91",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422af1",
+            "name": "sub_0x422af1",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422bf0",
+            "name": "sub_0x422bf0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422c20",
+            "name": "sub_0x422c20",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422c74",
+            "name": "sub_0x422c74",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422ca5",
+            "name": "sub_0x422ca5",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422cc9",
+            "name": "sub_0x422cc9",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422d11",
+            "name": "sub_0x422d11",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422db0",
+            "name": "sub_0x422db0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422de6",
+            "name": "sub_0x422de6",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422e49",
+            "name": "sub_0x422e49",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422f13",
+            "name": "sub_0x422f13",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422f20",
+            "name": "sub_0x422f20",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422f78",
+            "name": "sub_0x422f78",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422f9e",
+            "name": "sub_0x422f9e",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x422fc3",
+            "name": "sub_0x422fc3",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42370a",
+            "name": "sub_0x42370a",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x423780",
+            "name": "sub_0x423780",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4237c0",
+            "name": "sub_0x4237c0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42393d",
+            "name": "sub_0x42393d",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x423954",
+            "name": "sub_0x423954",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x423990",
+            "name": "sub_0x423990",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x423c77",
+            "name": "sub_0x423c77",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x423cf8",
+            "name": "sub_0x423cf8",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42409b",
+            "name": "sub_0x42409b",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4241d1",
+            "name": "sub_0x4241d1",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42425f",
+            "name": "sub_0x42425f",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424361",
+            "name": "sub_0x424361",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42436a",
+            "name": "sub_0x42436a",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4243a3",
+            "name": "sub_0x4243a3",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4245d3",
+            "name": "sub_0x4245d3",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42461d",
+            "name": "sub_0x42461d",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424723",
+            "name": "sub_0x424723",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4247bd",
+            "name": "sub_0x4247bd",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4247cd",
+            "name": "sub_0x4247cd",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4247e0",
+            "name": "sub_0x4247e0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4247f0",
+            "name": "sub_0x4247f0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424804",
+            "name": "sub_0x424804",
+            "source": "heuristic2"
+          },
+          {
+            "address": "0x42483c",
+            "name": "sub_0x42483c",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42487f",
+            "name": "sub_0x42487f",
+            "source": "heuristic2"
+          },
+          {
+            "address": "0x424960",
+            "name": "sub_0x424960",
+            "source": "heuristic2"
+          },
+          {
+            "address": "0x4249a0",
+            "name": "sub_0x4249a0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424a42",
+            "name": "sub_0x424a42",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424ae2",
+            "name": "sub_0x424ae2",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424b2d",
+            "name": "sub_0x424b2d",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424b68",
+            "name": "sub_0x424b68",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424ba3",
+            "name": "sub_0x424ba3",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424bde",
+            "name": "sub_0x424bde",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424c1c",
+            "name": "sub_0x424c1c",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424c80",
+            "name": "sub_0x424c80",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424c9d",
+            "name": "sub_0x424c9d",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424cd4",
+            "name": "sub_0x424cd4",
+            "source": "heuristic2"
+          },
+          {
+            "address": "0x424ce5",
+            "name": "sub_0x424ce5",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424e68",
+            "name": "sub_0x424e68",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x424fdc",
+            "name": "sub_0x424fdc",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4250a7",
+            "name": "sub_0x4250a7",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x425127",
+            "name": "sub_0x425127",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4251a8",
+            "name": "sub_0x4251a8",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4251dc",
+            "name": "sub_0x4251dc",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42520d",
+            "name": "sub_0x42520d",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42525b",
+            "name": "sub_0x42525b",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42546e",
+            "name": "sub_0x42546e",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x425a70",
+            "name": "sub_0x425a70",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x425bfd",
+            "name": "sub_0x425bfd",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x425d8f",
+            "name": "sub_0x425d8f",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x425f1c",
+            "name": "sub_0x425f1c",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4260ae",
+            "name": "sub_0x4260ae",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42623b",
+            "name": "sub_0x42623b",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4263cd",
+            "name": "sub_0x4263cd",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42642f",
+            "name": "sub_0x42642f",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4264a0",
+            "name": "sub_0x4264a0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42651f",
+            "name": "sub_0x42651f",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4265b4",
+            "name": "sub_0x4265b4",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x426630",
+            "name": "sub_0x426630",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4266bb",
+            "name": "sub_0x4266bb",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42672f",
+            "name": "sub_0x42672f",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4267af",
+            "name": "sub_0x4267af",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x426841",
+            "name": "sub_0x426841",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4268e6",
+            "name": "sub_0x4268e6",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x42696c",
+            "name": "sub_0x42696c",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4269fe",
+            "name": "sub_0x4269fe",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x426a65",
+            "name": "sub_0x426a65",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x426ad2",
+            "name": "sub_0x426ad2",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x426b88",
+            "name": "sub_0x426b88",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x426bac",
+            "name": "sub_0x426bac",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x426c16",
+            "name": "sub_0x426c16",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x426c51",
+            "name": "sub_0x426c51",
+            "source": "heuristic"
+          }
+        ],
+        "functions_count": 300,
+        "calls_count": 3537,
+        "calls_sample": [
+          {
+            "address": "0x401005",
+            "addr_int": 4198405,
+            "bytes": "e8b00d0200",
+            "mnemonic": "call",
+            "op_str": "0x421dba",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x401015",
+            "addr_int": 4198421,
+            "bytes": "e8a00d0200",
+            "mnemonic": "call",
+            "op_str": "0x421dba",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x401025",
+            "addr_int": 4198437,
+            "bytes": "e8900d0200",
+            "mnemonic": "call",
+            "op_str": "0x421dba",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x401035",
+            "addr_int": 4198453,
+            "bytes": "e8800d0200",
+            "mnemonic": "call",
+            "op_str": "0x421dba",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x401045",
+            "addr_int": 4198469,
+            "bytes": "e8700d0200",
+            "mnemonic": "call",
+            "op_str": "0x421dba",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x401055",
+            "addr_int": 4198485,
+            "bytes": "e8600d0200",
+            "mnemonic": "call",
+            "op_str": "0x421dba",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x40107e",
+            "addr_int": 4198526,
+            "bytes": "e8631d0200",
+            "mnemonic": "call",
+            "op_str": "0x422de6",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x4010b0",
+            "addr_int": 4198576,
+            "bytes": "e8941d0200",
+            "mnemonic": "call",
+            "op_str": "0x422e49",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x4010c1",
+            "addr_int": 4198593,
+            "bytes": "e80e0d0200",
+            "mnemonic": "call",
+            "op_str": "0x421dd4",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x4010da",
+            "addr_int": 4198618,
+            "bytes": "e86a1d0200",
+            "mnemonic": "call",
+            "op_str": "0x422e49",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x401130",
+            "addr_int": 4198704,
+            "bytes": "e8dbffffff",
+            "mnemonic": "call",
+            "op_str": "0x401110",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x40113a",
+            "addr_int": 4198714,
+            "bytes": "e893790200",
+            "mnemonic": "call",
+            "op_str": "0x428ad2",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x401164",
+            "addr_int": 4198756,
+            "bytes": "e8a7ffffff",
+            "mnemonic": "call",
+            "op_str": "0x401110",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x401172",
+            "addr_int": 4198770,
+            "bytes": "e81a790200",
+            "mnemonic": "call",
+            "op_str": "0x428a91",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x4011a1",
+            "addr_int": 4198817,
+            "bytes": "e8aaffffff",
+            "mnemonic": "call",
+            "op_str": "0x401150",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x401479",
+            "addr_int": 4199545,
+            "bytes": "e872fcffff",
+            "mnemonic": "call",
+            "op_str": "0x4010f0",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x401487",
+            "addr_int": 4199559,
+            "bytes": "e87e220200",
+            "mnemonic": "call",
+            "op_str": "0x42370a",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x4014ae",
+            "addr_int": 4199598,
+            "bytes": "e833190200",
+            "mnemonic": "call",
+            "op_str": "0x422de6",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x4014ee",
+            "addr_int": 4199662,
+            "bytes": "e8f3180200",
+            "mnemonic": "call",
+            "op_str": "0x422de6",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          },
+          {
+            "address": "0x401515",
+            "addr_int": 4199701,
+            "bytes": "e89d010200",
+            "mnemonic": "call",
+            "op_str": "0x4216b7",
+            "size": 5,
+            "group": [
+              "call",
+              "branch_relative",
+              "not64bitmode"
+            ],
+            "category": "control"
+          }
+        ],
+        "string_refs_sample": [
+          {
+            "address": "0x40106d",
+            "addr_int": 4198509,
+            "bytes": "c70664cb4300",
+            "mnemonic": "mov",
+            "op_str": "dword ptr [esi], 0x43cb64",
+            "size": 6,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x401093",
+            "addr_int": 4198547,
+            "bytes": "b804334400",
+            "mnemonic": "mov",
+            "op_str": "eax, 0x443304",
+            "size": 5,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x4010a9",
+            "addr_int": 4198569,
+            "bytes": "c70664cb4300",
+            "mnemonic": "mov",
+            "op_str": "dword ptr [esi], 0x43cb64",
+            "size": 6,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x4010d3",
+            "addr_int": 4198611,
+            "bytes": "c70164cb4300",
+            "mnemonic": "mov",
+            "op_str": "dword ptr [ecx], 0x43cb64",
+            "size": 6,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x4010fa",
+            "addr_int": 4198650,
+            "bytes": "c7410418334400",
+            "mnemonic": "mov",
+            "op_str": "dword ptr [ecx + 4], 0x443318",
+            "size": 7,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x401101",
+            "addr_int": 4198657,
+            "bytes": "c7017ccb4300",
+            "mnemonic": "mov",
+            "op_str": "dword ptr [ecx], 0x43cb7c",
+            "size": 6,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x401110",
+            "addr_int": 4198672,
+            "bytes": "b8e0ce4400",
+            "mnemonic": "mov",
+            "op_str": "eax, 0x44cee0",
+            "size": 5,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x401194",
+            "addr_int": 4198804,
+            "bytes": "8d4514",
+            "mnemonic": "lea",
+            "op_str": "eax, [ebp + 0x14]",
+            "size": 3,
+            "group": [
+              "not64bitmode"
+            ],
+            "category": "data"
+          },
+          {
+            "address": "0x4011bc",
+            "addr_int": 4198844,
+            "bytes": "6689542412",
+            "mnemonic": "mov",
+            "op_str": "word ptr [esp + 0x12], dx",
+            "size": 5,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x4011c3",
+            "addr_int": 4198851,
+            "bytes": "894c2414",
+            "mnemonic": "mov",
+            "op_str": "dword ptr [esp + 0x14], ecx",
+            "size": 4,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x4011df",
+            "addr_int": 4198879,
+            "bytes": "8d4810",
+            "mnemonic": "lea",
+            "op_str": "ecx, [eax + 0x10]",
+            "size": 3,
+            "group": [
+              "not64bitmode"
+            ],
+            "category": "data"
+          },
+          {
+            "address": "0x401216",
+            "addr_int": 4198934,
+            "bytes": "668b542416",
+            "mnemonic": "mov",
+            "op_str": "dx, word ptr [esp + 0x16]",
+            "size": 5,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x40127a",
+            "addr_int": 4199034,
+            "bytes": "8b542418",
+            "mnemonic": "mov",
+            "op_str": "edx, dword ptr [esp + 0x18]",
+            "size": 4,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x401291",
+            "addr_int": 4199057,
+            "bytes": "8b542418",
+            "mnemonic": "mov",
+            "op_str": "edx, dword ptr [esp + 0x18]",
+            "size": 4,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x4012ab",
+            "addr_int": 4199083,
+            "bytes": "8b542418",
+            "mnemonic": "mov",
+            "op_str": "edx, dword ptr [esp + 0x18]",
+            "size": 4,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x4012b2",
+            "addr_int": 4199090,
+            "bytes": "668b542416",
+            "mnemonic": "mov",
+            "op_str": "dx, word ptr [esp + 0x16]",
+            "size": 5,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x40130a",
+            "addr_int": 4199178,
+            "bytes": "8945f0",
+            "mnemonic": "mov",
+            "op_str": "dword ptr [ebp - 0x10], eax",
+            "size": 3,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x40131a",
+            "addr_int": 4199194,
+            "bytes": "8d4810",
+            "mnemonic": "lea",
+            "op_str": "ecx, [eax + 0x10]",
+            "size": 3,
+            "group": [
+              "not64bitmode"
+            ],
+            "category": "data"
+          },
+          {
+            "address": "0x40132c",
+            "addr_int": 4199212,
+            "bytes": "8955f4",
+            "mnemonic": "mov",
+            "op_str": "dword ptr [ebp - 0xc], edx",
+            "size": 3,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x401351",
+            "addr_int": 4199249,
+            "bytes": "894df4",
+            "mnemonic": "mov",
+            "op_str": "dword ptr [ebp - 0xc], ecx",
+            "size": 3,
+            "group": [],
+            "category": "data"
+          },
+          {
+            "address": "0x401358",
+            "addr_int": 4199256,
+            "bytes": "c745f0ffff0000",
+            "mnemonic": "mov",
+            "op_str": "dword ptr [ebp - 0x10], 0xffff",
+            "size": 7,
+            "group": [],
+            "category": "data"
+          }
+        ],
+        "cpp_skeleton_preview": "\n// Function at 0x401060 — original: sub_0x401060\nvoid sub_0x401060() {\n    // 0x401060: 55           push     ebp\n    // 0x401061: 8bec         mov      ebp, esp\n    // 0x401063: 56           push     esi\n    // 0x401064: 8bf1         mov      esi, ecx\n    // 0x401066: 0f57c0       xorps    xmm0, xmm0\n    // 0x401069: 8d4604       lea      eax, [esi + 4]\n    // 0x40106c: 50           push     eax\n    // 0x40106d: c70664cb4300 mov      dword ptr [esi], 0x43cb64\n    // 0x401073: 660fd600     movq     qword ptr [eax], xmm0\n    // 0x401077: 8b4508       mov      eax, dword ptr [ebp + 8]\n    // 0x40107a: 83c004       add      eax, 4\n    // 0x40107d: 50           push     eax\n    // 0x40107e: e8631d0200   call     0x422de6\n    // 0x401083: 83c408       add      esp, 8\n    // 0x401086: 8bc6         mov      eax, esi\n    // TODO: lift to C++ based on opcodes above\n    // calls: ['0x422de6']\n}\n\n\n// Function at 0x4010a0 — original: sub_0x4010a0\nvoid sub_0x4010a0() {\n    // 0x4010a0: 55           push     ebp\n    // 0x4010a1: 8bec         mov      ebp, esp\n    // 0x4010a3: 56           push     esi\n    // 0x4010a4: 8bf1         mov      esi, ecx\n    // 0x4010a6: 8d4604       lea      eax, [esi + 4]\n    // 0x4010a9: c70664cb4300 mov      dword ptr [esi], 0x43cb64\n    // 0x4010af: 50           push     eax\n    // 0x4010b0: e8941d0200   call     0x422e49\n    // 0x4010b5: 83c404       add      esp, 4\n    // 0x4010b8: f6450801     test     byte ptr [ebp + 8], 1\n    // 0x4010bc: 740b         je       0x4010c9\n    // 0x4010be: 6a0c         push     0xc\n    // 0x4010c0: 56           push     esi\n    // 0x4010c1: e80e0d0200   call     0x421dd4\n    // 0x4010c6: 83c408       add      esp, 8\n    // TODO: lift to C++ based on opcodes above\n    // calls: ['0x422e49', '0x421dd4', '0x422e49']\n}\n"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "meta.hash.sha256",
+      "category": "metadata",
+      "title": "SHA256",
+      "description": "SHA256 للعينة = 683520631b81a7283e9d7c0870115867ed29630a782348119308d22eae1b6f31",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "metadata:hashlib.sha256",
+      "method": "hashlib.sha256 over file bytes",
+      "evidence_refs": [],
+      "data": {
+        "sha256": "683520631b81a7283e9d7c0870115867ed29630a782348119308d22eae1b6f31"
+      },
+      "tags": []
+    },
+    {
+      "id": "meta.size",
+      "category": "metadata",
+      "title": "حجم الملف",
+      "description": "حجم الملف 6175744 بايت",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "metadata:stat",
+      "method": "stat.st_size",
+      "evidence_refs": [],
+      "data": {
+        "size_bytes": 6175744
+      },
+      "tags": []
+    },
+    {
+      "id": "meta.timestamps",
+      "category": "metadata",
+      "title": "طوابع زمنية لنظام الملفات",
+      "description": "mtime/ctime من نظام الملفات (قد لا تعكس وقت البناء)",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "metadata:stat",
+      "method": "stat.st_mtime/ctime",
+      "evidence_refs": [],
+      "data": {
+        "mtime": "2026-09-25T17:18:40.926354Z",
+        "ctime": "2026-09-25T17:18:40.926354Z",
+        "mode": "0o644"
+      },
+      "tags": []
+    },
+    {
+      "id": "meta.magic_bytes",
+      "category": "metadata",
+      "title": "Magic bytes",
+      "description": "أول 16 بايت hex: 4d5a90000300000004000000ffff0000",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "metadata:read",
+      "method": "read first 16 bytes",
+      "evidence_refs": [],
+      "data": {
+        "magic_hex": "4d5a90000300000004000000ffff0000"
+      },
+      "tags": []
+    },
+    {
+      "id": "platform.format",
+      "category": "platform",
+      "title": "صيغة الملف / المنصة",
+      "description": "الصيغة المكتشفة: PE | المعمارية: x86 | البت: unknown",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "platform:pe_magic",
+      "method": "pe_magic",
+      "evidence_refs": [],
+      "data": {
+        "format": "PE",
+        "arch": "x86",
+        "machine": 332
+      },
+      "tags": []
+    },
+    {
+      "id": "platform.runtime_hints",
+      "category": "platform",
+      "title": "تلميحات Runtime / اللغة",
+      "description": "تلميحات لغوية/تقنية مستنتجة من strings و readelf",
+      "confidence": "low",
+      "provenance": "inferred",
+      "source": "platform:strings+readelf",
+      "method": "keyword search in strings",
+      "evidence_refs": [],
+      "data": {
+        "hints": [
+          "JVM",
+          "Rust",
+          "Node.js",
+          "Python"
+        ]
+      },
+      "tags": [
+        "heuristic"
+      ]
+    },
+    {
+      "id": "struct.pe.sections",
+      "category": "structure",
+      "title": "PE Sections",
+      "description": "PE entry 0x22052 base 0x400000 sections=7",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "structure:pefile",
+      "method": "pefile.PE",
+      "evidence_refs": [],
+      "data": {
+        "pe_sections": [
+          {
+            "Name": ".text",
+            "VirtualAddress": "0x1000",
+            "Misc_VirtualSize": 227065,
+            "SizeOfRawData": 227328
+          },
+          {
+            "Name": ".mmap",
+            "VirtualAddress": "0x39000",
+            "Misc_VirtualSize": 581,
+            "SizeOfRawData": 1024
+          },
+          {
+            "Name": ".rdata",
+            "VirtualAddress": "0x3a000",
+            "Misc_VirtualSize": 68000,
+            "SizeOfRawData": 68096
+          },
+          {
+            "Name": ".data",
+            "VirtualAddress": "0x4b000",
+            "Misc_VirtualSize": 7944,
+            "SizeOfRawData": 3584
+          },
+          {
+            "Name": ".fptable",
+            "VirtualAddress": "0x4d000",
+            "Misc_VirtualSize": 128,
+            "SizeOfRawData": 512
+          },
+          {
+            "Name": ".rsrc",
+            "VirtualAddress": "0x4e000",
+            "Misc_VirtualSize": 5862968,
+            "SizeOfRawData": 5863424
+          },
+          {
+            "Name": ".reloc",
+            "VirtualAddress": "0x5e6000",
+            "Misc_VirtualSize": 10452,
+            "SizeOfRawData": 10752
+          }
+        ],
+        "pe_entry": "0x22052",
+        "pe_image_base": "0x400000"
+      },
+      "tags": []
+    },
+    {
+      "id": "strings.summary",
+      "category": "strings",
+      "title": "ملخص السلاسل",
+      "description": "إجمالي 137384 سلسلة ascii (+ 833 utf16)",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "strings:strings(1)",
+      "method": "strings -a -n 4",
+      "evidence_refs": [],
+      "data": {
+        "ascii": 137384,
+        "utf16": 833
+      },
+      "tags": []
+    },
+    {
+      "id": "strings.urls",
+      "category": "strings",
+      "title": "URLs مكتشفة",
+      "description": "عناوين URL مستخرجة من السلاسل",
+      "confidence": "high",
+      "provenance": "observed",
+      "source": "strings:regex",
+      "method": "regex https?://",
+      "evidence_refs": [],
+      "data": {
+        "urls": [
+          "https://discord.gg/ehXCwMMFrM"
+        ]
+      },
+      "tags": [
+        "network",
+        "ioc"
+      ]
+    },
+    {
+      "id": "strings.ips",
+      "category": "strings",
+      "title": "عناوين IP",
+      "description": "عناوين IP محتملة",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "strings:regex",
+      "method": "ipv4 regex",
+      "evidence_refs": [],
+      "data": {
+        "ips": [
+          "127.0.0.1",
+          "2.56.246.128"
+        ]
+      },
+      "tags": [
+        "network"
+      ]
+    },
+    {
+      "id": "strings.emails",
+      "category": "strings",
+      "title": "عناوين بريد",
+      "description": "عناوين بريد مستخرجة",
+      "confidence": "high",
+      "provenance": "observed",
+      "source": "strings:regex",
+      "method": "email regex",
+      "evidence_refs": [],
+      "data": {
+        "emails": [
+          "f@PX.BQ",
+          "q@ub.q",
+          "W@0.R",
+          "W0@6.5",
+          "N@TmS.T",
+          "L@7.LeW",
+          "N@oSD.Z",
+          "MGj@RY.G",
+          "3@0vq.a",
+          "D@8.B",
+          "hq0k2c@3x.P",
+          "r@p.9",
+          "L@CAE.W"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "strings.keywords",
+      "category": "strings",
+      "title": "كلمات مفتاحية مثيرة",
+      "description": "كلمات دلالية قد تشير لوظائف حساسة",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "strings:keyword search",
+      "method": "case-insensitive substring count",
+      "evidence_refs": [],
+      "data": {
+        "keywords": {
+          "db_": 5,
+          "sql": 2,
+          "http": 11,
+          "debug": 8,
+          "error": 25,
+          "fail": 15,
+          "success": 2,
+          "admin": 1,
+          "root": 1,
+          "key": 19,
+          "auth": 1,
+          "user": 19,
+          "AES": 1,
+          "RSA": 1,
+          "DES": 16
+        }
+      },
+      "tags": [
+        "heuristic"
+      ]
+    },
+    {
+      "id": "strings.paths",
+      "category": "strings",
+      "title": "مسارات ملفات",
+      "description": "مسارات ملفات مستخرجة (عينة من 50)",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "strings:regex",
+      "method": "path regex",
+      "evidence_refs": [],
+      "data": {
+        "paths": [
+          "/1U",
+          "/trustInfo",
+          "/Gzm",
+          "/Pma",
+          "/B-",
+          "/D_b",
+          "/cgHc",
+          "/2j2",
+          "/api/event",
+          "/M_",
+          "/M2026",
+          "/K4",
+          "/302",
+          "/Av",
+          "/gE",
+          "/Ay",
+          "/imu1w2",
+          "/nD",
+          "/m-",
+          "/7n",
+          "/w.",
+          "/r5",
+          "/l",
+          "/6B",
+          "/gb",
+          "/V2",
+          "/DY",
+          "/3zikim",
+          "/B_",
+          "/T5",
+          "/UncnHq",
+          "/O8",
+          "/Ap",
+          "/42",
+          "/zYy",
+          "/Zd",
+          "/_g",
+          "/pMs",
+          "/9ea",
+          "/Pn",
+          "/nb",
+          "/ZSj",
+          "/dj",
+          "/Tk",
+          "/D1",
+          "/9yQ",
+          "/6q",
+          "/UP",
+          "/s-1",
+          "/5Zu"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "deps.needed_libs",
+      "category": "dependencies",
+      "title": "المكتبات المطلوبة (NEEDED / DLL)",
+      "description": "عدد 10 مكتبة معتمدة",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "imports_exports:readelf/pefile",
+      "method": "readelf -d / pefile",
+      "evidence_refs": [],
+      "data": {
+        "needed_libs": [
+          "ADVAPI32.dll",
+          "GDI32.dll",
+          "USER32.dll",
+          "WINHTTP.dll",
+          "ole32.dll",
+          "OLEAUT32.dll",
+          "KERNEL32.dll",
+          "SHELL32.dll",
+          "gdiplus.dll",
+          "NETAPI32.dll"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "deps.imports",
+      "category": "dependencies",
+      "title": "الرموز المستوردة",
+      "description": "عدد 269 رمز مستورد (عينة 100 أولى محفوظة)",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "imports_exports:nm/objdump/pefile",
+      "method": "nm -D / objdump",
+      "evidence_refs": [],
+      "data": {
+        "imports_sample": [
+          "ADVAPI32.dll!RegEnumKeyExA",
+          "ADVAPI32.dll!RegQueryValueExW",
+          "ADVAPI32.dll!CredDeleteW",
+          "ADVAPI32.dll!GetUserNameW",
+          "ADVAPI32.dll!RegOpenKeyExW",
+          "ADVAPI32.dll!RegOpenKeyExA",
+          "ADVAPI32.dll!RegSetValueExA",
+          "ADVAPI32.dll!GetUserNameA",
+          "ADVAPI32.dll!RegDeleteKeyA",
+          "ADVAPI32.dll!RegCloseKey",
+          "GDI32.dll!CreateSolidBrush",
+          "GDI32.dll!DeleteObject",
+          "GDI32.dll!SetBkColor",
+          "GDI32.dll!SetTextColor",
+          "GDI32.dll!DeleteDC",
+          "GDI32.dll!CreateRoundRectRgn",
+          "GDI32.dll!CreateFontW",
+          "GDI32.dll!CreateCompatibleDC",
+          "GDI32.dll!SelectObject",
+          "GDI32.dll!CreateCompatibleBitmap",
+          "GDI32.dll!BitBlt",
+          "USER32.dll!GetClientRect",
+          "USER32.dll!SetClipboardData",
+          "USER32.dll!SetCapture",
+          "USER32.dll!LoadCursorW",
+          "USER32.dll!LoadIconW",
+          "USER32.dll!TranslateMessage",
+          "USER32.dll!DestroyMenu",
+          "USER32.dll!EnumWindows",
+          "USER32.dll!TrackMouseEvent",
+          "USER32.dll!RegisterClassW",
+          "USER32.dll!EmptyClipboard",
+          "USER32.dll!CloseClipboard",
+          "USER32.dll!ClientToScreen",
+          "USER32.dll!DispatchMessageW",
+          "USER32.dll!GetCapture",
+          "USER32.dll!OpenClipboard",
+          "USER32.dll!IsWindow",
+          "USER32.dll!ShowWindow",
+          "USER32.dll!TrackPopupMenu",
+          "USER32.dll!CreatePopupMenu",
+          "USER32.dll!SendMessageW",
+          "USER32.dll!GetWindowTextW",
+          "USER32.dll!ScreenToClient",
+          "USER32.dll!CreateWindowExW",
+          "USER32.dll!SetWindowRgn",
+          "USER32.dll!MessageBoxW",
+          "USER32.dll!SetWindowPos",
+          "USER32.dll!IsWindowVisible",
+          "USER32.dll!GetDC",
+          "USER32.dll!DestroyWindow",
+          "USER32.dll!GetWindow",
+          "USER32.dll!PostMessageW",
+          "USER32.dll!DefWindowProcW",
+          "USER32.dll!GetMessageW",
+          "USER32.dll!InvalidateRect",
+          "USER32.dll!IsIconic",
+          "USER32.dll!ReleaseDC",
+          "USER32.dll!BeginPaint",
+          "USER32.dll!EndPaint",
+          "USER32.dll!UpdateWindow",
+          "USER32.dll!PostQuitMessage",
+          "USER32.dll!SystemParametersInfoW",
+          "USER32.dll!AppendMenuW",
+          "USER32.dll!PtInRect",
+          "USER32.dll!SetWindowTextW",
+          "USER32.dll!ReleaseCapture",
+          "WINHTTP.dll!WinHttpSetTimeouts",
+          "WINHTTP.dll!WinHttpSendRequest",
+          "WINHTTP.dll!WinHttpCloseHandle",
+          "WINHTTP.dll!WinHttpOpenRequest",
+          "WINHTTP.dll!WinHttpReadData",
+          "WINHTTP.dll!WinHttpQueryHeaders",
+          "WINHTTP.dll!WinHttpOpen",
+          "WINHTTP.dll!WinHttpReceiveResponse",
+          "WINHTTP.dll!WinHttpConnect",
+          "ole32.dll!CoSetProxyBlanket",
+          "ole32.dll!CoInitializeEx",
+          "ole32.dll!CreateStreamOnHGlobal",
+          "ole32.dll!CoCreateInstance",
+          "ole32.dll!CoUninitialize",
+          "OLEAUT32.dll!SysFreeString",
+          "OLEAUT32.dll!SysAllocString",
+          "OLEAUT32.dll!VariantClear",
+          "KERNEL32.dll!DecodePointer",
+          "KERNEL32.dll!HeapReAlloc",
+          "KERNEL32.dll!HeapSize",
+          "KERNEL32.dll!GetConsoleMode",
+          "KERNEL32.dll!GetConsoleOutputCP",
+          "KERNEL32.dll!FlushFileBuffers",
+          "KERNEL32.dll!GetStringTypeW",
+          "KERNEL32.dll!SetStdHandle",
+          "KERNEL32.dll!GetProcessHeap",
+          "KERNEL32.dll!FreeEnvironmentStringsW",
+          "KERNEL32.dll!GetEnvironmentStringsW",
+          "KERNEL32.dll!GetCommandLineW",
+          "KERNEL32.dll!GetCommandLineA",
+          "KERNEL32.dll!GetCPInfo",
+          "KERNEL32.dll!GetOEMCP",
+          "KERNEL32.dll!GetACP"
+        ],
+        "total": 269
+      },
+      "tags": []
+    },
+    {
+      "id": "deps.suspicious_imports",
+      "category": "behavior",
+      "title": "استيرادات مثيرة للانتباه",
+      "description": "استيرادات قد تشير لقدرات حساسة (لا تعني خبثًا بحد ذاتها)",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "imports_exports:heuristic",
+      "method": "keyword match against imports",
+      "evidence_refs": [],
+      "data": {
+        "suspicious": [
+          "USER32.dll!SystemParametersInfoW",
+          "WINHTTP.dll!WinHttpOpenRequest",
+          "WINHTTP.dll!WinHttpOpen",
+          "WINHTTP.dll!WinHttpConnect",
+          "KERNEL32.dll!WriteProcessMemory",
+          "KERNEL32.dll!VirtualAllocEx",
+          "KERNEL32.dll!CreateRemoteThread",
+          "KERNEL32.dll!GetSystemTimeAsFileTime"
+        ]
+      },
+      "tags": [
+        "heuristic",
+        "behavior"
+      ]
+    },
+    {
+      "id": "res.no_obvious",
+      "category": "resources",
+      "title": "لا توجد موارد ظاهرة بالطرق المتاحة",
+      "description": "لم يتم العثور على موارد مضمنة واضحة؛ قد تكون مضمنة كـ blobs أو مشفرة",
+      "confidence": "unknown",
+      "provenance": "undetermined",
+      "source": "resources:negation",
+      "method": "no zip / no version",
+      "evidence_refs": [],
+      "data": {
+        "is_zip": false,
+        "config_hints": [],
+        "version_strings": []
+      },
+      "tags": []
+    },
+    {
+      "id": "crypto.high_entropy",
+      "category": "crypto",
+      "title": "إنتروبي عالي — محتمل تشفير/ضغط/حزم",
+      "description": "إنتروبي كلي 7.95 (>7.2) يشير لاحتمال تشفير أو ضغط أو packer",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "crypto:entropy",
+      "method": "shannon entropy",
+      "evidence_refs": [],
+      "data": {
+        "overall_entropy": 7.9478064199225855,
+        "high_windows": 4276
+      },
+      "tags": [
+        "heuristic"
+      ]
+    },
+    {
+      "id": "crypto.packed_sections",
+      "category": "crypto",
+      "title": "نوافذ عالية الإنتروبي كثيرة",
+      "description": "4276/6031 نوافذ بإنتروبي >7.5 — قد تشير لمقاطع مشفرة/مضغوطة",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "crypto:window_entropy",
+      "method": "1KB sliding window",
+      "evidence_refs": [],
+      "data": {
+        "high_windows": 4276,
+        "total": 6031
+      },
+      "tags": []
+    },
+    {
+      "id": "crypto.no_constants",
+      "category": "crypto",
+      "title": "لا توجد ثوابت تشفير واضحة",
+      "description": "لم يتم العثور على S-box أو PEM markers أو base64 alphabet كامل",
+      "confidence": "medium",
+      "provenance": "observed",
+      "source": "crypto:constant search",
+      "method": "byte pattern search",
+      "evidence_refs": [],
+      "data": {},
+      "tags": []
+    },
+    {
+      "id": "disasm.objdump_ok",
+      "category": "disasm",
+      "title": "Disassembly عبر objdump",
+      "description": "تم تفكيك 74673 سطر، 2 دالة محتملة",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "disasm:objdump -d",
+      "method": "objdump -d -M intel",
+      "evidence_refs": [],
+      "data": {
+        "lines": 74673,
+        "funcs": [
+          ".text",
+          ".mmap"
+        ],
+        "total_funcs": 2
+      },
+      "tags": []
+    },
+    {
+      "id": "disasm.capstone_available",
+      "category": "disasm",
+      "title": "Capstone متاح",
+      "description": "يمكن استخدام capstone للتحليل البرمجي لاحقًا",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "disasm:capstone import",
+      "method": "import capstone",
+      "evidence_refs": [],
+      "data": {},
+      "tags": []
+    },
+    {
+      "id": "disasm.decompilation_limitation",
+      "category": "disasm",
+      "title": "قيود الاستعادة",
+      "description": "لا يمكن استعادة المصدر الأصلي حرفيًا من binary؛ ما نستعيده هو سلوك مكافئ عبر الملاحظة والتفكيك. Decompilation الحقيقي يتطلب Ghidra/IDA غير مضمنة هنا.",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "disasm:disclaimer",
+      "method": "design principle",
+      "evidence_refs": [],
+      "data": {},
+      "tags": []
+    },
+    {
+      "id": "behavior.network",
+      "category": "behavior",
+      "title": "سلوك محتمل: عمليات شبكة",
+      "description": "تم العثور على ['socket', 'send'] مطابقة للنمط \\b(socket|connect|bind|listen|accept|send|recv)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(socket|connect|bind|listen|accept|send|recv)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "network",
+        "description": "عمليات شبكة",
+        "hits": [
+          "socket",
+          "send"
+        ],
+        "pattern": "\\b(socket|connect|bind|listen|accept|send|recv)\\b"
+      },
+      "tags": [
+        "network",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.file-io",
+      "category": "behavior",
+      "title": "سلوك محتمل: عمليات ملفات",
+      "description": "تم العثور على ['read', 'open'] مطابقة للنمط \\b(open|read|write|fopen|fwrite|fread|creat)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(open|read|write|fopen|fwrite|fread|creat)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "file-io",
+        "description": "عمليات ملفات",
+        "hits": [
+          "read",
+          "open"
+        ],
+        "pattern": "\\b(open|read|write|fopen|fwrite|fread|creat)\\b"
+      },
+      "tags": [
+        "file-io",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.process",
+      "category": "behavior",
+      "title": "سلوك محتمل: إنشاء عمليات",
+      "description": "تم العثور على ['system'] مطابقة للنمط \\b(execve|execvp|system|popen|fork|clone)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(execve|execvp|system|popen|fork|clone)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "process",
+        "description": "إنشاء عمليات",
+        "hits": [
+          "system"
+        ],
+        "pattern": "\\b(execve|execvp|system|popen|fork|clone)\\b"
+      },
+      "tags": [
+        "process",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.memory",
+      "category": "behavior",
+      "title": "سلوك محتمل: تلاعب بالذاكرة / حقن محتمل",
+      "description": "تم العثور على ['mmap', 'VirtualProtect'] مطابقة للنمط \\b(mmap|mprotect|VirtualAlloc|VirtualProtect)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(mmap|mprotect|VirtualAlloc|VirtualProtect)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "memory",
+        "description": "تلاعب بالذاكرة / حقن محتمل",
+        "hits": [
+          "mmap",
+          "VirtualProtect"
+        ],
+        "pattern": "\\b(mmap|mprotect|VirtualAlloc|VirtualProtect)\\b"
+      },
+      "tags": [
+        "memory",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.injection",
+      "category": "behavior",
+      "title": "سلوك محتمل: حقن/تتبع عمليات",
+      "description": "تم العثور على ['CreateRemoteThread', 'WriteProcessMemory'] مطابقة للنمط \\b(ptrace|CreateRemoteThread|WriteProcessMemory)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(ptrace|CreateRemoteThread|WriteProcessMemory)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "injection",
+        "description": "حقن/تتبع عمليات",
+        "hits": [
+          "CreateRemoteThread",
+          "WriteProcessMemory"
+        ],
+        "pattern": "\\b(ptrace|CreateRemoteThread|WriteProcessMemory)\\b"
+      },
+      "tags": [
+        "injection",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.crypto",
+      "category": "behavior",
+      "title": "سلوك محتمل: عمليات تشفير",
+      "description": "تم العثور على ['RSA', 'AES'] مطابقة للنمط \\b(crypt|encrypt|decrypt|AES|RSA|EVP_)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(crypt|encrypt|decrypt|AES|RSA|EVP_)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "crypto",
+        "description": "عمليات تشفير",
+        "hits": [
+          "RSA",
+          "AES"
+        ],
+        "pattern": "\\b(crypt|encrypt|decrypt|AES|RSA|EVP_)\\b"
+      },
+      "tags": [
+        "crypto",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.cli_hints",
+      "category": "interfaces",
+      "title": "تلميحات واجهة سطر الأوامر",
+      "description": "سلاسل تشبه خيارات CLI",
+      "confidence": "low",
+      "provenance": "inferred",
+      "source": "behavior:strings scan",
+      "method": "lines starting with -",
+      "evidence_refs": [],
+      "data": {
+        "cli_hints": [
+          "-jd_;",
+          "-h%D",
+          "-t%D",
+          "-J0D",
+          "-@0D",
+          "-^0D",
+          "-gqdt",
+          "-]q}",
+          "-+HC[",
+          "-e@f",
+          "-[bU'*",
+          "-tON",
+          "-}\t/",
+          "-RHj=",
+          "-fa0o",
+          "-%k0",
+          "-{'wb",
+          "R--Plk",
+          "-( ,",
+          "-bH)",
+          "-lh!20",
+          "-ph!20",
+          "-lth!20",
+          "-U026C5x",
+          "-lth!20=a",
+          "-lth!20T",
+          "-<86",
+          "-O|{",
+          "-uh!",
+          "-A~S",
+          "-v'}",
+          "-Pte",
+          "-%th!",
+          "-D>\"",
+          "-Xh!20",
+          "-+lt",
+          "-002",
+          "-p8p",
+          "-!G4",
+          "-uh!3",
+          "-302",
+          "-mth",
+          "-Keam",
+          "-#!20mh6'",
+          "-lth.",
+          "-102",
+          "-y6C5",
+          "-lth",
+          "-y024Lb",
+          "-lti"
+        ]
+      },
+      "tags": [
+        "interface"
+      ]
+    },
+    {
+      "id": "dynamic.skipped",
+      "category": "dynamic",
+      "title": "تم تخطي التحليل الديناميكي",
+      "description": "التحليل الديناميكي معطل افتراضياً لتجنب تنفيذ كود غير موثوق. فعّله صراحة مع --enable-dynamic بعد التأكد من العزل.",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "dynamic:opt-in",
+      "method": "ctx.options.enable_dynamic == False",
+      "evidence_refs": [],
+      "data": {},
+      "tags": []
+    },
+    {
+      "id": "compare.methodology",
+      "category": "comparison",
+      "title": "منهجية المقارنة",
+      "description": "المقارنة تزيد الثقة عند التوافق وتخفضها عند التعارض؛ كل تعارض يجب التحقيق بمدخلات إضافية.",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "compare:disclaimer",
+      "method": "design",
+      "evidence_refs": [],
+      "data": {
+        "static_network_hint": true,
+        "dynamic_network_observed": false,
+        "static_paths_sample": [
+          "/1U",
+          "/trustInfo",
+          "/Gzm",
+          "/Pma",
+          "/B-",
+          "/D_b",
+          "/cgHc",
+          "/2j2",
+          "/api/event",
+          "/Av"
+        ],
+        "dynamic_files_sample": [],
+        "overlap": []
+      },
+      "tags": []
+    },
+    {
+      "id": "deep.opcodes_summary",
+      "category": "disasm",
+      "title": "Opcodes (capstone) — 50001 تعليمة",
+      "description": "تم تفكيك 50001 تعليمة عبر capstone. أهمها: mov:12739, push:8970, call:3537, cmp:3409, lea:2637 | Blocks: 10626 | Functions: 300",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "deep:capstone",
+      "method": "capstone disassembly",
+      "evidence_refs": [],
+      "data": {
+        "total": 50001,
+        "top": [
+          [
+            "mov",
+            12739
+          ],
+          [
+            "push",
+            8970
+          ],
+          [
+            "call",
+            3537
+          ],
+          [
+            "cmp",
+            3409
+          ],
+          [
+            "lea",
+            2637
+          ],
+          [
+            "add",
+            2532
+          ],
+          [
+            "int3",
+            1815
+          ],
+          [
+            "pop",
+            1591
+          ],
+          [
+            "sub",
+            1253
+          ],
+          [
+            "je",
+            1220
+          ]
+        ],
+        "blocks": 10626,
+        "funcs": 300,
+        "cats": {
+          "data": 25953,
+          "control": 9239,
+          "other": 9463,
+          "arith": 5343,
+          "syscall": 3
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "deep.functions",
+      "category": "structure",
+      "title": "Functions مكتشفة: 300",
+      "description": "دوال عبر symbols أو prologue heuristics (push rbp; mov rbp,rsp)",
+      "confidence": "medium",
+      "provenance": "observed",
+      "source": "deep:nm+heuristic",
+      "method": "nm -S + prologue pattern",
+      "evidence_refs": [],
+      "data": {
+        "functions": [
+          {
+            "address": "0x401060",
+            "name": "sub_0x401060",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4010a0",
+            "name": "sub_0x4010a0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401120",
+            "name": "sub_0x401120",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401150",
+            "name": "sub_0x401150",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401190",
+            "name": "sub_0x401190",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4011b0",
+            "name": "sub_0x4011b0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4012ec",
+            "name": "sub_0x4012ec",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x401470",
+            "name": "sub_0x401470",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401490",
+            "name": "sub_0x401490",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4014d0",
+            "name": "sub_0x4014d0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401520",
+            "name": "sub_0x401520",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40169c",
+            "name": "sub_0x40169c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x401a6c",
+            "name": "sub_0x401a6c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x401ed0",
+            "name": "sub_0x401ed0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402020",
+            "name": "sub_0x402020",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402560",
+            "name": "sub_0x402560",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4025a0",
+            "name": "sub_0x4025a0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402600",
+            "name": "sub_0x402600",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402680",
+            "name": "sub_0x402680",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402790",
+            "name": "sub_0x402790",
+            "source": "heuristic"
+          }
+        ],
+        "total": 300
+      },
+      "tags": []
+    },
+    {
+      "id": "deep.cfg",
+      "category": "behavior",
+      "title": "Control Flow — 10626 basic blocks",
+      "description": "متوسط 4.71 تعليمة لكل block. Jumps/Calls تحدد التدفق.",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "deep:cfg",
+      "method": "split on jmp/call/ret",
+      "evidence_refs": [],
+      "data": {
+        "blocks": 10626,
+        "avg": 4.71
+      },
+      "tags": []
+    },
+    {
+      "id": "deep.ai_ready",
+      "category": "disasm",
+      "title": "تقرير جاهز لإعادة البناء في C++",
+      "description": "يحتوي opcodes_full.json.gz + skeleton.cpp + ai_report.json — يمكن إرسالها لنموذج AI لبناء C++ مكافئ.",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "deep:export",
+      "method": "capstone + skeleton gen",
+      "evidence_refs": [],
+      "data": {
+        "files": [
+          "opcodes_full.json.gz",
+          "skeleton.cpp",
+          "ai_report.json",
+          "cfg.dot"
+        ]
+      },
+      "tags": []
+    }
+  ],
+  "summary": {
+    "total_findings": 36,
+    "by_category": {
+      "metadata": 4,
+      "platform": 2,
+      "structure": 2,
+      "strings": 6,
+      "dependencies": 2,
+      "behavior": 8,
+      "resources": 1,
+      "crypto": 3,
+      "disasm": 5,
+      "interfaces": 1,
+      "dynamic": 1,
+      "comparison": 1
+    },
+    "confidence_histogram": {
+      "proven": 17,
+      "low": 2,
+      "high": 2,
+      "medium": 14,
+      "unknown": 1
+    },
+    "provenance_histogram": {
+      "observed": 21,
+      "inferred": 14,
+      "undetermined": 1
+    },
+    "analyzers_run": 12,
+    "analyzers_status": {
+      "metadata": "ok",
+      "platform": "ok",
+      "structure": "ok",
+      "strings": "ok",
+      "imports_exports": "ok",
+      "resources": "ok",
+      "crypto": "ok",
+      "disasm": "ok",
+      "behavior": "ok",
+      "dynamic": "skipped",
+      "compare": "ok",
+      "deep_opcode": "ok"
+    }
+  },
+  "comparison": {
+    "static_network_hint": true,
+    "dynamic_network_observed": false,
+    "static_paths_sample": [
+      "/1U",
+      "/trustInfo",
+      "/Gzm",
+      "/Pma",
+      "/B-",
+      "/D_b",
+      "/cgHc",
+      "/2j2",
+      "/api/event",
+      "/Av"
+    ],
+    "dynamic_files_sample": [],
+    "overlap": []
+  }
+}
