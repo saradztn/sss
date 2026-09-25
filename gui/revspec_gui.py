@@ -21,7 +21,9 @@ import traceback
 
 # === طلب تشغيل كمسؤول تلقائياً (Windows) ===
 def _ensure_admin_and_exit_if_not():
-    if "--no-admin" in sys.argv or os.environ.get("REVSPEC_NO_ELEVATE") == "1":
+    if "--admin" not in sys.argv:
+        return
+    if os.environ.get("REVSPEC_NO_ELEVATE") == "1":
         return
     if sys.platform != "win32":
         return
@@ -42,7 +44,7 @@ def _ensure_admin_and_exit_if_not():
     except SystemExit:
         raise
     except Exception as e:
-        print(f"تحقق المسؤول فشل: {e} - سيعمل بدون مسؤول")
+        print(f"تحقق المسؤول فشل: {e}")
         pass
 
 _ensure_admin_and_exit_if_not()

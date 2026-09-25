@@ -15,7 +15,11 @@ import os
 
 # === طلب تشغيل كمسؤول تلقائياً (Windows) ===
 def _ensure_admin_and_exit_if_not():
-    if "--no-admin" in sys.argv or os.environ.get("REVSPEC_NO_ELEVATE") == "1":
+    # لا يطلب مسؤول تلقائياً عند التشغيل المباشر - فقط عبر Patcher_GUI.pyw / .bat
+    # لمنع "ينهي نفسه" - استخدم --admin إذا أردت الترقية
+    if "--admin" not in sys.argv:
+        return
+    if os.environ.get("REVSPEC_NO_ELEVATE") == "1":
         return
     if sys.platform != "win32":
         return
@@ -31,12 +35,12 @@ def _ensure_admin_and_exit_if_not():
             if ret > 32:
                 sys.exit(0)
             else:
-                print("تم إلغاء الترقية - سيعمل بدون مسؤول (الحفظ على Desktop فقط)")
+                print("تم إلغاء الترقية - سيعمل بدون مسؤول")
                 return
     except SystemExit:
         raise
     except Exception as e:
-        print(f"تحقق المسؤول فشل: {e} - سيعمل بدون مسؤول")
+        print(f"تحقق المسؤول فشل: {e}")
         pass
 
 _ensure_admin_and_exit_if_not()
