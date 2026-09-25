@@ -46,6 +46,13 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+if 'idlelib' in sys.modules:
+    try:
+        import tkinter.messagebox as _mb
+        _mb.showwarning("تنبيه", "لا تفتح من IDLE - استخدم Patcher_GUI.pyw")
+    except: pass
+
+
 try:
     import tkinter as tk
     from tkinter import ttk, filedialog, messagebox
