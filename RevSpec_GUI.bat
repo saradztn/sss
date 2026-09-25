@@ -1,4 +1,13 @@
 @echo off
+REM === طلب تشغيل كمسؤول تلقائياً ===
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+  echo [مطلوب صلاحيات مسؤول] جاري طلب التشغيل كمسؤول...
+  powershell -Command "Start-Process '%~f0' -Verb RunAs"
+  exit /b
+)
+REM === تم التأكد من صلاحيات المسؤول ===
+
 REM RevSpec GUI — دبل كليك للتشغيل على Windows
 REM لا تحتاج كتابة أوامر، فقط اختر البرنامج
 

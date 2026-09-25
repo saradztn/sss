@@ -13,6 +13,30 @@ import re
 import json
 import os
 
+# === طلب تشغيل كمسؤول تلقائياً (Windows) ===
+def _ensure_admin_and_exit_if_not():
+    if sys.platform != "win32":
+        return
+    try:
+        import ctypes
+        is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
+        if not is_admin:
+            params = " ".join([f'"{a}"' for a in sys.argv])
+            ret = ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, params, None, 1)
+            if ret > 32:
+                sys.exit(0)
+            else:
+                print("تم إلغاء التشغيل كمسؤول.")
+                sys.exit(0)
+    except SystemExit:
+        raise
+    except Exception as e:
+        print(f"تحقق المسؤول فشل: {e}")
+        pass
+
+_ensure_admin_and_exit_if_not()
+# === نهاية طلب المسؤول ===
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
