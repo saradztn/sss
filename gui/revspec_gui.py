@@ -21,23 +21,28 @@ import traceback
 
 # === طلب تشغيل كمسؤول تلقائياً (Windows) ===
 def _ensure_admin_and_exit_if_not():
+    if "--no-admin" in sys.argv or os.environ.get("REVSPEC_NO_ELEVATE") == "1":
+        return
     if sys.platform != "win32":
         return
     try:
         import ctypes
+        if os.environ.get("__REVSPEC_ELEVATED") == "1":
+            return
         is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
         if not is_admin:
             params = " ".join([f'"{a}"' for a in sys.argv])
+            os.environ["__REVSPEC_ELEVATED"] = "1"
             ret = ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, params, None, 1)
             if ret > 32:
                 sys.exit(0)
             else:
-                print("تم إلغاء التشغيل كمسؤول.")
-                sys.exit(0)
+                print("تم إلغاء الترقية - سيعمل بدون مسؤول")
+                return
     except SystemExit:
         raise
     except Exception as e:
-        print(f"تحقق المسؤول فشل: {e}")
+        print(f"تحقق المسؤول فشل: {e} - سيعمل بدون مسؤول")
         pass
 
 _ensure_admin_and_exit_if_not()
