@@ -12,11 +12,10 @@ import threading
 import re
 import json
 import os
+import traceback  # تم إصلاح الاستيراد هنا ليعمل في جميع الدوال
 
 # === طلب تشغيل كمسؤول تلقائياً (Windows) ===
 def _ensure_admin_and_exit_if_not():
-    # لا يطلب مسؤول تلقائياً عند التشغيل المباشر - فقط عبر Patcher_GUI.pyw / .bat
-    # لمنع "ينهي نفسه" - استخدم --admin إذا أردت الترقية
     if "--admin" not in sys.argv:
         return
     if os.environ.get("REVSPEC_NO_ELEVATE") == "1":
@@ -65,6 +64,7 @@ except ImportError:
     tk = None
     TK_AVAILABLE = False
 
+# محاولة تحميل ملفات الباتشر الخاصة بـ RevSpec
 try:
     from revspec.patcher.string_patcher import BinaryPatcher
     from revspec.patcher.pe_patcher import PEPatcher
@@ -107,7 +107,7 @@ class PatcherGUI:
             except:
                 pass
 
-        # تحذير
+        # تحذير الاستخدام
         warn = ttk.Frame(self.root, padding=6)
         warn.pack(fill="x")
         ttk.Label(warn, text="⚠️ للاستخدام فقط على البرامج التي تملكها أو لديك تصريح بتعديلها", foreground="#b45309", font=("Segoe UI", 9, "bold")).pack()
@@ -201,13 +201,13 @@ class PatcherGUI:
 
         # Will be populated after loading PE
         self.ver_entries = {}
-        # Placeholder
         ttk.Label(self.ver_frame, text="حمّل ملف .exe لعرض الحقول...", foreground="#94a3b8").pack()
 
-        # Tab 3: كل القيم — يعرض كل القيم (20000) واضحة كـ v3
+        # Tab 3: كل القيم
         tab_all = ttk.Frame(nb, padding=8)
         nb.add(tab_all, text="📊 كل القيم")
-        ttk.Label(tab_all, text="كل القيم — نصوص v3 الواضحة + VersionInfo + موارد + Imports (20000) — يعرض كل القيم في المختبر", foreground="#1e40af", font=("Segoe UI", 9, "bold")).pack(anchor="w")
+        ttk.Label(tab_all, text="كل القيم — نصوص v3 الواضحة + VersionInfo + موارد + Imports", foreground="#1e40af", font=("Segoe UI", 9, "bold")).pack(anchor="w")
+        
         all_top = ttk.Frame(tab_all)
         all_top.pack(fill="x", pady=6)
         ttk.Button(all_top, text="🔄 تحديث (كل القيم)", command=self.refresh_all_values).pack(side="left", padx=4)
@@ -215,34 +215,45 @@ class PatcherGUI:
         ttk.Button(all_top, text="📤 تصدير CSV (الكل)", command=self.export_all_csv).pack(side="left", padx=4)
         self.all_status = ttk.Label(all_top, text="")
         self.all_status.pack(side="left", padx=12)
+        
         all_search = ttk.Frame(tab_all)
         all_search.pack(fill="x")
         ttk.Label(all_search, text="بحث/فلترة:").pack(side="left")
-        self.all_search_var = __import__('tkinter').StringVar()
+        self.all_search_var = tk.StringVar()
         ent_all_search = ttk.Entry(all_search, textvariable=self.all_search_var, width=22)
         ent_all_search.pack(side="left", padx=4)
         ent_all_search.bind("<KeyRelease>", lambda e: self.filter_all_values())
         ttk.Button(all_search, text="🔄", width=3, command=self.filter_all_values).pack(side="left")
+        
         ttk.Label(all_search, text="  الفئة:").pack(side="left", padx=(8,2))
-        self.all_category_var = __import__('tkinter').StringVar(value="الكل")
-        ttk.Combobox(all_search, textvariable=self.all_category_var, values=["الكل","نصوص","VersionInfo","موارد","Import"], width=10, state="readonly").pack(side="left", padx=4)
-        self.all_category_var.trace_add("write", lambda *a: self.filter_all_values())
+        self.all_category_var = tk.StringVar(value="الكل")
+        
+        cmb_cat = ttk.Combobox(all_search, textvariable=self.all_category_var, values=["الكل","نصوص","VersionInfo","موارد","Import"], width=10, state="readonly")
+        cmb_cat.pack(side="left", padx=4)
+        
         self.all_values = []
+        
         self.tree_all = ttk.Treeview(tab_all, columns=("section", "addr", "value", "type"), show="headings", height=14)
         for col, w, txt in [("section", 90, "القسم"), ("addr", 110, "العنوان"), ("value", 420, "القيمة"), ("type", 80, "النوع")]:
             self.tree_all.heading(col, text=txt, command=lambda c=col: self.sort_all_by(c))
             self.tree_all.column(col, width=w)
+            
         vsb_all = ttk.Scrollbar(tab_all, orient="vertical", command=self.tree_all.yview)
         self.tree_all.configure(yscrollcommand=vsb_all.set)
         self.tree_all.pack(side="left", fill="both", expand=True, pady=6)
         vsb_all.pack(side="right", fill="y", pady=6)
+        
         self.all_count_label = ttk.Label(tab_all, text="")
         self.all_count_label.pack()
+        
+        # ربط الـ Trace الخاص بالفئة بعد بناء الـ Treeview بالكامل لتفادي الأخطاء
+        self.all_category_var.trace_add("write", lambda *a: self.filter_all_values())
 
-        # Tab 4: مختبر الحماية — إدخال عنوان يدوي + بحث + كل القيم
+        # Tab 4: مختبر الحماية
         tab_jmp = ttk.Frame(nb, padding=8)
         nb.add(tab_jmp, text="🔀 مختبر الحماية")
-        ttk.Label(tab_jmp, text="مختبر الحماية — اختبر برنامجك (je/jne → jmp/NOP) — يعرض كل القيم", font=("Segoe UI", 10, "bold")).pack(anchor="w")
+        ttk.Label(tab_jmp, text="مختبر الحماية — اختبر برنامجك (je/jne → jmp/NOP)", font=("Segoe UI", 10, "bold")).pack(anchor="w")
+        
         jmp_top = ttk.Frame(tab_jmp)
         jmp_top.pack(fill="x", pady=6)
         ttk.Button(jmp_top, text="🔍 ابحث عن الفحوصات", command=self.find_jumps).pack(side="left", padx=4)
@@ -251,30 +262,33 @@ class PatcherGUI:
         ttk.Button(jmp_top, text="↩️ تراجع", command=self.undo_last_patch).pack(side="left", padx=8)
         self.jmp_status = ttk.Label(jmp_top, text="")
         self.jmp_status.pack(side="left", padx=12)
-        # إدخال يدوي + بحث وفلترة (طلبك)
+        
         jmp_manual = ttk.Frame(tab_jmp)
         jmp_manual.pack(fill="x", pady=4)
         ttk.Label(jmp_manual, text="عنوان يدوي:").pack(side="left")
-        self.jmp_manual_var = __import__('tkinter').StringVar(value="0x401000")
+        self.jmp_manual_var = tk.StringVar(value="0x401000")
         ttk.Entry(jmp_manual, textvariable=self.jmp_manual_var, width=12).pack(side="left", padx=4)
         ttk.Button(jmp_manual, text="✏️ عدّل هذا العنوان لـ jmp", command=self.patch_manual_address).pack(side="left", padx=4)
+        
         ttk.Label(jmp_manual, text="بحث/فلترة:").pack(side="left", padx=(12,2))
-        self.jmp_search_var = __import__('tkinter').StringVar()
+        self.jmp_search_var = tk.StringVar()
         ent_jmp_search = ttk.Entry(jmp_manual, textvariable=self.jmp_search_var, width=18)
         ent_jmp_search.pack(side="left", padx=4)
         ent_jmp_search.bind("<KeyRelease>", lambda e: self.filter_jumps())
         ttk.Button(jmp_manual, text="🔄", width=3, command=self.filter_jumps).pack(side="left")
+        
         self.jmp_list = []
         self.jmp_history = []
         self.tree_jmp = ttk.Treeview(tab_jmp, columns=("addr", "bytes", "mnem", "op", "target", "action"), show="headings", height=12)
         for col, w, txt in [("addr", 90, "العنوان"), ("bytes", 80, "البايتات"), ("mnem", 60, "الأمر"), ("op", 140, "المعامل"), ("target", 90, "الهدف"), ("action", 100, "الحالة")]:
             self.tree_jmp.heading(col, text=txt)
             self.tree_jmp.column(col, width=w)
+            
         vsb_jmp = ttk.Scrollbar(tab_jmp, orient="vertical", command=self.tree_jmp.yview)
         self.tree_jmp.configure(yscrollcommand=vsb_jmp.set)
         self.tree_jmp.pack(side="left", fill="both", expand=True, pady=6)
         vsb_jmp.pack(side="right", fill="y", pady=6)
-        # حفظ مع jmp
+        
         jmp_btns = ttk.Frame(tab_jmp)
         jmp_btns.pack(fill="x", pady=6)
         ttk.Button(jmp_btns, text="💾 حفظ النسخة الجديدة (مع jmp)", command=self.save_file).pack(side="left", padx=4)
@@ -286,14 +300,12 @@ class PatcherGUI:
 
         ttk.Label(tab3, text="حفظ البرنامج المعدّل", font=("Segoe UI", 12, "bold")).pack(anchor="w", pady=(0,10))
         
-        # Output
         out_frame = ttk.Frame(tab3)
         out_frame.pack(fill="x", pady=6)
         ttk.Label(out_frame, text="حفظ باسم:").pack(side="left")
         ttk.Entry(out_frame, textvariable=self.output_var, font=("Consolas", 9)).pack(side="left", fill="x", expand=True, padx=6)
         ttk.Button(out_frame, text="📁", width=4, command=self.browse_output).pack(side="left")
 
-        # Buttons
         btn_frame = ttk.Frame(tab3)
         btn_frame.pack(fill="x", pady=12)
         tk.Button(btn_frame, text="💾 حفظ البرنامج الجديد", font=("Segoe UI", 11, "bold"), bg="#16a34a", fg="white", activebackground="#15803d", padx=20, pady=8, relief="flat", cursor="hand2", command=self.save_file).pack(side="left", padx=6)
@@ -302,7 +314,6 @@ class PatcherGUI:
 
         ttk.Separator(tab3).pack(fill="x", pady=12)
 
-        # Info
         info = tk.Text(tab3, height=10, font=("Consolas", 9), bg="#f8fafc", wrap="word")
         info.pack(fill="both", expand=True)
         info.insert("1.0", 
@@ -316,7 +327,7 @@ class PatcherGUI:
 5. احفظ باسم جديد (سيُنشئ .bak للنسخة الأصلية)
 
 قيود:
-- لا يمكن تكبير حجم البرنامج بسهولة (تحتاج إضافة section جديد - غير مدعوم هنا)
+- لا يمكن تكبير حجم البرنامج بسهولة (تحتاج إضافة section جديد)
 - النصوص المشفرة/المضغوطة لا تظهر
 - الأيقونات تحتاج أدوات متخصصة (Resource Hacker) — سيُضاف لاحقاً
 """)
@@ -325,9 +336,87 @@ class PatcherGUI:
         # Status bar
         self.status = ttk.Label(self.root, text="جاهز", foreground="#334155", font=("Segoe UI", 9))
         self.status.pack(side="bottom", fill="x", padx=8, pady=4)
-        # Progress
+        
         self.progress = ttk.Progressbar(self.root, mode="indeterminate")
         self.progress.pack(side="bottom", fill="x", padx=8)
+
+    # === [إضافة الدوال البرمجية لإصلاح خطأ انهيار الواجهة] ===
+    
+    def filter_all_values(self):
+        """تصفية وفلترة كل القيم في Tab 3"""
+        if not hasattr(self, 'tree_all') or not self.tree_all:
+            return
+        
+        # مسح الجدول الحالي
+        for item in self.tree_all.get_children():
+            self.tree_all.delete(item)
+            
+        filt = self.all_search_var.get().strip().lower()
+        cat = self.all_category_var.get()
+        count = 0
+        
+        # فلترة وعرض النصوص
+        if self.patcher and (cat == "الكل" or cat == "نصوص"):
+            for s in self.patcher.strings:
+                if filt and (filt not in s.original.lower() and filt not in hex(s.offset).lower()):
+                    continue
+                self.tree_all.insert("", "end", values=(s.section, hex(s.offset), s.original, "نص"))
+                count += 1
+                if count >= 1500: # حد أقصى للأداء
+                    break
+                    
+        # فلترة وعرض حقول VersionInfo
+        if self.pe and (cat == "الكل" or cat == "VersionInfo"):
+            for k, v in self.pe.get_version_info().items():
+                if filt and (filt not in k.lower() and filt not in v.lower()):
+                    continue
+                self.tree_all.insert("", "end", values=("Header", "VersionInfo", f"{k}: {v}", "بيانات"))
+                count += 1
+                
+        self.all_count_label.config(text=f"عدد العناصر المعروضة: {count}")
+
+    def sort_all_by(self, col):
+        """ترتيب عناصر جدول كل القيم أبجدياً"""
+        items = [(self.tree_all.set(k, col), k) for k in self.tree_all.get_children("")]
+        items.sort()
+        for index, (val, k) in enumerate(items):
+            self.tree_all.move(k, "", index)
+
+    def copy_all_selected(self):
+        """نسخ العنصر المحدد في جدول كل القيم"""
+        sel = self.tree_all.selection()
+        if sel:
+            val = self.tree_all.item(sel[0])["values"][2]
+            self.root.clipboard_clear()
+            self.root.clipboard_append(str(val))
+            self.status.config(text="📋 تم نسخ القيمة المحددة للحافظة")
+        else:
+            messagebox.showwarning("تنبيه", "حدد عنصراً أولاً لنسخه.")
+
+    def export_all_csv(self):
+        """تصدير القيم لملف CSV خارجي"""
+        if not self.tree_all.get_children():
+            messagebox.showwarning("تنبيه", "الجدول فارغ ولا توجد بيانات لتصديرها")
+            return
+        p = filedialog.asksaveasfilename(title="حفظ الملف", defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
+        if p:
+            try:
+                import csv
+                with open(p, "w", newline="", encoding="utf-8-sig") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(["القسم", "العنوان", "القيمة", "النوع"])
+                    for item in self.tree_all.get_children():
+                        writer.writerow(self.tree_all.item(item)["values"])
+                messagebox.showinfo("تم", "تم تصدير ملف CSV بنجاح")
+            except Exception as e:
+                messagebox.showerror("خطأ", f"فشل تصدير الملف: {e}")
+
+    def refresh_all_values(self):
+        """تحديث جدول كل القيم بالكامل"""
+        self.filter_all_values()
+        self.status.config(text="🔄 تم تحديث قائمة كل القيم")
+
+    # === [نهاية الدوال المضافة للواجهة] ===
 
     def browse_file(self):
         p = filedialog.askopenfilename(
@@ -364,7 +453,6 @@ class PatcherGUI:
                 pe = PEPatcher(p)
                 self.root.after(0, lambda: self.on_loaded(p, patcher, pe))
             except Exception as e:
-                import traceback
                 tb = traceback.format_exc()
                 self.root.after(0, lambda: self.on_load_error(e, tb))
 
@@ -376,44 +464,31 @@ class PatcherGUI:
         self.pe = pe
         self.current_file = path
 
-        # فحص هل مضغوط/محمي
         try:
             packed = is_packed_or_protected(patcher.data if isinstance(patcher.data, bytes) else bytes(patcher.data), len(patcher.strings))
             packed_warn = ""
             if packed.get("packed"):
                 packed_warn = " ⚠️ مضغوط/محمي!"
-                # رسالة تحذيرية
                 self.root.after(200, lambda: messagebox.showwarning("تحذير", f"البرنامج يبدو مضغوط/محمي:\n" + "\n".join(packed["reasons"]) + "\n\nتعديل الملفات المضغوطة (UPX, Themida) غالباً يفسدها. جرّب فك الضغط أولاً."))
         except:
             packed_warn = ""
             packed = {"packed": False}
 
         self.info_label.config(text=f"✅ {path.name} — {len(patcher.data)} بايت — {len(patcher.strings)} نص — {'PE' if pe.is_pe_file() else 'غير PE'}{packed_warn}")
-        self.status.config(text=f"تم — {len(patcher.strings)} نص" + (f" — {packed['reasons'][0]}" if packed.get("packed") else ""))
+        self.status.config(text=f"تم — {len(patcher.strings)} نص")
 
-        # اقتراح اسم إخراج
         out = path.with_name(path.stem + "_modified" + path.suffix)
         self.output_var.set(str(out))
 
-        # تعبئة الجدول
         self.filter_strings()
-
-        # تعبئة VersionInfo
         self.populate_version_info()
+        self.filter_all_values()
 
-        # اقتراح OldName من ProductName أو اسم الملف
         if pe.get_version_info().get("ProductName"):
             self.old_name_var.set(pe.get_version_info()["ProductName"])
         elif path.stem:
             self.old_name_var.set(path.stem)
-        try:
-            if hasattr(self, 'all_values'):
-                self.all_values = []
-                for s in self.patcher.strings[:5000]:
-                    self.all_values.append((s.offset, s.original))
-        except: pass
 
-        # تحقق PE
         try:
             val = validate_pe(patcher.data if isinstance(patcher.data, bytes) else bytes(patcher.data))
             if not val["valid"]:
@@ -423,8 +498,8 @@ class PatcherGUI:
 
     def on_load_error(self, e, tb):
         self.progress.stop()
-        self.status.config(text="❌ فشل")
-        messagebox.showerror("خطأ", f"فشل التحميل:\n{e}\n\n{tb[:500]}")
+        self.status.config(text="❌ فشل التحميل")
+        messagebox.showerror("خطأ", f"فشل تحميل الملف:\n{e}\n\n{tb[:500]}")
 
     def filter_strings(self):
         if not self.patcher:
@@ -438,7 +513,6 @@ class PatcherGUI:
 
         lst = self.patcher.get_strings(filter_text=filt, encoding=enc)
 
-        # حد أقصى 3000 للعرض لسرعة
         max_show = 3000
         if len(lst) > max_show:
             self.status.config(text=f"عرض {max_show} من {len(lst)} (استخدم البحث للتصفية)")
@@ -446,16 +520,13 @@ class PatcherGUI:
         else:
             self.status.config(text=f"{len(lst)} نص")
 
-        # مسح
         for item in self.tree.get_children():
             self.tree.delete(item)
 
         for s in lst:
-            # اختصر النص الطويل
             txt = s.original
             if len(txt) > 80:
                 txt = txt[:77] + "..."
-            # لون حسب القسم: خطر إذا في .text
             tags = (str(s.offset),)
             if s.section in [".text", ".code", "CODE"]:
                 tags = ("danger",)
@@ -463,7 +534,6 @@ class PatcherGUI:
                 tags = ("safe",)
             self.tree.insert("", "end", values=(hex(s.offset), s.encoding, s.section, txt, s.length), tags=tags)
 
-        # ألوان
         try:
             self.tree.tag_configure("danger", foreground="#dc2626")
             self.tree.tag_configure("safe", foreground="#16a34a")
@@ -472,16 +542,8 @@ class PatcherGUI:
 
         self.filtered_strings = lst
 
-    def refresh_all_values(self):
-        try:
-            if hasattr(self, 'tree_all') and self.tree_all:
-                for i in self.tree_all.get_children(): self.tree_all.delete(i)
-                for off, txt in getattr(self, 'all_values', [])[:200]:
-                    self.tree_all.insert("", "end", values=("نصوص", hex(off), txt[:60]))
-        except: pass
     def filter_jumps(self):
-        filt = self.jmp_search_var.get().strip().lower() if hasattr(self, 'jmp_search_var') else ""
-        # أعد عرض jmp_list مع الفلتر
+        filt = self.jmp_search_var.get().strip().lower()
         for item in self.tree_jmp.get_children():
             self.tree_jmp.delete(item)
         count = 0
@@ -492,29 +554,27 @@ class PatcherGUI:
             count += 1
             if count >= 1000:
                 break
-        self.jmp_status.config(text=f"عرض {count} من {len(getattr(self, 'jmp_list', []))} — فلتر: '{filt}'" if filt else f"وجد {len(getattr(self, 'jmp_list', []))} فحص")
+        self.jmp_status.config(text=f"وجد {len(self.jmp_list)} فحص")
 
     def patch_manual_address(self):
         addr_str = self.jmp_manual_var.get().strip()
         if not addr_str:
-            __import__('tkinter').messagebox.showwarning("تنبيه", "أدخل العنوان مثل 0x401000")
+            messagebox.showwarning("تنبيه", "أدخل العنوان مثل 0x401000")
             return
         try:
             addr = int(addr_str, 16)
         except:
-            __import__('tkinter').messagebox.showerror("خطأ", f"عنوان غير صالح: {addr_str}")
+            messagebox.showerror("خطأ", f"عنوان غير صالح: {addr_str}")
             return
-        # ابحث عنه في القائمة أو أنشئ entry جديد
+            
         found = None
         for j in getattr(self, 'jmp_list', []):
             if j["addr"].lower() == addr_str.lower():
                 found = j
                 break
         if not found:
-            # أنشئ entry يدوي
             try:
                 data = self.patcher.data if isinstance(self.patcher.data, (bytes, bytearray)) else bytes(self.patcher.data)
-                # اقرأ بايتين عند العنوان
                 file_off = addr
                 try:
                     pe = getattr(self.pe, 'pe', None)
@@ -531,9 +591,9 @@ class PatcherGUI:
                 self.jmp_list.append(found)
                 self.tree_jmp.insert("", "end", values=(found["addr"], found["bytes"], found["mnem"], found["op"], found["target"], found["action"]))
             except Exception as e:
-                __import__('tkinter').messagebox.showerror("خطأ", str(e))
+                messagebox.showerror("خطأ", str(e))
                 return
-        # حدد العنصر وطبق patch
+                
         for item in self.tree_jmp.get_children():
             vals = self.tree_jmp.item(item)["values"]
             if str(vals[0]).lower() == addr_str.lower():
@@ -552,6 +612,7 @@ class PatcherGUI:
             self.jmp_status.config(text=f"وجد {len(self.jmp_list)}")
         except Exception as e:
             self.jmp_status.config(text=str(e)[:60])
+
     def patch_to_jmp(self):
         sel = self.tree_jmp.selection()
         if not sel: return
@@ -567,8 +628,8 @@ class PatcherGUI:
             self.jmp_history.append((addr, orig, newb))
             self.jmp_status.config(text=f"✅ {vals[0]} → jmp")
         except Exception as e:
-            import traceback, tkinter.messagebox as mb
-            mb.showerror("خطأ", str(e))
+            messagebox.showerror("خطأ", str(e))
+
     def patch_to_nop(self):
         sel = self.tree_jmp.selection()
         if not sel: return
@@ -583,6 +644,7 @@ class PatcherGUI:
             self.patcher.data = bytes(data)
             self.jmp_history.append((addr, orig, newb))
         except: pass
+
     def undo_last_patch(self):
         if not getattr(self, 'jmp_history', None): return
         off, orig, new = self.jmp_history.pop()
@@ -591,10 +653,6 @@ class PatcherGUI:
             data[off:off+len(orig)] = orig
             self.patcher.data = bytes(data)
         except: pass
-    def copy_all_value(self): pass
-    def export_all_csv(self): pass
-    def on_all_double_click(self, e): pass
-    def on_all_right_click(self, e): pass
 
     def on_double_click(self, event):
         sel = self.tree.selection()
@@ -612,7 +670,6 @@ class PatcherGUI:
         self.edit_dialog(entry)
 
     def on_right_click(self, event):
-        # قائمة سياق
         sel = self.tree.selection()
         if not sel:
             return
@@ -628,7 +685,7 @@ class PatcherGUI:
     def copy_text(self):
         sel = self.tree.selection()
         if sel:
-            txt = self.tree.item(sel[0])["values"][2]
+            txt = self.tree.item(sel[0])["values"][3] # تعديل الاندكس ليتطابق مع النص
             self.root.clipboard_clear()
             self.root.clipboard_append(txt)
 
@@ -654,11 +711,9 @@ class PatcherGUI:
         old_txt.config(state="disabled")
 
         ttk.Label(win, text="النص الجديد:", font=("Segoe UI", 10, "bold")).pack(anchor="w", padx=12, pady=(8,0))
-        # عداد الأحرف
         count_label = ttk.Label(win, text="", foreground="#64748b")
         count_label.pack(anchor="w", padx=12)
 
-        new_text_var = tk.StringVar(value=entry.original)
         new_entry = tk.Text(win, height=3, font=("Consolas", 10), wrap="word")
         new_entry.pack(fill="x", padx=12, pady=4)
         new_entry.insert("1.0", entry.original)
@@ -681,9 +736,6 @@ class PatcherGUI:
 
         new_entry.bind("<KeyRelease>", update_count)
         update_count()
-
-        # معلومات
-        ttk.Label(win, text="يجب أن يكون الجديد بنفس الطول أو أقصر. الزائد يُحشى تلقائياً.", foreground="#64748b", font=("Segoe UI", 8)).pack(anchor="w", padx=12, pady=4)
 
         def do_save():
             new_txt = new_entry.get("1.0", "end-1c")
@@ -723,7 +775,6 @@ class PatcherGUI:
             messagebox.showinfo("نتيجة", f"لم يوجد أي ظهور لـ '{old}'")
             return
 
-        # عرض النتائج
         ok_count = sum(1 for _, msg in results if "✅" in msg)
         fail_count = len(results) - ok_count
         detail = "\n".join([f"{hex(off)} {msg}" for off, msg in results[:20]])
@@ -735,7 +786,6 @@ class PatcherGUI:
         self.status.config(text=f"Batch: {ok_count} تم، {fail_count} فشل")
 
     def populate_version_info(self):
-        # مسح
         for w in self.ver_frame.winfo_children():
             w.destroy()
         self.ver_entries.clear()
@@ -743,15 +793,12 @@ class PatcherGUI:
         info = self.pe.get_pe_info() if self.pe else {}
         ver = self.pe.get_version_info() if self.pe else {}
 
-        # PE info
         ttk.Label(self.ver_frame, text=f"PE Info: {info.get('machine','')} | Sections: {info.get('num_sections','')} | Entry: {info.get('entry_point','')}", foreground="#334155", font=("Segoe UI", 9, "bold")).pack(anchor="w", pady=(0,8))
 
         if not ver:
-            ttk.Label(self.ver_frame, text="لم يتم العثور على VersionInfo (قد يكون البرنامج غير PE أو stripped). يمكنك البحث عن النصوص في تبويب النصوص وتعديلها يدوياً.", foreground="#64748b", wraplength=800).pack(anchor="w", pady=8)
-            # اقترح حقول شائعة فارغة لإضافتها
+            ttk.Label(self.ver_frame, text="لم يتم العثور على VersionInfo (قد يكون البرنامج غير PE).", foreground="#64748b", wraplength=800).pack(anchor="w", pady=8)
             ver = {k: "" for k in ["CompanyName", "FileDescription", "FileVersion", "ProductName", "ProductVersion", "LegalCopyright", "OriginalFilename"]}
 
-        # إنشاء حقول
         for key, val in ver.items():
             row = ttk.Frame(self.ver_frame)
             row.pack(fill="x", pady=3)
@@ -759,17 +806,13 @@ class PatcherGUI:
             var = tk.StringVar(value=val)
             ent = ttk.Entry(row, textvariable=var, font=("Consolas", 9))
             ent.pack(side="left", fill="x", expand=True, padx=6)
-            # زر تعديل
+            
             def make_patch(k=key, v=var):
                 txt = v.get().strip()
                 if not self.patcher:
                     return
-                # حاول تعديل
                 old = self.pe.get_version_info().get(k, "")
-                # إذا كان فارغ، نبحث عنkey نفسه?
-                # نستخدم patcher للبحث عن old value
                 if old:
-                    # ابحث عن entry
                     for entry in self.patcher.strings:
                         if entry.original == old:
                             ok, msg = self.patcher.can_patch(entry, txt)
@@ -786,17 +829,12 @@ class PatcherGUI:
                             return
                     messagebox.showwarning("تنبيه", f"لم يوجد نص '{old}' في الجدول — عدّله من تبويب النصوص.")
                 else:
-                    # حاول البحث عن القيمة المدخلة كـ old?
-                    messagebox.showinfo("معلومة", "هذا الحقل لم يكن موجوداً أصلاً. عدّل النصوص يدوياً من تبويب النصوص إذا كان يظهر هناك.")
+                    messagebox.showinfo("معلومة", "هذا الحقل لم يكن موجوداً أصلاً.")
 
             ttk.Button(row, text="✏️ تعديل", width=8, command=make_patch).pack(side="left", padx=2)
             self.ver_entries[key] = var
 
-        # زر حفظ الكل
         ttk.Button(self.ver_frame, text="💾 حفظ كل حقول VersionInfo", command=self.save_all_version).pack(anchor="w", pady=10)
-
-        # تحذير
-        ttk.Label(self.ver_frame, text="ملاحظة: تغيير VersionInfo يغيّر ما يظهر في خصائص الملف (Properties) وقائمة البرامج.", foreground="#64748b", font=("Segoe UI", 8)).pack(anchor="w")
 
     def save_all_version(self):
         if not self.patcher:
@@ -806,7 +844,6 @@ class PatcherGUI:
             new_val = var.get().strip()
             old_val = self.pe.get_version_info().get(k, "")
             if new_val and new_val != old_val:
-                # حاول
                 for entry in self.patcher.strings:
                     if entry.original == old_val and old_val:
                         ok, msg = self.patcher.can_patch(entry, new_val)
@@ -830,31 +867,26 @@ class PatcherGUI:
             return
         out_path = pathlib.Path(out)
 
-        # تحقق من تعديلات خطرة
         dangerous = [p for p in self.patcher.patches if any(self.patcher.find_string_at(off) and self.patcher.find_string_at(off).section in [".text", ".code"] for off in [p[0]])]
         if dangerous:
-            if not messagebox.askyesno("تحذير", f"لديك {len(dangerous)} تعديل في قسم الكود (.text) — قد يمنع البرنامج من العمل!\n\nالأفضل تعديل نصوص في .rdata/.data/.rsrc فقط (تظهر باللون الأخضر).\n\nهل تريد المتابعة؟"):
+            if not messagebox.askyesno("تحذير", f"لديك {len(dangerous)} تعديل في قسم الكود (.text) — قد يمنع البرنامج من العمل!\n\nهل تريد المتابعة؟"):
                 return
 
-        # إذا كان المسار في Program Files بدون Admin، اقترح Desktop
         try:
-            # تحقق من الكتابة
             if not os.access(str(out_path.parent), os.W_OK):
-                # اقترح Desktop
                 desktop = pathlib.Path.home() / "Desktop"
                 if desktop.exists():
                     alt = desktop / out_path.name
-                    if messagebox.askyesno("صلاحيات", f"لا يمكن الكتابة في:\n{out_path.parent}\n\nتحتاج Admin.\n\nهل تريد الحفظ على سطح المكتب بدلاً؟\n{alt}"):
+                    if messagebox.askyesno("صلاحيات", f"لا يمكن الكتابة هنا.\n\nهل تريد الحفظ على سطح المكتب بدلاً؟\n{alt}"):
                         out_path = alt
                         self.output_var.set(str(out_path))
+                        
             saved = self.patcher.save(out_path, fix_checksum=True)
-            # تقرير
             rep = out_path.with_suffix(".patch_report.json")
             self.patcher.save_report(rep)
 
-            # تحقق بعد الحفظ
             val = self.patcher.validate_patched()
-            msg = f"✅ تم الحفظ:\n{saved}\n\nتقرير: {rep}\n\nعدد التعديلات: {len(self.patcher.patches)}\n"
+            msg = f"✅ تم الحفظ:\n{saved}\n\nعدد التعديلات: {len(self.patcher.patches)}\n"
             if val.get("pe_valid") == False:
                 msg += f"\n⚠️ تحذير PE: {val['pe_errors']}"
             if val.get("packed", {}).get("packed"):
@@ -864,27 +896,21 @@ class PatcherGUI:
 
             msg += "\n\nتم إصلاح PE CheckSum تلقائياً."
 
-            # عرض تشخيص
             messagebox.showinfo("تم", msg)
-            self.status.config(text=f"✅ حُفظ {saved.name} — تم إصلاح CheckSum")
+            self.status.config(text=f"✅ حُفظ {saved.name}")
 
-            # اختبار تشغيل سريع
-            if messagebox.askyesno("اختبار", "هل تريد تجربة تشغيل البرنامج المعدّل الآن (اختبار سريع 3 ثواني)؟\nإذا كان لا يعمل سيظهر السبب."):
+            if messagebox.askyesno("اختبار", "هل تريد تجربة تشغيل البرنامج المعدّل الآن؟"):
                 self.test_run(saved)
 
             if messagebox.askyesno("فتح", "هل تريد فتح مجلد الملف الجديد؟"):
-                try:
-                    os.startfile(str(out_path.parent))
-                except:
-                    pass
+                try: os.startfile(str(out_path.parent))
+                except: pass
         except PermissionError as e:
-            messagebox.showerror("صلاحيات", f"ممنوع الكتابة هنا (تحتاج Admin):\n{e}\n\nالحل:\n1. احفظ على سطح المكتب\n2. أو كليك يمين على Patcher_GUI.bat → تشغيل كمسؤول")
+            messagebox.showerror("صلاحيات", f"ممنوع الكتابة هنا (تحتاج Admin):\n{e}\n\nاحفظ الملف على سطح المكتب.")
         except Exception as e:
-            import traceback
             messagebox.showerror("خطأ", f"فشل الحفظ:\n{e}\n\n{traceback.format_exc()}")
 
     def test_run(self, path):
-        """يجرب تشغيل البرنامج المعدّل 3 ثواني ويعرض النتيجة"""
         import subprocess
         win = tk.Toplevel(self.root)
         win.title("اختبار التشغيل")
@@ -896,8 +922,6 @@ class PatcherGUI:
 
         def worker():
             try:
-                # جرب تشغيل مع timeout 3 ثواني
-                # للـ .py استخدم python، للـ .exe مباشرة
                 if path.suffix.lower() in [".py", ".pyw"]:
                     cmd = [sys.executable, str(path), "--help"]
                 else:
@@ -911,27 +935,14 @@ class PatcherGUI:
                     txt.insert("end", f"STDOUT:\n{out[:1000]}\n")
                     txt.insert("end", f"STDERR:\n{err[:1000]}\n")
                     if code == 0:
-                        txt.insert("end", "\n✅ البرنامج بدأ بنجاح (exit 0) — يبدو سليماً!\n")
+                        txt.insert("end", "\n✅ البرنامج بدأ بنجاح (exit 0)!\n")
                     else:
-                        txt.insert("end", f"\n⚠️ خرج بكود {code} — قد يكون خطأ أو يحتاج وسائط مختلفة.\n")
-                        txt.insert("end", "جرب تشغيله يدوياً من PowerShell لرؤية الخطأ الكامل.\n")
+                        txt.insert("end", f"\n⚠️ خرج بكود {code}.\n")
                 except subprocess.TimeoutExpired:
                     proc.kill()
-                    txt.insert("end", "⏱️ البرنامج اشتغل ولم ينته خلال 3 ثواني — تم إيقافه.\n")
-                    txt.insert("end", "هذا طبيعي للبرامج التي تفتح نافذة — يعني أنه يعمل!\n")
-                    txt.insert("end", "✅ الاختبار ناجح.\n")
-            except FileNotFoundError as e:
-                txt.insert("end", f"❌ فشل التشغيل: {e}\n")
-                txt.insert("end", "قد يحتاج ملفات DLL بجانبه.\n")
+                    txt.insert("end", "⏱️ البرنامج اشتغل بنجاح (تم إيقافه بعد 3 ثواني لتخطي واجهة الرسوم).\n")
             except Exception as e:
                 txt.insert("end", f"❌ خطأ: {e}\n{traceback.format_exc()}\n")
-
-            txt.insert("end", "\n" + "="*60 + "\n")
-            txt.insert("end", "إذا كان البرنامج لا يشتغل بدون خطأ:\n")
-            txt.insert("end", "1. جرب تعديل نص واحد فقط بنفس الطول تماماً\n")
-            txt.insert("end", "2. تجنب نصوص في .text (حمراء) — عدّل الخضراء فقط (.rdata/.rsrc)\n")
-            txt.insert("end", "3. تأكد أن البرنامج غير مضغوط (UPX)\n")
-            txt.insert("end", "4. شغّله من PowerShell: .\\program_modified.exe  وشاهد الخطأ\n")
 
         threading.Thread(target=worker, daemon=True).start()
 
@@ -957,22 +968,32 @@ class PatcherGUI:
             messagebox.showinfo("معلومة", "لا توجد تعديلات لإلغائها")
             return
         if messagebox.askyesno("تأكيد", f"إلغاء {len(self.patcher.patches)} تعديل والعودة للنسخة الأصلية؟"):
-            # إعادة تحميل
             self.load_file()
 
 def main():
     if not TK_AVAILABLE:
         print("Tkinter غير متوفر", file=sys.stderr)
-        print("sudo apt install python3-tk  (Linux)", file=sys.stderr)
         sys.exit(1)
-    if not PATCHER_AVAILABLE:
-        print(f"فشل تحميل Patcher: {IMPORT_ERR}", file=sys.stderr)
-        sys.exit(1)
+        
+    # تهيئة واجهة المستخدم أولاً لعرض رسالة خطأ واضحة بدلاً من إغلاق البرنامج بصمت
     root = tk.Tk()
+    
+    if not PATCHER_AVAILABLE:
+        # إظهار رسالة خطأ رسومية للمستخدم تشرح المشكلة بدقة
+        messagebox.showerror(
+            "خطأ في التشغيل (Dependencies Missing)",
+            f"لم يتم العثور على مكتبة RevSpec الخاصة بباتشر البرامج في بيئة العمل.\n\n"
+            f"التشخيص:\n{IMPORT_ERR}\n\n"
+            f"تأكد من تشغيل البرنامج من المجلد الصحيح أو تثبيت حزمة revspec."
+        )
+        root.destroy()
+        sys.exit(1)
+        
     try:
         root.tk.call("tk", "scaling", 1.1)
     except:
         pass
+        
     app = PatcherGUI(root)
     root.mainloop()
 
