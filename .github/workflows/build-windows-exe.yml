@@ -32,14 +32,13 @@ jobs:
       - name: Compile (single source file)
         shell: pwsh
         run: |
-          $out = & g++ -O2 -std=c++17 -Wall -Wextra `
-              tools/serial_change_probe.cpp -o serial_change_probe.exe `
-              -ladvapi32 -lole32 -loleaut32 -lwbemuuid -liphlpapi 2>&1 | Out-String
+          $gargs = @('-O2','-std=c++17','-Wall','-Wextra','tools/serial_change_probe.cpp','-o','serial_change_probe.exe','-ladvapi32','-lole32','-loleaut32','-lwbemuuid','-liphlpapi')
+          $out = & g++ @gargs 2>&1 | Out-String
           $code = $LASTEXITCODE
           $out | Out-File -FilePath build.log -Append -Encoding utf8
-          "```" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          '```' | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
           $out | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
-          "```" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          '```' | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
           if ($code -ne 0) {
             foreach ($l in ($out -split "`r?`n" | Where-Object { $_ -ne "" } | Select-Object -First 15)) {
               Write-Output "::error title=MinGW compile::$l"
@@ -94,9 +93,9 @@ jobs:
           $out = & cmd /c "cl /nologo /O2 /EHsc /W4 tools\serial_change_probe.cpp advapi32.lib ole32.lib oleaut32.lib wbemuuid.lib iphlpapi.lib /Fe:serial_change_probe.exe" 2>&1 | Out-String
           $code = $LASTEXITCODE
           $out | Out-File -FilePath build.log -Append -Encoding utf8
-          "```" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          '```' | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
           $out | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
-          "```" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          '```' | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
           if ($code -ne 0) {
             foreach ($l in ($out -split "`r?`n" | Where-Object { $_ -ne "" } | Select-Object -First 15)) {
               Write-Output "::error title=MSVC compile::$l"
