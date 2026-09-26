@@ -1,0 +1,11 @@
+{
+  "objdump_returncode": 0,
+  "objdump_lines": 74673,
+  "objdump_stderr_preview": "",
+  "functions_found": [
+    ".text",
+    ".mmap"
+  ],
+  "functions_count": 2,
+  "interesting_mnemonics": []
+}

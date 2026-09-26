@@ -1,0 +1,188 @@
+{
+  "findings": [
+    {
+      "id": "strings.summary",
+      "category": "strings",
+      "title": "ملخص السلاسل",
+      "description": "إجمالي 137384 سلسلة ascii (+ 833 utf16)",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "strings:strings(1)",
+      "method": "strings -a -n 4",
+      "evidence_refs": [],
+      "data": {
+        "ascii": 137384,
+        "utf16": 833
+      },
+      "tags": []
+    },
+    {
+      "id": "strings.urls",
+      "category": "strings",
+      "title": "URLs مكتشفة",
+      "description": "عناوين URL مستخرجة من السلاسل",
+      "confidence": "high",
+      "provenance": "observed",
+      "source": "strings:regex",
+      "method": "regex https?://",
+      "evidence_refs": [],
+      "data": {
+        "urls": [
+          "https://discord.gg/ehXCwMMFrM"
+        ]
+      },
+      "tags": [
+        "network",
+        "ioc"
+      ]
+    },
+    {
+      "id": "strings.ips",
+      "category": "strings",
+      "title": "عناوين IP",
+      "description": "عناوين IP محتملة",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "strings:regex",
+      "method": "ipv4 regex",
+      "evidence_refs": [],
+      "data": {
+        "ips": [
+          "127.0.0.1",
+          "2.56.246.128"
+        ]
+      },
+      "tags": [
+        "network"
+      ]
+    },
+    {
+      "id": "strings.emails",
+      "category": "strings",
+      "title": "عناوين بريد",
+      "description": "عناوين بريد مستخرجة",
+      "confidence": "high",
+      "provenance": "observed",
+      "source": "strings:regex",
+      "method": "email regex",
+      "evidence_refs": [],
+      "data": {
+        "emails": [
+          "f@PX.BQ",
+          "q@ub.q",
+          "W@0.R",
+          "W0@6.5",
+          "N@TmS.T",
+          "L@7.LeW",
+          "N@oSD.Z",
+          "MGj@RY.G",
+          "3@0vq.a",
+          "D@8.B",
+          "hq0k2c@3x.P",
+          "r@p.9",
+          "L@CAE.W"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "strings.keywords",
+      "category": "strings",
+      "title": "كلمات مفتاحية مثيرة",
+      "description": "كلمات دلالية قد تشير لوظائف حساسة",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "strings:keyword search",
+      "method": "case-insensitive substring count",
+      "evidence_refs": [],
+      "data": {
+        "keywords": {
+          "db_": 5,
+          "sql": 2,
+          "http": 11,
+          "debug": 8,
+          "error": 25,
+          "fail": 15,
+          "success": 2,
+          "admin": 1,
+          "root": 1,
+          "key": 19,
+          "auth": 1,
+          "user": 19,
+          "AES": 1,
+          "RSA": 1,
+          "DES": 16
+        }
+      },
+      "tags": [
+        "heuristic"
+      ]
+    },
+    {
+      "id": "strings.paths",
+      "category": "strings",
+      "title": "مسارات ملفات",
+      "description": "مسارات ملفات مستخرجة (عينة من 50)",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "strings:regex",
+      "method": "path regex",
+      "evidence_refs": [],
+      "data": {
+        "paths": [
+          "/1U",
+          "/trustInfo",
+          "/Gzm",
+          "/Pma",
+          "/B-",
+          "/D_b",
+          "/cgHc",
+          "/2j2",
+          "/api/event",
+          "/M_",
+          "/M2026",
+          "/K4",
+          "/302",
+          "/Av",
+          "/gE",
+          "/Ay",
+          "/imu1w2",
+          "/nD",
+          "/m-",
+          "/7n",
+          "/w.",
+          "/r5",
+          "/l",
+          "/6B",
+          "/gb",
+          "/V2",
+          "/DY",
+          "/3zikim",
+          "/B_",
+          "/T5",
+          "/UncnHq",
+          "/O8",
+          "/Ap",
+          "/42",
+          "/zYy",
+          "/Zd",
+          "/_g",
+          "/pMs",
+          "/9ea",
+          "/Pn",
+          "/nb",
+          "/ZSj",
+          "/dj",
+          "/Tk",
+          "/D1",
+          "/9yQ",
+          "/6q",
+          "/UP",
+          "/s-1",
+          "/5Zu"
+        ]
+      },
+      "tags": []
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+{
+  "findings": [
+    {
+      "id": "behavior.network",
+      "category": "behavior",
+      "title": "سلوك محتمل: عمليات شبكة",
+      "description": "تم العثور على ['socket', 'send'] مطابقة للنمط \\b(socket|connect|bind|listen|accept|send|recv)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(socket|connect|bind|listen|accept|send|recv)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "network",
+        "description": "عمليات شبكة",
+        "hits": [
+          "socket",
+          "send"
+        ],
+        "pattern": "\\b(socket|connect|bind|listen|accept|send|recv)\\b"
+      },
+      "tags": [
+        "network",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.file-io",
+      "category": "behavior",
+      "title": "سلوك محتمل: عمليات ملفات",
+      "description": "تم العثور على ['read', 'open'] مطابقة للنمط \\b(open|read|write|fopen|fwrite|fread|creat)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(open|read|write|fopen|fwrite|fread|creat)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "file-io",
+        "description": "عمليات ملفات",
+        "hits": [
+          "read",
+          "open"
+        ],
+        "pattern": "\\b(open|read|write|fopen|fwrite|fread|creat)\\b"
+      },
+      "tags": [
+        "file-io",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.process",
+      "category": "behavior",
+      "title": "سلوك محتمل: إنشاء عمليات",
+      "description": "تم العثور على ['system'] مطابقة للنمط \\b(execve|execvp|system|popen|fork|clone)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(execve|execvp|system|popen|fork|clone)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "process",
+        "description": "إنشاء عمليات",
+        "hits": [
+          "system"
+        ],
+        "pattern": "\\b(execve|execvp|system|popen|fork|clone)\\b"
+      },
+      "tags": [
+        "process",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.memory",
+      "category": "behavior",
+      "title": "سلوك محتمل: تلاعب بالذاكرة / حقن محتمل",
+      "description": "تم العثور على ['mmap', 'VirtualProtect'] مطابقة للنمط \\b(mmap|mprotect|VirtualAlloc|VirtualProtect)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(mmap|mprotect|VirtualAlloc|VirtualProtect)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "memory",
+        "description": "تلاعب بالذاكرة / حقن محتمل",
+        "hits": [
+          "mmap",
+          "VirtualProtect"
+        ],
+        "pattern": "\\b(mmap|mprotect|VirtualAlloc|VirtualProtect)\\b"
+      },
+      "tags": [
+        "memory",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.injection",
+      "category": "behavior",
+      "title": "سلوك محتمل: حقن/تتبع عمليات",
+      "description": "تم العثور على ['CreateRemoteThread', 'WriteProcessMemory'] مطابقة للنمط \\b(ptrace|CreateRemoteThread|WriteProcessMemory)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(ptrace|CreateRemoteThread|WriteProcessMemory)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "injection",
+        "description": "حقن/تتبع عمليات",
+        "hits": [
+          "CreateRemoteThread",
+          "WriteProcessMemory"
+        ],
+        "pattern": "\\b(ptrace|CreateRemoteThread|WriteProcessMemory)\\b"
+      },
+      "tags": [
+        "injection",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.crypto",
+      "category": "behavior",
+      "title": "سلوك محتمل: عمليات تشفير",
+      "description": "تم العثور على ['RSA', 'AES'] مطابقة للنمط \\b(crypt|encrypt|decrypt|AES|RSA|EVP_)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(crypt|encrypt|decrypt|AES|RSA|EVP_)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "crypto",
+        "description": "عمليات تشفير",
+        "hits": [
+          "RSA",
+          "AES"
+        ],
+        "pattern": "\\b(crypt|encrypt|decrypt|AES|RSA|EVP_)\\b"
+      },
+      "tags": [
+        "crypto",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.cli_hints",
+      "category": "interfaces",
+      "title": "تلميحات واجهة سطر الأوامر",
+      "description": "سلاسل تشبه خيارات CLI",
+      "confidence": "low",
+      "provenance": "inferred",
+      "source": "behavior:strings scan",
+      "method": "lines starting with -",
+      "evidence_refs": [],
+      "data": {
+        "cli_hints": [
+          "-jd_;",
+          "-h%D",
+          "-t%D",
+          "-J0D",
+          "-@0D",
+          "-^0D",
+          "-gqdt",
+          "-]q}",
+          "-+HC[",
+          "-e@f",
+          "-[bU'*",
+          "-tON",
+          "-}\t/",
+          "-RHj=",
+          "-fa0o",
+          "-%k0",
+          "-{'wb",
+          "R--Plk",
+          "-( ,",
+          "-bH)",
+          "-lh!20",
+          "-ph!20",
+          "-lth!20",
+          "-U026C5x",
+          "-lth!20=a",
+          "-lth!20T",
+          "-<86",
+          "-O|{",
+          "-uh!",
+          "-A~S",
+          "-v'}",
+          "-Pte",
+          "-%th!",
+          "-D>\"",
+          "-Xh!20",
+          "-+lt",
+          "-002",
+          "-p8p",
+          "-!G4",
+          "-uh!3",
+          "-302",
+          "-mth",
+          "-Keam",
+          "-#!20mh6'",
+          "-lth.",
+          "-102",
+          "-y6C5",
+          "-lth",
+          "-y024Lb",
+          "-lti"
+        ]
+      },
+      "tags": [
+        "interface"
+      ]
+    }
+  ]
+}

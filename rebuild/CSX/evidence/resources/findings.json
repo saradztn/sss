@@ -1,0 +1,21 @@
+{
+  "findings": [
+    {
+      "id": "res.no_obvious",
+      "category": "resources",
+      "title": "لا توجد موارد ظاهرة بالطرق المتاحة",
+      "description": "لم يتم العثور على موارد مضمنة واضحة؛ قد تكون مضمنة كـ blobs أو مشفرة",
+      "confidence": "unknown",
+      "provenance": "undetermined",
+      "source": "resources:negation",
+      "method": "no zip / no version",
+      "evidence_refs": [],
+      "data": {
+        "is_zip": false,
+        "config_hints": [],
+        "version_strings": []
+      },
+      "tags": []
+    }
+  ]
+}

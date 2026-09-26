@@ -1,0 +1,48 @@
+{
+  "pe_sections": [
+    {
+      "Name": ".text",
+      "VirtualAddress": "0x1000",
+      "Misc_VirtualSize": 227065,
+      "SizeOfRawData": 227328
+    },
+    {
+      "Name": ".mmap",
+      "VirtualAddress": "0x39000",
+      "Misc_VirtualSize": 581,
+      "SizeOfRawData": 1024
+    },
+    {
+      "Name": ".rdata",
+      "VirtualAddress": "0x3a000",
+      "Misc_VirtualSize": 68000,
+      "SizeOfRawData": 68096
+    },
+    {
+      "Name": ".data",
+      "VirtualAddress": "0x4b000",
+      "Misc_VirtualSize": 7944,
+      "SizeOfRawData": 3584
+    },
+    {
+      "Name": ".fptable",
+      "VirtualAddress": "0x4d000",
+      "Misc_VirtualSize": 128,
+      "SizeOfRawData": 512
+    },
+    {
+      "Name": ".rsrc",
+      "VirtualAddress": "0x4e000",
+      "Misc_VirtualSize": 5862968,
+      "SizeOfRawData": 5863424
+    },
+    {
+      "Name": ".reloc",
+      "VirtualAddress": "0x5e6000",
+      "Misc_VirtualSize": 10452,
+      "SizeOfRawData": 10752
+    }
+  ],
+  "pe_entry": "0x22052",
+  "pe_image_base": "0x400000"
+}

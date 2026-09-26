@@ -1,0 +1,51 @@
+{
+  "findings": [
+    {
+      "id": "crypto.high_entropy",
+      "category": "crypto",
+      "title": "إنتروبي عالي — محتمل تشفير/ضغط/حزم",
+      "description": "إنتروبي كلي 7.95 (>7.2) يشير لاحتمال تشفير أو ضغط أو packer",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "crypto:entropy",
+      "method": "shannon entropy",
+      "evidence_refs": [],
+      "data": {
+        "overall_entropy": 7.9478064199225855,
+        "high_windows": 4276
+      },
+      "tags": [
+        "heuristic"
+      ]
+    },
+    {
+      "id": "crypto.packed_sections",
+      "category": "crypto",
+      "title": "نوافذ عالية الإنتروبي كثيرة",
+      "description": "4276/6031 نوافذ بإنتروبي >7.5 — قد تشير لمقاطع مشفرة/مضغوطة",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "crypto:window_entropy",
+      "method": "1KB sliding window",
+      "evidence_refs": [],
+      "data": {
+        "high_windows": 4276,
+        "total": 6031
+      },
+      "tags": []
+    },
+    {
+      "id": "crypto.no_constants",
+      "category": "crypto",
+      "title": "لا توجد ثوابت تشفير واضحة",
+      "description": "لم يتم العثور على S-box أو PEM markers أو base64 alphabet كامل",
+      "confidence": "medium",
+      "provenance": "observed",
+      "source": "crypto:constant search",
+      "method": "byte pattern search",
+      "evidence_refs": [],
+      "data": {},
+      "tags": []
+    }
+  ]
+}

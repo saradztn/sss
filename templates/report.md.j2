@@ -1,0 +1,333 @@
+# تقرير الهندسة العكسية — RevSpec
+> **للاستخدام فقط على البرامج التي تملكها أو لديك تصريح بتحليلها**
+> هذا التقرير يميّز بوضوح بين **الحقيقة المرصودة** و**الاستنتاج**، ويذكر مصدر كل معلومة ودرجة الثقة.
+
+---
+
+## 1) معلومات البرنامج والعينة
+
+| البند | القيمة |
+|-------|--------|
+| **اسم الملف** | `{{ result.sample.filename }}` |
+| **المسار الأصلي** | `{{ result.sample.path }}` |
+| **الحجم** | {{ result.sample.size_bytes }} بايت ({{ "%.2f"|format(result.sample.size_bytes/1024) }} KB) |
+| **SHA256** | `{{ result.sample.sha256 }}` |
+| **SHA1** | `{{ result.sample.sha1 }}` |
+| **MD5** | `{{ result.sample.md5 }}` |
+| **تاريخ الجمع** | {{ result.sample.collected_at }} |
+
+### البيئة والمنصة (Host)
+
+| البند | القيمة |
+|-------|--------|
+| نظام التشغيل | {{ result.host.os }} |
+| المعمارية | {{ result.host.arch }} |
+| Python | {{ result.host.python_version }} |
+| Hostname | {{ result.host.hostname }} |
+| وقت التحليل | {{ result.started_at }} → {{ result.finished_at }} |
+
+**إصدارات الأدوات:**
+
+{% for k,v in result.host.tool_versions.items() %}- `{{k}}`: {{v}}
+{% endfor %}
+
+---
+
+## 2) ملخص تنفيذي
+
+- إجمالي الاستنتاجات: **{{ result.summary.total_findings }}**
+- موزعة حسب الفئة:
+{% for cat, cnt in result.summary.by_category.items() %}  - {{ cat }}: {{ cnt }}
+{% endfor %}
+- توزيع الثقة:
+{% for conf, cnt in result.summary.confidence_histogram.items() %}  - {{ conf }}: {{ cnt }}
+{% endfor %}
+- توزيع المصدر:
+{% for prov, cnt in result.summary.provenance_histogram.items() %}  - {{ prov }}: {{ cnt }}
+{% endfor %}
+
+**حالة المحللات:**
+{% for a in result.analyzers %}
+- `{{ a.analyzer }}`: {{ a.status }} ({{ a.duration_ms }}ms) {% if a.warnings %}⚠️ {{ a.warnings|join(", ") }}{% endif %}
+{% endfor %}
+
+---
+
+## 3) بنية البرنامج
+
+{% set struct_findings = by_cat.get('structure', []) %}
+{% if struct_findings %}
+{% for f in struct_findings %}
+### {{ f.title }} — {{ f.confidence|badge }} ({{ f.provenance }})
+- **المصدر:** `{{ f.source }}` — `{{ f.method }}`
+- **الوصف:** {{ f.description }}
+{% if f.data %}```json
+{{ f.data | tojson(indent=2) }}
+```{% endif %}
+{% endfor %}
+{% else %}
+لا توجد بيانات بنية.
+{% endif %}
+
+---
+
+## 4) المنصة والمعمارية والـRuntime
+
+{% set plat = by_cat.get('platform', []) %}
+{% for f in plat %}
+### {{ f.title }} — {{ f.confidence|badge }}
+- **المنهج:** {{ f.method }}
+- **الوصف:** {{ f.description }}
+{% if f.data %}```json
+{{ f.data | tojson(indent=2) }}
+```{% endif %}
+{% endfor %}
+
+---
+
+## 5) المكونات والوحدات المكتشفة
+
+{% set deps = by_cat.get('dependencies', []) %}
+{% for f in deps %}
+- **{{ f.title }}** — {{ f.confidence|badge }} — {{ f.description }}
+  - مصدر: `{{ f.source }}`
+{% if f.data.needed_libs %}  - libs: `{{ f.data.needed_libs|join(", ") }}`
+{% endif %}
+{% if f.data.imports_sample %}  - عينة imports: `{{ f.data.imports_sample[:10]|join(", ") }}` (الإجمالي {{ f.data.total }})
+{% endif %}
+{% endfor %}
+
+### الموارد
+{% set res = by_cat.get('resources', []) %}
+{% for f in res %}
+- **{{ f.title }}** — {{ f.confidence|badge }} — {{ f.description }}
+{% if f.data %}```json
+{{ f.data | tojson(indent=2) }}
+```{% endif %}
+{% endfor %}
+
+---
+
+## 6) الوظائف والسلوكيات (Static)
+
+{% set beh = by_cat.get('behavior', []) %}
+{% for f in beh %}
+- **{{ f.title }}** — {{ f.confidence|badge }} — tags: {{ f.tags|join(", ") }}
+  - {{ f.description }}
+  - مصدر: `{{ f.source }}` / `{{ f.method }}`
+{% if f.data %}```json
+{{ f.data | tojson(indent=2) }}
+```{% endif %}
+{% endfor %}
+
+---
+
+## 7) الواجهات والمدخلات والمخرجات
+
+{% set iface = by_cat.get('interfaces', []) %}
+{% if iface %}
+{% for f in iface %}
+- **{{ f.title }}** — {{ f.confidence|badge }}
+  - {{ f.description }}
+{% if f.data %}```json
+{{ f.data | tojson(indent=2) }}
+```{% endif %}
+{% endfor %}
+{% else %}
+- لا توجد واجهات CLI/Network واضحة بالطرق الحالية (انظر strings).
+{% endif %}
+
+> **ملاحظة:** الواجهات الموثقة هنا هي **قابلة للملاحظة** فقط (CLI args, file paths, env vars, network endpoints). لا ندّعي معرفة بروتوكول داخلي غير مرصود.
+
+---
+
+## 8) الاعتمادات
+
+انظر قسم المكونات أعلاه. ملخص `needed` و `imports` يمثل **الاعتمادات المباشرة المرصودة**. الاعتمادات العابرة (transitive) غير مستنتجة إلا إذا ظهرت في `ldd` الديناميكي.
+
+---
+
+## 9) تدفقات البيانات والأحداث
+
+{% set dyn = by_cat.get('dynamic', []) %}
+{% if dyn %}
+{% for f in dyn %}
+- **{{ f.title }}** — {{ f.confidence|badge }} ({{ f.provenance }})
+  - {{ f.description }}
+{% if f.data.files %}  - ملفات: `{{ f.data.files[:10]|join(", ") }}`
+{% endif %}
+{% if f.data.counts %}  - syscalls: `{{ f.data.counts }}`
+{% endif %}
+{% endfor %}
+{% else %}
+- لا يوجد تتبع ديناميكي (معطل أو غير متوفر).
+{% endif %}
+
+---
+
+## 10) الحالات والانتقالات المهمة
+
+- يتم اشتقاق الحالات من رموز الخروج و stdout/stderr و syscalls.
+- إذا كان التطبيق تفاعليًا، فإن هذا القسم يحتاج تشغيلًا بمُدخلات متنوعة وتسجيل الانتقالات (يُنصح بإضافة محلل scenario).
+
+{% if result.comparison %}
+**مقارنة ثابت/ديناميكي:**
+```json
+{{ result.comparison | tojson(indent=2) }}
+```
+{% endif %}
+
+---
+
+## 11) الموارد والملفات والإعدادات
+
+انظر قسم الموارد. الملفات التي يعتمد عليها البرنامج تُقسم إلى:
+- **مرصودة ديناميكياً** (proven): من `strace` — دقيقة.
+- **مستنتجة من السلاسل** (medium/low): قد تكون بقايا أو مسارات افتراضية.
+
+---
+
+## 12) نتائج التحليل الثابت
+
+| المحلل | الحالة | النتائج |
+{% for a in result.analyzers if a.analyzer not in ['dynamic','compare'] %}| {{ a.analyzer }} | {{ a.status }} | {{ a.findings|length }} findings |
+{% endfor %}
+
+**أبرز الاستنتاجات الثابتة:**
+
+{% for f in findings if f.category in ['metadata','platform','structure','strings','dependencies','crypto','disasm','behavior'] %}
+- [{{ f.confidence|badge }}] **{{ f.title }}** — {{ f.description }} — *{{ f.source }}*
+{% endfor %}
+
+---
+
+## 13) نتائج التحليل الديناميكي
+
+{% if by_cat.get('dynamic') %}
+{% for f in by_cat.get('dynamic', []) %}
+- [{{ f.confidence|badge }}] **{{ f.title }}** — {{ f.description }}
+{% endfor %}
+{% else %}
+- **لم يتم إجراء تحليل ديناميكي** أو كان معطلاً. لتفعيله: `revspec analyze <binary> --enable-dynamic`.
+- السبب: العزل الافتراضي يمنع التنفيذ غير المقصود.
+{% endif %}
+
+---
+
+## 14) درجة الثقة في كل استنتاج
+
+| المستوى | المعنى | متى تُستخدم |
+|---------|--------|-------------|
+| ✅ **proven** | حقيقة مرصودة مباشرة | hash محسوب، syscall مرصود، header مقروء |
+| 🔵 **high** | استنتاج قوي بأدلة متعددة | توافق file+readelf+strings |
+| 🟡 **medium** | معقول بدليل واحد | keyword في strings فقط |
+| 🟠 **low** | ضعيف | heuristic عام |
+| 🔴 **speculative** | تخميني | نمط غير مكتمل |
+| ⚪ **unknown** | غير محدد | لا يوجد دليل |
+
+كل finding في الـJSON يحمل `confidence` و `provenance` و `method`.
+
+---
+
+## 15) الأشياء التي تم إثباتها مقابل المستنتجة
+
+### ✅ مثبتة (proven/observed)
+{% for f in proven %}
+- **{{ f.title }}** — {{ f.description }} — `{{ f.source }}` — `{{ f.method }}`
+{% endfor %}
+
+### 🔍 مستنتجة (inferred)
+{% for f in inferred %}
+- **{{ f.title }}** — {{ f.description }} — ثقة: {{ f.confidence|badge }} — `{{ f.method }}`
+{% endfor %}
+
+### ❓ غير محددة / تعذر تحديدها
+{% for f in undetermined %}
+- **{{ f.title }}** — {{ f.description }}
+{% endfor %}
+
+---
+
+## 16) الأشياء التي تعذر تحديدها
+
+- المصدر الأصلي الحرفي لا يمكن استعادته من binary بدون معلومات debug/full symbols؛ ما نستعيده هو **سلوك مكافئ**.
+- المسارات غير المُنفذة أثناء الديناميكي تظل غير مؤكدة.
+- البروتوكولات المشفرة/المضغوطة تحتاج مفاتيح أو عينات إضافية.
+- المنطق الداخلي المعقد (خوارزميات مخصصة) يحتاج تحليل يدوي إضافي بـ Ghidra/IDA.
+
+---
+
+## 17) القيود ومواطن عدم اليقين
+
+- **الثابت لا يرى السلوك وقت التشغيل**؛ الديناميكي لا يغطي كل المسارات.
+- **Stripped binaries** تخفي الأسماء؛ الثقة تنخفض إلى medium/low.
+- **Packers/Crypto**: الإنتروبي العالي قد يعني تشفيرًا لكنه ليس دليلاً قاطعًا.
+- **العزل**: يمنع الوصول للشبكة الخارجية؛ قد يُظهر سلوكًا مختلفًا عن البيئة الحقيقية.
+- **الأدوات المتوفرة**: إذا غابت `pefile/lief/capstone` تنخفض الدقة لكن التقرير يذكر ذلك.
+
+---
+
+## 18) Specification قابلة للاستخدام لإعادة التنفيذ (AI-Ready)
+
+> **هذه الفقرة هي الخلاصة التنفيذية لنموذج AI آخر.**
+
+**السلوك القابل للملاحظة الذي يجب الحفاظ عليه:**
+
+{% for f in findings if f.confidence in ['proven','high'] %}
+- {{ f.title }}: {{ f.description }}
+{% endfor %}
+
+**الواجهات التي يجب إعادة تنفيذها:**
+{% for f in findings if f.category == 'interfaces' and f.confidence != 'unknown' %}
+- {{ f.title }} — {{ f.description }} — data: `{{ f.data | tojson }}` 
+{% else %}
+- (استخرج الواجهات من findings: strings.urls, strings.paths, behavior.cli_hints, dynamic.file_access)
+{% endfor %}
+
+**الاعتمادات الإلزامية:**
+{% for f in findings if f.category == 'dependencies' and f.confidence == 'proven' %}
+- {{ f.description }} — `{{ f.data }}`
+{% endfor %}
+
+**القيود:**
+- لا تختلق كودًا غير مؤكد؛ وثّق السلوك فقط.
+- إذا كان التقرير يذكر `unknown`، يجب أن يطلب التنفيذ الجديد توضيحًا أو يضع افتراضًا موثقًا.
+
+**المخرجات المطلوبة للتنفيذ الجديد:**
+1. برنامج مكافئ وظيفياً يحقق نفس المدخلات/المخرجات المرصودة.
+2. نفس الواجهات (CLI/Files/Network) كما في `interfaces` و `dynamic`.
+3. نفس الاعتمادات أو بدائل موثقة.
+4. اختبارات تعيد إنتاج السلوك الديناميكي المرصود.
+
+---
+
+## الملاحق
+
+### A) الأدلة الخام
+
+جميع الأدلة محفوظة تحت `evidence/` داخل مجلد الـrun:
+{% for a in result.analyzers %}
+- `evidence/{{ a.analyzer }}/` — {{ a.findings|length }} findings — status {{ a.status }}
+{% endfor %}
+
+### B) كيفية إعادة الإنتاج
+
+```bash
+# إعادة تشغيل التحليل بنفس البيئة
+revspec analyze "{{ result.sample.path }}" --output ./runs --enable-dynamic
+
+# التحقق من الـhash
+sha256sum "{{ result.sample.path }}"
+# يجب أن يطابق {{ result.sample.sha256 }}
+
+# التحقق من المخطط
+python -m jsonschema -i report.json schemas/report.schema.json
+```
+
+### C) الترخيص والأخلاق
+
+هذا التحليل أُجري على عينة يملكها المحلل أو لديه تصريح بها. لا تستخدم هذه المنهجية على برامج لا تملكها.
+
+---
+
+*تم إنشاء هذا التقرير بواسطة RevSpec v{{ result.schema_version }} — {{ result.finished_at }}*

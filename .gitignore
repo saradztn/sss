@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Runs
+runs/
+*.log
+*.tmp
+
+# Evidence caches
+.evidence_cache/
+
+# Compiled demo
+samples/demo_app/demo_app
+samples/demo_app/*.o
+samples/demo_app/*.so
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+
+# Large artifacts
+*.pcap
+*.dump
+*.bin
+!samples/demo_app/config.ini

@@ -1,0 +1,66 @@
+{
+  "findings": [
+    {
+      "id": "meta.hash.sha256",
+      "category": "metadata",
+      "title": "SHA256",
+      "description": "SHA256 للعينة = 683520631b81a7283e9d7c0870115867ed29630a782348119308d22eae1b6f31",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "metadata:hashlib.sha256",
+      "method": "hashlib.sha256 over file bytes",
+      "evidence_refs": [],
+      "data": {
+        "sha256": "683520631b81a7283e9d7c0870115867ed29630a782348119308d22eae1b6f31"
+      },
+      "tags": []
+    },
+    {
+      "id": "meta.size",
+      "category": "metadata",
+      "title": "حجم الملف",
+      "description": "حجم الملف 6175744 بايت",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "metadata:stat",
+      "method": "stat.st_size",
+      "evidence_refs": [],
+      "data": {
+        "size_bytes": 6175744
+      },
+      "tags": []
+    },
+    {
+      "id": "meta.timestamps",
+      "category": "metadata",
+      "title": "طوابع زمنية لنظام الملفات",
+      "description": "mtime/ctime من نظام الملفات (قد لا تعكس وقت البناء)",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "metadata:stat",
+      "method": "stat.st_mtime/ctime",
+      "evidence_refs": [],
+      "data": {
+        "mtime": "2026-09-25T17:18:40.926354Z",
+        "ctime": "2026-09-25T17:18:40.926354Z",
+        "mode": "0o644"
+      },
+      "tags": []
+    },
+    {
+      "id": "meta.magic_bytes",
+      "category": "metadata",
+      "title": "Magic bytes",
+      "description": "أول 16 بايت hex: 4d5a90000300000004000000ffff0000",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "metadata:read",
+      "method": "read first 16 bytes",
+      "evidence_refs": [],
+      "data": {
+        "magic_hex": "4d5a90000300000004000000ffff0000"
+      },
+      "tags": []
+    }
+  ]
+}

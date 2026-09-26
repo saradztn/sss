@@ -1,0 +1,9 @@
+{
+  "overall_entropy": 7.9478,
+  "size": 6175744,
+  "high_entropy_windows": 4276,
+  "total_windows": 6031,
+  "avg_window_entropy": 7.44,
+  "max_window_entropy": 7.8618,
+  "constants_found": []
+}

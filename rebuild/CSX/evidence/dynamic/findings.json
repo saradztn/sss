@@ -1,0 +1,17 @@
+{
+  "findings": [
+    {
+      "id": "dynamic.skipped",
+      "category": "dynamic",
+      "title": "تم تخطي التحليل الديناميكي",
+      "description": "التحليل الديناميكي معطل افتراضياً لتجنب تنفيذ كود غير موثوق. فعّله صراحة مع --enable-dynamic بعد التأكد من العزل.",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "dynamic:opt-in",
+      "method": "ctx.options.enable_dynamic == False",
+      "evidence_refs": [],
+      "data": {},
+      "tags": []
+    }
+  ]
+}
