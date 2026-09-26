@@ -1,0 +1,223 @@
+{
+  "findings": [
+    {
+      "id": "deep.opcodes_summary",
+      "category": "disasm",
+      "title": "Opcodes (capstone) — 50001 تعليمة",
+      "description": "تم تفكيك 50001 تعليمة عبر capstone. أهمها: mov:12739, push:8970, call:3537, cmp:3409, lea:2637 | Blocks: 10626 | Functions: 300",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "deep:capstone",
+      "method": "capstone disassembly",
+      "evidence_refs": [],
+      "data": {
+        "total": 50001,
+        "top": [
+          [
+            "mov",
+            12739
+          ],
+          [
+            "push",
+            8970
+          ],
+          [
+            "call",
+            3537
+          ],
+          [
+            "cmp",
+            3409
+          ],
+          [
+            "lea",
+            2637
+          ],
+          [
+            "add",
+            2532
+          ],
+          [
+            "int3",
+            1815
+          ],
+          [
+            "pop",
+            1591
+          ],
+          [
+            "sub",
+            1253
+          ],
+          [
+            "je",
+            1220
+          ]
+        ],
+        "blocks": 10626,
+        "funcs": 300,
+        "cats": {
+          "data": 25953,
+          "control": 9239,
+          "other": 9463,
+          "arith": 5343,
+          "syscall": 3
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "deep.functions",
+      "category": "structure",
+      "title": "Functions مكتشفة: 300",
+      "description": "دوال عبر symbols أو prologue heuristics (push rbp; mov rbp,rsp)",
+      "confidence": "medium",
+      "provenance": "observed",
+      "source": "deep:nm+heuristic",
+      "method": "nm -S + prologue pattern",
+      "evidence_refs": [],
+      "data": {
+        "functions": [
+          {
+            "address": "0x401060",
+            "name": "sub_0x401060",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4010a0",
+            "name": "sub_0x4010a0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401120",
+            "name": "sub_0x401120",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401150",
+            "name": "sub_0x401150",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401190",
+            "name": "sub_0x401190",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4011b0",
+            "name": "sub_0x4011b0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4012ec",
+            "name": "sub_0x4012ec",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x401470",
+            "name": "sub_0x401470",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401490",
+            "name": "sub_0x401490",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4014d0",
+            "name": "sub_0x4014d0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x401520",
+            "name": "sub_0x401520",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x40169c",
+            "name": "sub_0x40169c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x401a6c",
+            "name": "sub_0x401a6c",
+            "source": "heuristic32"
+          },
+          {
+            "address": "0x401ed0",
+            "name": "sub_0x401ed0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402020",
+            "name": "sub_0x402020",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402560",
+            "name": "sub_0x402560",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x4025a0",
+            "name": "sub_0x4025a0",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402600",
+            "name": "sub_0x402600",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402680",
+            "name": "sub_0x402680",
+            "source": "heuristic"
+          },
+          {
+            "address": "0x402790",
+            "name": "sub_0x402790",
+            "source": "heuristic"
+          }
+        ],
+        "total": 300
+      },
+      "tags": []
+    },
+    {
+      "id": "deep.cfg",
+      "category": "behavior",
+      "title": "Control Flow — 10626 basic blocks",
+      "description": "متوسط 4.71 تعليمة لكل block. Jumps/Calls تحدد التدفق.",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "deep:cfg",
+      "method": "split on jmp/call/ret",
+      "evidence_refs": [],
+      "data": {
+        "blocks": 10626,
+        "avg": 4.71
+      },
+      "tags": []
+    },
+    {
+      "id": "deep.ai_ready",
+      "category": "disasm",
+      "title": "تقرير جاهز لإعادة البناء في C++",
+      "description": "يحتوي opcodes_full.json.gz + skeleton.cpp + ai_report.json — يمكن إرسالها لنموذج AI لبناء C++ مكافئ.",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "deep:export",
+      "method": "capstone + skeleton gen",
+      "evidence_refs": [],
+      "data": {
+        "files": [
+          "opcodes_full.json.gz",
+          "skeleton.cpp",
+          "ai_report.json",
+          "cfg.dot"
+        ]
+      },
+      "tags": []
+    }
+  ]
+}

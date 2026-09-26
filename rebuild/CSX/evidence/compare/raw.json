@@ -1,0 +1,18 @@
+{
+  "static_network_hint": true,
+  "dynamic_network_observed": false,
+  "static_paths_sample": [
+    "/1U",
+    "/trustInfo",
+    "/Gzm",
+    "/Pma",
+    "/B-",
+    "/D_b",
+    "/cgHc",
+    "/2j2",
+    "/api/event",
+    "/Av"
+  ],
+  "dynamic_files_sample": [],
+  "overlap": []
+}

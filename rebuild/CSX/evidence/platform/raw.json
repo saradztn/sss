@@ -1,0 +1,6 @@
+{
+  "format": "PE",
+  "arch": "x86",
+  "machine": 332,
+  "detector": "pe_magic"
+}

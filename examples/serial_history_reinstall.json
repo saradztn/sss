@@ -1,0 +1,41 @@
+{
+  "_comment": "سجلّ قراءات مُصنَّع لنمط حميد: إعادة تثبيت فعلية لنظام Windows. لاحظ المفتاح الفارق: install_date تغيّر (مرساة). أداة التزوير تغيّر machine_guid و sso_rnd_device و mta_serial لكنها لا تغيّر install_date — وهذا بالضبط ما يفرّق النمطين. الحكم المتوقع: hardware-change (ثقة 0.50) أي require-reauth، لا block.",
+  "readings": [
+    {
+      "session_id": "2026-09-18_01",
+      "timestamp": "2026-09-18T14:20:00Z",
+      "identifiers": {
+        "machine_guid": "7d671f0a-4c2e-4b81-9a55-31e0c8b2c585",
+        "bios_serial": "BIOS-9F21-AA07",
+        "board_serial": "BOARD-4471-C0DE",
+        "disk_serial": "WD-WX21A79K3T1P",
+        "mac_address": "02:f1:3c:88:20:05",
+        "volume_serial": "1A2B-3C4D",
+        "install_date": "1735689600",
+        "computer_name": "DESKTOP-7QK2M1",
+        "user_name": "player",
+        "sso_rnd_device": "rnd-88f1c2",
+        "mta_serial": "A1B2C3D4E5F60718293A4B5C6D7E8F90"
+      },
+      "client_serial": "SER-0F3A91C2B7"
+    },
+    {
+      "session_id": "2026-09-19_01",
+      "timestamp": "2026-09-19T11:45:00Z",
+      "identifiers": {
+        "machine_guid": "c4d2e8b1-99f0-4a17-b3c6-70ee15da8842",
+        "bios_serial": "BIOS-9F21-AA07",
+        "board_serial": "BOARD-4471-C0DE",
+        "disk_serial": "SK-hynix-HN8821",
+        "mac_address": "02:f1:3c:88:20:05",
+        "volume_serial": "7E4F-09AB",
+        "install_date": "1758240000",
+        "computer_name": "DESKTOP-7QK2M1",
+        "user_name": "player",
+        "sso_rnd_device": "rnd-5c1d90",
+        "mta_serial": "0F1E2D3C4B5A69788796A5B4C3D2E1F0"
+      },
+      "client_serial": "SER-B81D22EF40"
+    }
+  ]
+}

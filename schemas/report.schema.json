@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://revspec.local/schemas/report.schema.json",
+  "title": "RevSpec Report",
+  "description": "Machine-readable reverse engineering report — كل حقيقة تميز عن الاستنتاج مع مصدر ودرجة ثقة",
+  "type": "object",
+  "required": ["schema_version", "sample", "host", "started_at", "finished_at", "analyzers", "findings"],
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$", "description": "إصدار المخطط" },
+    "sample": {
+      "type": "object",
+      "required": ["path", "filename", "size_bytes", "sha256", "sha1", "md5"],
+      "properties": {
+        "path": { "type": "string" },
+        "filename": { "type": "string" },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "sha1": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "md5": { "type": "string", "pattern": "^[a-f0-9]{32}$" },
+        "mime_type": { "type": ["string", "null"] },
+        "collected_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "host": {
+      "type": "object",
+      "properties": {
+        "os": { "type": "string" },
+        "arch": { "type": "string" },
+        "python_version": { "type": "string" },
+        "hostname": { "type": "string" },
+        "tool_versions": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "started_at": { "type": "string", "format": "date-time" },
+    "finished_at": { "type": "string", "format": "date-time" },
+    "analyzers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["analyzer", "version", "started_at", "finished_at", "duration_ms", "status", "findings"],
+        "properties": {
+          "analyzer": { "type": "string" },
+          "version": { "type": "string" },
+          "started_at": { "type": "string" },
+          "finished_at": { "type": "string" },
+          "duration_ms": { "type": "integer" },
+          "status": { "enum": ["ok", "partial", "failed", "skipped"] },
+          "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+          "artifacts": { "type": "array", "items": { "$ref": "#/$defs/evidenceRef" } },
+          "errors": { "type": "array", "items": { "type": "string" } },
+          "warnings": { "type": "array", "items": { "type": "string" } },
+          "raw": { "type": "object" }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/finding" }
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "total_findings": { "type": "integer" },
+        "by_category": { "type": "object", "additionalProperties": { "type": "integer" } },
+        "confidence_histogram": { "type": "object", "additionalProperties": { "type": "integer" } },
+        "provenance_histogram": { "type": "object", "additionalProperties": { "type": "integer" } }
+      }
+    },
+    "comparison": { "type": ["object", "null"] }
+  },
+  "$defs": {
+    "evidenceRef": {
+      "type": "object",
+      "required": ["path", "kind"],
+      "properties": {
+        "path": { "type": "string" },
+        "kind": { "type": "string" },
+        "description": { "type": "string" },
+        "sha256": { "type": ["string", "null"] }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "required": ["id", "category", "title", "description", "confidence", "provenance", "source", "method"],
+      "properties": {
+        "id": { "type": "string", "description": "معرف فريد للاستنتاج" },
+        "category": { "type": "string", "enum": ["metadata","platform","structure","strings","dependencies","resources","crypto","disasm","behavior","dynamic","comparison","interfaces","verdict"] },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "confidence": { "enum": ["proven","high","medium","low","speculative","unknown"] },
+        "provenance": { "enum": ["observed","inferred","absent","undetermined"] },
+        "source": { "type": "string", "description": "المحلل:الأداة" },
+        "method": { "type": "string", "description": "كيف تم الاكتشاف" },
+        "evidence_refs": { "type": "array", "items": { "$ref": "#/$defs/evidenceRef" } },
+        "data": { "type": "object" },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

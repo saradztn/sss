@@ -1,0 +1,43 @@
+{
+  "findings": [
+    {
+      "id": "platform.format",
+      "category": "platform",
+      "title": "صيغة الملف / المنصة",
+      "description": "الصيغة المكتشفة: PE | المعمارية: x86 | البت: unknown",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "platform:pe_magic",
+      "method": "pe_magic",
+      "evidence_refs": [],
+      "data": {
+        "format": "PE",
+        "arch": "x86",
+        "machine": 332
+      },
+      "tags": []
+    },
+    {
+      "id": "platform.runtime_hints",
+      "category": "platform",
+      "title": "تلميحات Runtime / اللغة",
+      "description": "تلميحات لغوية/تقنية مستنتجة من strings و readelf",
+      "confidence": "low",
+      "provenance": "inferred",
+      "source": "platform:strings+readelf",
+      "method": "keyword search in strings",
+      "evidence_refs": [],
+      "data": {
+        "hints": [
+          "JVM",
+          "Rust",
+          "Node.js",
+          "Python"
+        ]
+      },
+      "tags": [
+        "heuristic"
+      ]
+    }
+  ]
+}

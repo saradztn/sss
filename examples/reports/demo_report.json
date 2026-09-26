@@ -1,0 +1,1719 @@
+{
+  "schema_version": "1.0.0",
+  "sample": {
+    "path": "/home/user/sss/samples/demo_app/demo_app",
+    "filename": "demo_app",
+    "size_bytes": 24640,
+    "sha256": "10a158d7ca71d3b204fbf852145987952c560a02b0c2fc139e4a60d8bfb15761",
+    "sha1": "a354c8efb5fa5e3d3275aa5ff3681309ab399091",
+    "md5": "5c025f522cccae2155e89f84aed4f2fe",
+    "mime_type": null,
+    "collected_at": "2026-09-25T15:41:09.039596Z"
+  },
+  "host": {
+    "os": "Linux-6.1.158+-x86_64-with-glibc2.36",
+    "arch": "x86_64",
+    "python_version": "3.11.2",
+    "hostname": "e2b.local",
+    "tool_versions": {
+      "readelf": "GNU readelf (GNU Binutils for Debian) 2.40",
+      "objdump": "GNU objdump (GNU Binutils for Debian) 2.40",
+      "nm": "GNU nm (GNU Binutils for Debian) 2.40",
+      "strings": "GNU strings (GNU Binutils for Debian) 2.40",
+      "ldd": "ldd (Debian GLIBC 2.36-9+deb12u14) 2.36",
+      "unzip": "caution:  both -n and -o specified; ignoring -o",
+      "jinja2": "3.1.6",
+      "jsonschema": "4.26.0"
+    }
+  },
+  "started_at": "2026-09-25T15:41:09.091279Z",
+  "finished_at": "2026-09-25T15:41:09.163170Z",
+  "analyzers": [
+    {
+      "analyzer": "metadata",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T15:41:09.092422Z",
+      "finished_at": "2026-09-25T15:41:09.093151Z",
+      "duration_ms": 0,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "meta.hash.sha256",
+          "category": "metadata",
+          "title": "SHA256",
+          "description": "SHA256 للعينة = 10a158d7ca71d3b204fbf852145987952c560a02b0c2fc139e4a60d8bfb15761",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "metadata:hashlib.sha256",
+          "method": "hashlib.sha256 over file bytes",
+          "evidence_refs": [],
+          "data": {
+            "sha256": "10a158d7ca71d3b204fbf852145987952c560a02b0c2fc139e4a60d8bfb15761"
+          },
+          "tags": []
+        },
+        {
+          "id": "meta.size",
+          "category": "metadata",
+          "title": "حجم الملف",
+          "description": "حجم الملف 24640 بايت",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "metadata:stat",
+          "method": "stat.st_size",
+          "evidence_refs": [],
+          "data": {
+            "size_bytes": 24640
+          },
+          "tags": []
+        },
+        {
+          "id": "meta.timestamps",
+          "category": "metadata",
+          "title": "طوابع زمنية لنظام الملفات",
+          "description": "mtime/ctime من نظام الملفات (قد لا تعكس وقت البناء)",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "metadata:stat",
+          "method": "stat.st_mtime/ctime",
+          "evidence_refs": [],
+          "data": {
+            "mtime": "2026-09-25T15:40:25.538983Z",
+            "ctime": "2026-09-25T15:41:05.335589Z",
+            "mode": "0o755"
+          },
+          "tags": []
+        },
+        {
+          "id": "meta.magic_bytes",
+          "category": "metadata",
+          "title": "Magic bytes",
+          "description": "أول 16 بايت hex: 7f454c46020101000000000000000000",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "metadata:read",
+          "method": "read first 16 bytes",
+          "evidence_refs": [],
+          "data": {
+            "magic_hex": "7f454c46020101000000000000000000"
+          },
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "sha256": "10a158d7ca71d3b204fbf852145987952c560a02b0c2fc139e4a60d8bfb15761",
+        "size": 24640,
+        "file": "",
+        "mime": null
+      }
+    },
+    {
+      "analyzer": "platform",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T15:41:09.093558Z",
+      "finished_at": "2026-09-25T15:41:09.100419Z",
+      "duration_ms": 6,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "platform.format",
+          "category": "platform",
+          "title": "صيغة الملف / المنصة",
+          "description": "الصيغة المكتشفة: ELF | المعمارية: x86-64 | البت: 64",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "platform:elf_magic",
+          "method": "elf_magic",
+          "evidence_refs": [],
+          "data": {
+            "format": "ELF",
+            "bitness": 64,
+            "endian": "little",
+            "arch": "x86-64",
+            "e_machine": 62,
+            "e_type": "DYN",
+            "osabi": "SystemV",
+            "ei_osabi_raw": 0
+          },
+          "tags": []
+        },
+        {
+          "id": "platform.runtime_hints",
+          "category": "platform",
+          "title": "تلميحات Runtime / اللغة",
+          "description": "تلميحات لغوية/تقنية مستنتجة من strings و readelf",
+          "confidence": "low",
+          "provenance": "inferred",
+          "source": "platform:strings+readelf",
+          "method": "keyword search in strings",
+          "evidence_refs": [],
+          "data": {
+            "hints": [
+              "interpreter:/lib64/ld-linux-x86-64.so.2]"
+            ]
+          },
+          "tags": [
+            "heuristic"
+          ]
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "format": "ELF",
+        "bitness": 64,
+        "endian": "little",
+        "arch": "x86-64",
+        "e_machine": 62,
+        "e_type": "DYN",
+        "osabi": "SystemV",
+        "ei_osabi_raw": 0,
+        "detector": "elf_magic",
+        "interpreter": "/lib64/ld-linux-x86-64.so.2]",
+        "strings_hints": [
+          "interpreter:/lib64/ld-linux-x86-64.so.2]"
+        ]
+      }
+    },
+    {
+      "analyzer": "structure",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T15:41:09.100786Z",
+      "finished_at": "2026-09-25T15:41:09.109842Z",
+      "duration_ms": 9,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "struct.elf.header",
+          "category": "structure",
+          "title": "ELF header",
+          "description": "Entry: 0x1480 | OSABI: SystemV",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "structure:readelf -h",
+          "method": "readelf -h",
+          "evidence_refs": [],
+          "data": {
+            "entry_point": "0x1480",
+            "header": "ELF Header:\n  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00 \n  Class:                             ELF64\n  Data:                              2's complement, little endian\n  Version:                           1 (current)\n  OS/ABI:                            UNIX - System V\n  ABI Version:                       0\n  Type:                              DYN (Position-Independent Executable file)\n  Machine:                           Advanced Micro Devices X86-64\n  Version:                           0x1\n  Entry point address:               0x1480\n  Start of program headers:          64 (bytes into file)\n  Start of section headers:          22144 (bytes into file)\n  Flags:                             0x0\n  Size of this header:               64 (bytes)\n  Size of program headers:           56 (bytes)\n  Number of program headers:         13\n  Size of section headers:           64 (bytes)\n  Number of section headers:         39\n  Section header string table index: 38\n"
+          },
+          "tags": []
+        },
+        {
+          "id": "struct.elf.sections",
+          "category": "structure",
+          "title": "Sections / Segments",
+          "description": "قائمة sections و segments كما أظهرها readelf",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "structure:readelf -S/-l",
+          "method": "readelf",
+          "evidence_refs": [],
+          "data": {
+            "sections_raw": "There are 39 section headers, starting at offset 0x5680:\n\nSection Headers:\n  [Nr] Name              Type             Address           Offset\n       Size              EntSize          Flags  Link  Info  Align\n  [ 0]                   NULL             0000000000000000  00000000\n       0000000000000000  0000000000000000           0     0     0\n  [ 1] .interp           PROGBITS         0000000000000318  00000318\n       000000000000001c  0000000000000000   A       0     0     1\n  [ 2] .note.gnu.pr[...] NOTE             0000000000000338  00000338\n       0000000000000020  0000000000000000   A       0     0     8\n  [ 3] .note.gnu.bu[...] NOTE             0000000000000358  00000358\n       0000000000000024  0000000000000000   A       0     0     4\n  [ 4] .note.ABI-tag     NOTE             000000000000037c  0000037c\n       0000000000000020  0000000000000000   A       0     0     4\n  [ 5] .gnu.hash         GNU_HASH         00000000000003a0  000003a0\n       0000000000000028  0000000000000000   A       6     0     8\n  [ 6] .dynsym           DYNSYM           00000000000003c8  000003c8\n       00000000000001e0  0000000000000018   A       7     1     8\n  [ 7] .dynstr           STRTAB           00000000000005a8  000005a8\n       00000000000000e1  0000000000000000   A       0     0     1\n  [ 8] .gnu.version      VERSYM           000000000000068a  0000068a\n       0000000000000028  0000000000000002   A       6     0     2\n  [ 9] .gnu.version_r    VERNEED          00000000000006b8  000006b8\n       0000000000000030  0000000000000000   A       7     1     8\n  [10] .rela.dyn         RELA             00000000000006e8  000006e8\n       00000000000000d8  0000000000000018   A       6     0     8\n  [11] .rela.plt         RELA             00000000000007c0  000007c0\n       0000000000000138  0000000000000018  AI       6    24     8\n  [12] .init             PROGBITS         0000000000001000  00001000\n       0000000000000017  0000000000000000  AX       0     0     4\n  [13] .plt              PROGBITS         0000000000001020  00001020\n       00000000000000e0  0000000000000010  AX       0     0     16\n  [14] .plt.got          PROGBITS         0000000000001100  00001100\n       0000000000000008  0000000000000008  AX       0     0     8\n  [15] .text             PROGBITS         0000000000001110  00001110\n       0000000000000710  0000000000000000  AX       0     0     16\n  [16] .fini             PROGBITS         0000000000001820  00001820\n       0000000000000009  0000000000000000  AX       0     0     4\n  [17] .rodata           PROGBITS         0000000000002000  00002000\n       00000000000004c1  0000000000000000   A       0     0     8\n  [18] .eh_frame_hdr     PROGBITS         00000000000024c4  000024c4\n       0000000000000054  0000000000000000   A       0     0     4\n  [19] .eh_frame         PROGBITS         0000000000002518  00002518\n       0000000000000198  0000000000000000   A       0     0     8\n  [20] .init_array       INIT_ARRAY       0000000000003dd0  00002dd0\n       0000000000000008  0000000000000008  WA       0     0     8\n  [21] .fini_array       FINI_ARRAY       0000000000003dd8  00002dd8\n       0000000000000008  0000000000000008  WA       0     0     8\n  [22] .dynamic          DYNAMIC          0000000000003de0  00002de0\n       00000000000001e0  0000000000000010  WA       7     0     8\n  [23] .got              PROGBITS         0000000000003fc0  00002fc0\n       0000000000000028  0000000000000008  WA       0     0     8\n  [24] .got.plt          PROGBITS         0000000000003fe8  00002fe8\n       0000000000000080  0000000000000008  WA       0     0     8\n  [25] .data             PROGBITS         0000000000004068  00003068\n       0000000000000010  0000000000000000  WA       0     0     8\n  [26] .bss              NOBITS           0000000000004080  00003078\n       0000000000000010  0000000000000000  WA       0     0     32\n  [27] .comment          PROGBITS         0000000000000000  00003078\n       0000000000000027  0000000000000001  MS       0     0     1\n  [28] .",
+            "segments_raw": "\nElf file type is DYN (Position-Independent Executable file)\nEntry point 0x1480\nThere are 13 program headers, starting at offset 64\n\nProgram Headers:\n  Type           Offset             VirtAddr           PhysAddr\n                 FileSiz            MemSiz              Flags  Align\n  PHDR           0x0000000000000040 0x0000000000000040 0x0000000000000040\n                 0x00000000000002d8 0x00000000000002d8  R      0x8\n  INTERP         0x0000000000000318 0x0000000000000318 0x0000000000000318\n                 0x000000000000001c 0x000000000000001c  R      0x1\n      [Requesting program interpreter: /lib64/ld-linux-x86-64.so.2]\n  LOAD           0x0000000000000000 0x0000000000000000 0x0000000000000000\n                 0x00000000000008f8 0x00000000000008f8  R      0x1000\n  LOAD           0x0000000000001000 0x0000000000001000 0x0000000000001000\n                 0x0000000000000829 0x0000000000000829  R E    0x1000\n  LOAD           0x0000000000002000 0x0000000000002000 0x0000000000002000\n                 0x00000000000006b0 0x00000000000006b0  R      0x1000\n  LOAD           0x0000000000002dd0 0x0000000000003dd0 0x0000000000003dd0\n                 0x00000000000002a8 0x00000000000002c0  RW     0x1000\n  DYNAMIC        0x0000000000002de0 0x0000000000003de0 0x0000000000003de0\n                 0x00000000000001e0 0x00000000000001e0  RW     0x8\n  NOTE           0x0000000000000338 0x0000000000000338 0x0000000000000338\n                 0x0000000000000020 0x0000000000000020  R      0x8\n  NOTE           0x0000000000000358 0x0000000000000358 0x0000000000000358\n                 0x0000000000000044 0x0000000000000044  R      0x4\n  GNU_PROPERTY   0x0000000000000338 0x0000000000000338 0x0000000000000338\n                 0x0000000000000020 0x0000000000000020  R      0x8\n  GNU_EH_FRAME   0x00000000000024c4 0x00000000000024c4 0x00000000000024c4\n                 0x0000000000000054 0x0000000000000054  R      0x4\n  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000\n                 0x0000000000000000 0x0000000000000000  RW     0x10\n  GNU_RELRO      0x0000000000002dd0 0x0000000000003dd0 0x0000000000003dd0\n                 0x0000000000000230 0x0000000000000230  R      0x1\n\n Section to Segment mapping:\n  Segment Sections...\n   00     \n   01     .interp \n   02     .interp .note.gnu.property .note.gnu.build-id .note.ABI-tag .gnu.hash .dynsym .dynstr .gnu.version .gnu.version_r .rela.dyn .rela.plt \n   03     .init .plt .plt.got .text .fini \n   04     .rodata .eh_frame_hdr .eh_frame \n   05     .init_array .fini_array .dynamic .got .got.plt .data .bss \n   06     .dynamic \n   07     .note.gnu.property \n   08     .note.gnu.build-id .note.ABI-tag \n   09     .note.gnu.property \n   10     .eh_frame_hdr \n   11     \n   12     .init_array .fini_array .dynamic .got \n"
+          },
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "sections": "There are 39 section headers, starting at offset 0x5680:\n\nSection Headers:\n  [Nr] Name              Type             Address           Offset\n       Size              EntSize          Flags  Link  Info  Align\n  [ 0]                   NULL             0000000000000000  00000000\n       0000000000000000  0000000000000000           0     0     0\n  [ 1] .interp           PROGBITS         0000000000000318  00000318\n       000000000000001c  0000000000000000   A       0     0     1\n  [ 2] .note.gnu.pr[...] NOTE             0000000000000338  00000338\n       0000000000000020  0000000000000000   A       0     0     8\n  [ 3] .note.gnu.bu[...] NOTE             0000000000000358  00000358\n       0000000000000024  0000000000000000   A       0     0     4\n  [ 4] .note.ABI-tag     NOTE             000000000000037c  0000037c\n       0000000000000020  0000000000000000   A       0     0     4\n  [ 5] .gnu.hash         GNU_HASH         00000000000003a0  000003a0\n       0000000000000028  0000000000000000   A       6     0     8\n  [ 6] .dynsym           DYNSYM           00000000000003c8  000003c8\n       00000000000001e0  0000000000000018   A       7     1     8\n  [ 7] .dynstr           STRTAB           00000000000005a8  000005a8\n       00000000000000e1  0000000000000000   A       0     0     1\n  [ 8] .gnu.version      VERSYM           000000000000068a  0000068a\n       0000000000000028  0000000000000002   A       6     0     2\n  [ 9] .gnu.version_r    VERNEED          00000000000006b8  000006b8\n       0000000000000030  0000000000000000   A       7     1     8\n  [10] .rela.dyn         RELA             00000000000006e8  000006e8\n       00000000000000d8  0000000000000018   A       6     0     8\n  [11] .rela.plt         RELA             00000000000007c0  000007c0\n       0000000000000138  0000000000000018  AI       6    24     8\n  [12] .init             PROGBITS         0000000000001000  00001000\n       0000000000000017  0000000000000000  AX       0     0     4\n  [13] .plt              PROGBITS         0000000000001020  00001020\n       00000000000000e0  0000000000000010  AX       0     0     16\n  [14] .plt.got          PROGBITS         0000000000001100  00001100\n       0000000000000008  0000000000000008  AX       0     0     8\n  [15] .text             PROGBITS         0000000000001110  00001110\n       0000000000000710  0000000000000000  AX       0     0     16\n  [16] .fini             PROGBITS         0000000000001820  00001820\n       0000000000000009  0000000000000000  AX       0     0     4\n  [17] .rodata           PROGBITS         0000000000002000  00002000\n       00000000000004c1  0000000000000000   A       0     0     8\n  [18] .eh_frame_hdr     PROGBITS         00000000000024c4  000024c4\n       0000000000000054  0000000000000000   A       0     0     4\n  [19] .eh_frame         PROGBITS         0000000000002518  00002518\n       0000000000000198  0000000000000000   A       0     0     8\n  [20] .init_array       INIT_ARRAY       0000000000003dd0  00002dd0\n       0000000000000008  0000000000000008  WA       0     0     8\n  [21] .fini_array       FINI_ARRAY       0000000000003dd8  00002dd8\n       0000000000000008  0000000000000008  WA       0     0     8\n  [22] .dynamic          DYNAMIC          0000000000003de0  00002de0\n       00000000000001e0  0000000000000010  WA       7     0     8\n  [23] .got              PROGBITS         0000000000003fc0  00002fc0\n       0000000000000028  0000000000000008  WA       0     0     8\n  [24] .got.plt          PROGBITS         0000000000003fe8  00002fe8\n       0000000000000080  0000000000000008  WA       0     0     8\n  [25] .data             PROGBITS         0000000000004068  00003068\n       0000000000000010  0000000000000000  WA       0     0     8\n  [26] .bss              NOBITS           0000000000004080  00003078\n       0000000000000010  0000000000000000  WA       0     0     32\n  [27] .comment          PROGBITS         0000000000000000  00003078\n       0000000000000027  0000000000000001  MS       0     0     1\n  [28] .debug_aranges    PROGBITS         0000000000000000  0000309f\n       0000000000000040  0000000000000000           0     0     1\n  [29] .debug_info       PROGBITS         0000000000000000  000030df\n       0000000000000db8  0000000000000000           0     0     1\n  [30] .debug_abbrev     PROGBITS         0000000000000000  00003e97\n       0000000000000257  0000000000000000           0     0     1\n  [31] .debug_line       PROGBITS         0000000000000000  000040ee\n       0000000000000350  0000000000000000           0     0     1\n  [32] .debug_str        PROGBITS         0000000000000000  0000443e\n       000000000000030d  0000000000000001  MS       0     0     1\n  [33] .debug_line_str   PROGBITS         0000000000000000  0000474b\n       00000000000000f6  0000000000000001  MS       0     0     1\n  [34] .debug_loclists   PROGBITS         0000000000000000  00004841\n       000000000000045e  0000000000000000           0     0     1\n  [35] .debug_rnglists   PROGBITS         0000000000000000  00004c9f\n       0000000000000049  0000000000000000           0     0     1\n  [36] .symtab           SYMTAB           0000000000000000  00004ce8\n       0000000000000510  0000000000000018          37    18     8\n  [37] .strtab           STRTAB           0000000000000000  000051f8\n       00000000000002fc  0000000000000000           0     0     1\n  [38] .shstrtab         STRTAB           0000000000000000  000054f4\n       000000000000018a  0000000000000000           0     0     1\nKey to Flags:\n  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),\n  L (link order), O (extra OS processing required), G (group), T (TLS),\n  C (compressed), x (unknown), o (OS specific), E (exclude),\n  D (mbind), l (large), p (processor specific)\n",
+        "segments": "\nElf file type is DYN (Position-Independent Executable file)\nEntry point 0x1480\nThere are 13 program headers, starting at offset 64\n\nProgram Headers:\n  Type           Offset             VirtAddr           PhysAddr\n                 FileSiz            MemSiz              Flags  Align\n  PHDR           0x0000000000000040 0x0000000000000040 0x0000000000000040\n                 0x00000000000002d8 0x00000000000002d8  R      0x8\n  INTERP         0x0000000000000318 0x0000000000000318 0x0000000000000318\n                 0x000000000000001c 0x000000000000001c  R      0x1\n      [Requesting program interpreter: /lib64/ld-linux-x86-64.so.2]\n  LOAD           0x0000000000000000 0x0000000000000000 0x0000000000000000\n                 0x00000000000008f8 0x00000000000008f8  R      0x1000\n  LOAD           0x0000000000001000 0x0000000000001000 0x0000000000001000\n                 0x0000000000000829 0x0000000000000829  R E    0x1000\n  LOAD           0x0000000000002000 0x0000000000002000 0x0000000000002000\n                 0x00000000000006b0 0x00000000000006b0  R      0x1000\n  LOAD           0x0000000000002dd0 0x0000000000003dd0 0x0000000000003dd0\n                 0x00000000000002a8 0x00000000000002c0  RW     0x1000\n  DYNAMIC        0x0000000000002de0 0x0000000000003de0 0x0000000000003de0\n                 0x00000000000001e0 0x00000000000001e0  RW     0x8\n  NOTE           0x0000000000000338 0x0000000000000338 0x0000000000000338\n                 0x0000000000000020 0x0000000000000020  R      0x8\n  NOTE           0x0000000000000358 0x0000000000000358 0x0000000000000358\n                 0x0000000000000044 0x0000000000000044  R      0x4\n  GNU_PROPERTY   0x0000000000000338 0x0000000000000338 0x0000000000000338\n                 0x0000000000000020 0x0000000000000020  R      0x8\n  GNU_EH_FRAME   0x00000000000024c4 0x00000000000024c4 0x00000000000024c4\n                 0x0000000000000054 0x0000000000000054  R      0x4\n  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000\n                 0x0000000000000000 0x0000000000000000  RW     0x10\n  GNU_RELRO      0x0000000000002dd0 0x0000000000003dd0 0x0000000000003dd0\n                 0x0000000000000230 0x0000000000000230  R      0x1\n\n Section to Segment mapping:\n  Segment Sections...\n   00     \n   01     .interp \n   02     .interp .note.gnu.property .note.gnu.build-id .note.ABI-tag .gnu.hash .dynsym .dynstr .gnu.version .gnu.version_r .rela.dyn .rela.plt \n   03     .init .plt .plt.got .text .fini \n   04     .rodata .eh_frame_hdr .eh_frame \n   05     .init_array .fini_array .dynamic .got .got.plt .data .bss \n   06     .dynamic \n   07     .note.gnu.property \n   08     .note.gnu.build-id .note.ABI-tag \n   09     .note.gnu.property \n   10     .eh_frame_hdr \n   11     \n   12     .init_array .fini_array .dynamic .got \n",
+        "header": "ELF Header:\n  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00 \n  Class:                             ELF64\n  Data:                              2's complement, little endian\n  Version:                           1 (current)\n  OS/ABI:                            UNIX - System V\n  ABI Version:                       0\n  Type:                              DYN (Position-Independent Executable file)\n  Machine:                           Advanced Micro Devices X86-64\n  Version:                           0x1\n  Entry point address:               0x1480\n  Start of program headers:          64 (bytes into file)\n  Start of section headers:          22144 (bytes into file)\n  Flags:                             0x0\n  Size of this header:               64 (bytes)\n  Size of program headers:           56 (bytes)\n  Number of program headers:         13\n  Size of section headers:           64 (bytes)\n  Number of section headers:         39\n  Section header string table index: 38\n",
+        "dynamic": "\nDynamic section at offset 0x2de0 contains 26 entries:\n  Tag        Type                         Name/Value\n 0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]\n 0x000000000000000c (INIT)               0x1000\n 0x000000000000000d (FINI)               0x1820\n 0x0000000000000019 (INIT_ARRAY)         0x3dd0\n 0x000000000000001b (INIT_ARRAYSZ)       8 (bytes)\n 0x000000000000001a (FINI_ARRAY)         0x3dd8\n 0x000000000000001c (FINI_ARRAYSZ)       8 (bytes)\n 0x000000006ffffef5 (GNU_HASH)           0x3a0\n 0x0000000000000005 (STRTAB)             0x5a8\n 0x0000000000000006 (SYMTAB)             0x3c8\n 0x000000000000000a (STRSZ)              225 (bytes)\n 0x000000000000000b (SYMENT)             24 (bytes)\n 0x0000000000000015 (DEBUG)              0x0\n 0x0000000000000003 (PLTGOT)             0x3fe8\n 0x0000000000000002 (PLTRELSZ)           312 (bytes)\n 0x0000000000000014 (PLTREL)             RELA\n 0x0000000000000017 (JMPREL)             0x7c0\n 0x0000000000000007 (RELA)               0x6e8\n 0x0000000000000008 (RELASZ)             216 (bytes)\n 0x0000000000000009 (RELAENT)            24 (bytes)\n 0x000000006ffffffb (FLAGS_1)            Flags: PIE\n 0x000000006ffffffe (VERNEED)            0x6b8\n 0x000000006fffffff (VERNEEDNUM)         1\n 0x000000006ffffff0 (VERSYM)             0x68a\n 0x000000006ffffff9 (RELACOUNT)          3\n 0x0000000000000000 (NULL)               0x0\n",
+        "entry_point": "0x1480"
+      }
+    },
+    {
+      "analyzer": "strings",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T15:41:09.110320Z",
+      "finished_at": "2026-09-25T15:41:09.115781Z",
+      "duration_ms": 5,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "strings.summary",
+          "category": "strings",
+          "title": "ملخص السلاسل",
+          "description": "إجمالي 241 سلسلة ascii (+ 0 utf16)",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "strings:strings(1)",
+          "method": "strings -a -n 4",
+          "evidence_refs": [],
+          "data": {
+            "ascii": 241,
+            "utf16": 0
+          },
+          "tags": []
+        },
+        {
+          "id": "strings.urls",
+          "category": "strings",
+          "title": "URLs مكتشفة",
+          "description": "عناوين URL مستخرجة من السلاسل",
+          "confidence": "high",
+          "provenance": "observed",
+          "source": "strings:regex",
+          "method": "regex https?://",
+          "evidence_refs": [],
+          "data": {
+            "urls": [
+              "https://example.com/api/v1/status"
+            ]
+          },
+          "tags": [
+            "network",
+            "ioc"
+          ]
+        },
+        {
+          "id": "strings.ips",
+          "category": "strings",
+          "title": "عناوين IP",
+          "description": "عناوين IP محتملة",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "strings:regex",
+          "method": "ipv4 regex",
+          "evidence_refs": [],
+          "data": {
+            "ips": [
+              "127.0.0.1"
+            ]
+          },
+          "tags": [
+            "network"
+          ]
+        },
+        {
+          "id": "strings.keywords",
+          "category": "strings",
+          "title": "كلمات مفتاحية مثيرة",
+          "description": "كلمات دلالية قد تشير لوظائف حساسة",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "strings:keyword search",
+          "method": "case-insensitive substring count",
+          "evidence_refs": [],
+          "data": {
+            "keywords": {
+              "password": 1,
+              "secret": 2,
+              "token": 2,
+              "config": 12,
+              "http": 1,
+              "debug": 16,
+              "error": 3,
+              "fail": 3,
+              "key": 1,
+              "user": 1
+            }
+          },
+          "tags": [
+            "heuristic"
+          ]
+        },
+        {
+          "id": "strings.paths",
+          "category": "strings",
+          "title": "مسارات ملفات",
+          "description": "مسارات ملفات مستخرجة (عينة من 50)",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "strings:regex",
+          "method": "path regex",
+          "evidence_refs": [],
+          "data": {
+            "paths": [
+              "/usr/include",
+              "/tmp/demo_output.txt",
+              "/usr/lib/gcc/x86_64-linux-gnu/12/include",
+              "/config.ini",
+              "/usr/include/x86_64-linux-gnu/bits/types",
+              "/dev/tcp/127.0.0.1/9999",
+              "/dev/null",
+              "/example.com/api/v1/status",
+              "/usr/include/x86_64-linux-gnu/bits",
+              "/home/user/sss/samples/demo_app",
+              "/lib64/ld-linux-x86-64.so.2"
+            ]
+          },
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "strings_ascii_lines": 241,
+        "strings_utf16_lines": 0,
+        "urls": [
+          "https://example.com/api/v1/status"
+        ],
+        "ips": [
+          "127.0.0.1"
+        ],
+        "emails": [],
+        "paths_sample": [
+          "/usr/include",
+          "/tmp/demo_output.txt",
+          "/usr/lib/gcc/x86_64-linux-gnu/12/include",
+          "/config.ini",
+          "/usr/include/x86_64-linux-gnu/bits/types",
+          "/dev/tcp/127.0.0.1/9999",
+          "/dev/null",
+          "/example.com/api/v1/status",
+          "/usr/include/x86_64-linux-gnu/bits",
+          "/home/user/sss/samples/demo_app",
+          "/lib64/ld-linux-x86-64.so.2"
+        ],
+        "regs": [],
+        "keywords": {
+          "password": 1,
+          "secret": 2,
+          "token": 2,
+          "config": 12,
+          "http": 1,
+          "debug": 16,
+          "error": 3,
+          "fail": 3,
+          "key": 1,
+          "user": 1
+        },
+        "total_strings": 242
+      }
+    },
+    {
+      "analyzer": "imports_exports",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T15:41:09.116166Z",
+      "finished_at": "2026-09-25T15:41:09.131228Z",
+      "duration_ms": 15,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "deps.imports",
+          "category": "dependencies",
+          "title": "الرموز المستوردة",
+          "description": "عدد 14 رمز مستورد (عينة 100 أولى محفوظة)",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "imports_exports:nm/objdump/pefile",
+          "method": "nm -D / objdump",
+          "evidence_refs": [],
+          "data": {
+            "imports_sample": [
+              "__libc_start_main@GLIBC_2.34",
+              "access@GLIBC_2.2.5",
+              "fclose@GLIBC_2.2.5",
+              "fgets@GLIBC_2.2.5",
+              "fopen@GLIBC_2.2.5",
+              "fprintf@GLIBC_2.2.5",
+              "fwrite@GLIBC_2.2.5",
+              "perror@GLIBC_2.2.5",
+              "printf@GLIBC_2.2.5",
+              "puts@GLIBC_2.2.5",
+              "strcmp@GLIBC_2.2.5",
+              "strcspn@GLIBC_2.2.5",
+              "strstr@GLIBC_2.2.5",
+              "system@GLIBC_2.2.5"
+            ],
+            "total": 14
+          },
+          "tags": []
+        },
+        {
+          "id": "deps.suspicious_imports",
+          "category": "behavior",
+          "title": "استيرادات مثيرة للانتباه",
+          "description": "استيرادات قد تشير لقدرات حساسة (لا تعني خبثًا بحد ذاتها)",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "imports_exports:heuristic",
+          "method": "keyword match against imports",
+          "evidence_refs": [],
+          "data": {
+            "suspicious": [
+              "system@GLIBC_2.2.5"
+            ]
+          },
+          "tags": [
+            "heuristic",
+            "behavior"
+          ]
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "needed": [],
+        "imports_total": 14,
+        "exports_total": 0
+      }
+    },
+    {
+      "analyzer": "resources",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T15:41:09.131465Z",
+      "finished_at": "2026-09-25T15:41:09.141696Z",
+      "duration_ms": 10,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "res.version_strings",
+          "category": "resources",
+          "title": "سلاسل إصدار",
+          "description": "سلاسل تشبه أرقام إصدار",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "resources:regex",
+          "method": "version regex",
+          "evidence_refs": [],
+          "data": {
+            "versions": [
+              "127.0.0.1",
+              "12.2.0",
+              "1.2.3"
+            ]
+          },
+          "tags": []
+        },
+        {
+          "id": "res.config_hints",
+          "category": "resources",
+          "title": "تلميحات ملفات إعداد",
+          "description": "مسارات تشبه ملفات إعداد/قواعد بيانات",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "resources:strings regex",
+          "method": "extension keyword",
+          "evidence_refs": [],
+          "data": {
+            "configs": [
+              "/config.ini"
+            ]
+          },
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "is_zip": false,
+        "config_hints": [
+          "/config.ini"
+        ],
+        "version_strings": [
+          "127.0.0.1",
+          "12.2.0",
+          "1.2.3"
+        ],
+        "rodata": ".rodata           PROGBITS         0000000000002000  00002000\n       00000000000004c1",
+        "rodata_hex_snippet": "\n/home/user/sss/samples/demo_app/demo_app:     file format elf64-x86-64\n\nContents of section .rodata:\n 2000 01000200 55736167 653a2025 73205b6f  ....Usage: %s [o\n 2010 7074696f 6e735d0a 004f7074 696f6e73  ptions]..Options\n 2020 3a002020 2d682c20 2d2d6865 6c702020  :.  -h, --help  \n 2030 20202020 2053686f 77206865 6c700053       Show help.S\n 2040 65702032 35203230 32360031 2e322e33  ep 25 2026.1.2.3\n 2050 00720046 61696c65 6420746f 206f7065  .r.Failed to ope\n 2060 6e20636f 6e666967 3a202573 0a005b2a  n config: %s..[*\n 2070 5d205265 6164696e 6720636f 6e666967  ] Reading config\n 2080 2066726f 6d202573 0a000d0a 00202063   from %s.....  c\n 2090 6f6e6669 673a2025 730a0070 61737377  onfig: %s..passw\n 20a0 6f726400 73656372 65740077 00666f70  ord.secret.w.fop\n 20b0 656e206f 75747075 74006465 6d6f5f61  en output.demo_a\n 20c0 7070206f 75747075 740a0076 65727369  pp output..versi\n 20d0 6f6e3d25 730a006d 65737361 67653d25  on=%s..message=%\n 20e0 730a005b 2a5d2057 726f7465 206f7574  s..[*] Wrote ou"
+      }
+    },
+    {
+      "analyzer": "crypto",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T15:41:09.141902Z",
+      "finished_at": "2026-09-25T15:41:09.145993Z",
+      "duration_ms": 4,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "crypto.low_entropy",
+          "category": "crypto",
+          "title": "إنتروبي منخفض — نص/كود غير مضغوط",
+          "description": "إنتروبي 3.90 منخفض يشير لملف غير مشفر/غير مضغوط",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "crypto:entropy",
+          "method": "shannon",
+          "evidence_refs": [],
+          "data": {
+            "overall_entropy": 3.9046643117045687
+          },
+          "tags": []
+        },
+        {
+          "id": "crypto.constants",
+          "category": "crypto",
+          "title": "ثوابت تشفير معروفة",
+          "description": "تم العثور على ثوابت/علامات تشفير",
+          "confidence": "high",
+          "provenance": "observed",
+          "source": "crypto:constant search",
+          "method": "byte pattern search",
+          "evidence_refs": [],
+          "data": {
+            "constants": [
+              "base64 alphabet"
+            ]
+          },
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "overall_entropy": 3.9047,
+        "size": 24640,
+        "high_entropy_windows": 0,
+        "total_windows": 25,
+        "avg_window_entropy": 2.8834,
+        "max_window_entropy": 5.5682,
+        "constants_found": [
+          "base64 alphabet"
+        ]
+      }
+    },
+    {
+      "analyzer": "disasm",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T15:41:09.146212Z",
+      "finished_at": "2026-09-25T15:41:09.154899Z",
+      "duration_ms": 8,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "disasm.objdump_ok",
+          "category": "disasm",
+          "title": "Disassembly عبر objdump",
+          "description": "تم تفكيك 557 سطر، 28 دالة محتملة",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "disasm:objdump -d",
+          "method": "objdump -d -M intel",
+          "evidence_refs": [],
+          "data": {
+            "lines": 557,
+            "funcs": [
+              "_init",
+              "puts@plt-0x10",
+              "puts@plt",
+              "fclose@plt",
+              "system@plt",
+              "printf@plt",
+              "strcspn@plt",
+              "fgets@plt",
+              "strcmp@plt",
+              "fprintf@plt",
+              "access@plt",
+              "fopen@plt",
+              "perror@plt",
+              "fwrite@plt",
+              "strstr@plt",
+              "__cxa_finalize@plt",
+              "main",
+              "_start",
+              "deregister_tm_clones",
+              "register_tm_clones",
+              "__do_global_dtors_aux",
+              "frame_dummy",
+              "print_help",
+              "print_version",
+              "read_config",
+              "write_output",
+              "try_connect",
+              "_fini"
+            ],
+            "total_funcs": 28
+          },
+          "tags": []
+        },
+        {
+          "id": "disasm.decompilation_limitation",
+          "category": "disasm",
+          "title": "قيود الاستعادة",
+          "description": "لا يمكن استعادة المصدر الأصلي حرفيًا من binary؛ ما نستعيده هو سلوك مكافئ عبر الملاحظة والتفكيك. Decompilation الحقيقي يتطلب Ghidra/IDA غير مضمنة هنا.",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "disasm:disclaimer",
+          "method": "design principle",
+          "evidence_refs": [],
+          "data": {},
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "objdump_returncode": 0,
+        "objdump_lines": 557,
+        "objdump_stderr_preview": "",
+        "functions_found": [
+          "_init",
+          "puts@plt-0x10",
+          "puts@plt",
+          "fclose@plt",
+          "system@plt",
+          "printf@plt",
+          "strcspn@plt",
+          "fgets@plt",
+          "strcmp@plt",
+          "fprintf@plt",
+          "access@plt",
+          "fopen@plt",
+          "perror@plt",
+          "fwrite@plt",
+          "strstr@plt",
+          "__cxa_finalize@plt",
+          "main",
+          "_start",
+          "deregister_tm_clones",
+          "register_tm_clones",
+          "__do_global_dtors_aux",
+          "frame_dummy",
+          "print_help",
+          "print_version",
+          "read_config",
+          "write_output",
+          "try_connect",
+          "_fini"
+        ],
+        "functions_count": 28,
+        "interesting_mnemonics": []
+      }
+    },
+    {
+      "analyzer": "behavior",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T15:41:09.155095Z",
+      "finished_at": "2026-09-25T15:41:09.157417Z",
+      "duration_ms": 2,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "behavior.network",
+          "category": "behavior",
+          "title": "سلوك محتمل: عمليات شبكة",
+          "description": "تم العثور على ['connect'] مطابقة للنمط \\b(socket|connect|bind|listen|accept|send|recv)\\b",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "behavior:regex over imports+strings",
+          "method": "regex \\b(socket|connect|bind|listen|accept|send|recv)\\b",
+          "evidence_refs": [],
+          "data": {
+            "tag": "network",
+            "description": "عمليات شبكة",
+            "hits": [
+              "connect"
+            ],
+            "pattern": "\\b(socket|connect|bind|listen|accept|send|recv)\\b"
+          },
+          "tags": [
+            "network",
+            "heuristic"
+          ]
+        },
+        {
+          "id": "behavior.file-io",
+          "category": "behavior",
+          "title": "سلوك محتمل: عمليات ملفات",
+          "description": "تم العثور على ['fwrite', 'fopen', 'open'] مطابقة للنمط \\b(open|read|write|fopen|fwrite|fread|creat)\\b",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "behavior:regex over imports+strings",
+          "method": "regex \\b(open|read|write|fopen|fwrite|fread|creat)\\b",
+          "evidence_refs": [],
+          "data": {
+            "tag": "file-io",
+            "description": "عمليات ملفات",
+            "hits": [
+              "fwrite",
+              "fopen",
+              "open"
+            ],
+            "pattern": "\\b(open|read|write|fopen|fwrite|fread|creat)\\b"
+          },
+          "tags": [
+            "file-io",
+            "heuristic"
+          ]
+        },
+        {
+          "id": "behavior.process",
+          "category": "behavior",
+          "title": "سلوك محتمل: إنشاء عمليات",
+          "description": "تم العثور على ['system'] مطابقة للنمط \\b(execve|execvp|system|popen|fork|clone)\\b",
+          "confidence": "medium",
+          "provenance": "inferred",
+          "source": "behavior:regex over imports+strings",
+          "method": "regex \\b(execve|execvp|system|popen|fork|clone)\\b",
+          "evidence_refs": [],
+          "data": {
+            "tag": "process",
+            "description": "إنشاء عمليات",
+            "hits": [
+              "system"
+            ],
+            "pattern": "\\b(execve|execvp|system|popen|fork|clone)\\b"
+          },
+          "tags": [
+            "process",
+            "heuristic"
+          ]
+        },
+        {
+          "id": "behavior.cli_hints",
+          "category": "interfaces",
+          "title": "تلميحات واجهة سطر الأوامر",
+          "description": "سلاسل تشبه خيارات CLI",
+          "confidence": "low",
+          "provenance": "inferred",
+          "source": "behavior:strings scan",
+          "method": "lines starting with -",
+          "evidence_refs": [],
+          "data": {
+            "cli_hints": [
+              "-h, --help       Show help",
+              "--help",
+              "--version",
+              "--connect",
+              "--debug",
+              "-v, --version    Show version"
+            ]
+          },
+          "tags": [
+            "interface"
+          ]
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "network": [
+          "connect"
+        ],
+        "file-io": [
+          "fwrite",
+          "fopen",
+          "open"
+        ],
+        "process": [
+          "system"
+        ],
+        "cli_hints": [
+          "-h, --help       Show help",
+          "--help",
+          "--version",
+          "--connect",
+          "--debug",
+          "-v, --version    Show version"
+        ]
+      }
+    },
+    {
+      "analyzer": "dynamic",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T15:41:09.157700Z",
+      "finished_at": "2026-09-25T15:41:09.162724Z",
+      "duration_ms": 5,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "dynamic.exit_code",
+          "category": "dynamic",
+          "title": "رمز الخروج",
+          "description": "exit code = 0",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "dynamic:runner",
+          "method": "waitpid",
+          "evidence_refs": [],
+          "data": {
+            "returncode": 0,
+            "duration": 0.004324913024902344
+          },
+          "tags": []
+        },
+        {
+          "id": "dynamic.stdout",
+          "category": "dynamic",
+          "title": "مخرجات stdout",
+          "description": "[DEBUG] debug enabled, config=./config.ini output=/tmp/demo_output.txt\n[DEBUG] token=demo-secret-token-12345\n=== demo_app v1.2.3 ===\nPlatform: Linux x86-64 (ELF)\n[*] Config not found at ./config.ini, using defaults\n[*] Wrote output to /tmp/demo_output.txt\n[DEBUG] b64 alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/\n[*] Done. Exit 0.\n",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "dynamic:runner",
+          "method": "capture stdout",
+          "evidence_refs": [],
+          "data": {
+            "stdout": "[DEBUG] debug enabled, config=./config.ini output=/tmp/demo_output.txt\n[DEBUG] token=demo-secret-token-12345\n=== demo_app v1.2.3 ===\nPlatform: Linux x86-64 (ELF)\n[*] Config not found at ./config.ini, using defaults\n[*] Wrote output to /tmp/demo_output.txt\n[DEBUG] b64 alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/\n[*] Done. Exit 0.\n"
+          },
+          "tags": []
+        },
+        {
+          "id": "dynamic.stderr",
+          "category": "dynamic",
+          "title": "مخرجات stderr",
+          "description": "(لا يوجد stderr)",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "dynamic:runner",
+          "method": "capture stderr",
+          "evidence_refs": [],
+          "data": {
+            "stderr": ""
+          },
+          "tags": []
+        },
+        {
+          "id": "dynamic.no_strace",
+          "category": "dynamic",
+          "title": "strace غير متوفر",
+          "description": "لا يمكن تتبع syscalls بدون strace",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "dynamic:missing",
+          "method": "which strace",
+          "evidence_refs": [],
+          "data": {},
+          "tags": []
+        },
+        {
+          "id": "dynamic.limitation",
+          "category": "dynamic",
+          "title": "قيود التحليل الديناميكي",
+          "description": "السلوك المرصود يعتمد على المدخلات المقدمة والبيئة المعزولة؛ قد يختلف بمدخلات أخرى. لا يشمل كل المسارات.",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "dynamic:disclaimer",
+          "method": "design",
+          "evidence_refs": [],
+          "data": {},
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "returncode": 0,
+        "timed_out": false,
+        "duration": 0.004324913024902344,
+        "cmd": [
+          "/home/user/sss/samples/demo_app/demo_app",
+          "--debug"
+        ],
+        "stdout_preview": "[DEBUG] debug enabled, config=./config.ini output=/tmp/demo_output.txt\n[DEBUG] token=demo-secret-token-12345\n=== demo_app v1.2.3 ===\nPlatform: Linux x86-64 (ELF)\n[*] Config not found at ./config.ini, using defaults\n[*] Wrote output to /tmp/demo_output.txt\n[DEBUG] b64 alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/\n[*] Done. Exit 0.\n",
+        "stderr_preview": ""
+      }
+    },
+    {
+      "analyzer": "compare",
+      "version": "1.0.0",
+      "started_at": "2026-09-25T15:41:09.162923Z",
+      "finished_at": "2026-09-25T15:41:09.163054Z",
+      "duration_ms": 0,
+      "status": "ok",
+      "findings": [
+        {
+          "id": "compare.no_network_consistent",
+          "category": "comparison",
+          "title": "توافق عدم وجود شبكة",
+          "description": "لا يوجد دليل شبكة في الثابت ولا الديناميكي",
+          "confidence": "high",
+          "provenance": "inferred",
+          "source": "compare:static_vs_dynamic",
+          "method": "negative both",
+          "evidence_refs": [],
+          "data": {
+            "static_network_hint": false,
+            "dynamic_network_observed": false,
+            "static_paths_sample": [
+              "/usr/include",
+              "/tmp/demo_output.txt",
+              "/usr/lib/gcc/x86_64-linux-gnu/12/include",
+              "/config.ini",
+              "/usr/include/x86_64-linux-gnu/bits/types",
+              "/dev/tcp/127.0.0.1/9999",
+              "/dev/null",
+              "/example.com/api/v1/status",
+              "/lib64/ld-linux-x86-64.so.2",
+              "/home/user/sss/samples/demo_app"
+            ],
+            "dynamic_files_sample": [],
+            "overlap": []
+          },
+          "tags": []
+        },
+        {
+          "id": "compare.methodology",
+          "category": "comparison",
+          "title": "منهجية المقارنة",
+          "description": "المقارنة تزيد الثقة عند التوافق وتخفضها عند التعارض؛ كل تعارض يجب التحقيق بمدخلات إضافية.",
+          "confidence": "proven",
+          "provenance": "observed",
+          "source": "compare:disclaimer",
+          "method": "design",
+          "evidence_refs": [],
+          "data": {
+            "static_network_hint": false,
+            "dynamic_network_observed": false,
+            "static_paths_sample": [
+              "/usr/include",
+              "/tmp/demo_output.txt",
+              "/usr/lib/gcc/x86_64-linux-gnu/12/include",
+              "/config.ini",
+              "/usr/include/x86_64-linux-gnu/bits/types",
+              "/dev/tcp/127.0.0.1/9999",
+              "/dev/null",
+              "/example.com/api/v1/status",
+              "/lib64/ld-linux-x86-64.so.2",
+              "/home/user/sss/samples/demo_app"
+            ],
+            "dynamic_files_sample": [],
+            "overlap": []
+          },
+          "tags": []
+        }
+      ],
+      "artifacts": [],
+      "errors": [],
+      "warnings": [],
+      "raw": {
+        "static_network_hint": false,
+        "dynamic_network_observed": false,
+        "static_paths_sample": [
+          "/usr/include",
+          "/tmp/demo_output.txt",
+          "/usr/lib/gcc/x86_64-linux-gnu/12/include",
+          "/config.ini",
+          "/usr/include/x86_64-linux-gnu/bits/types",
+          "/dev/tcp/127.0.0.1/9999",
+          "/dev/null",
+          "/example.com/api/v1/status",
+          "/lib64/ld-linux-x86-64.so.2",
+          "/home/user/sss/samples/demo_app"
+        ],
+        "dynamic_files_sample": [],
+        "overlap": []
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "meta.hash.sha256",
+      "category": "metadata",
+      "title": "SHA256",
+      "description": "SHA256 للعينة = 10a158d7ca71d3b204fbf852145987952c560a02b0c2fc139e4a60d8bfb15761",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "metadata:hashlib.sha256",
+      "method": "hashlib.sha256 over file bytes",
+      "evidence_refs": [],
+      "data": {
+        "sha256": "10a158d7ca71d3b204fbf852145987952c560a02b0c2fc139e4a60d8bfb15761"
+      },
+      "tags": []
+    },
+    {
+      "id": "meta.size",
+      "category": "metadata",
+      "title": "حجم الملف",
+      "description": "حجم الملف 24640 بايت",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "metadata:stat",
+      "method": "stat.st_size",
+      "evidence_refs": [],
+      "data": {
+        "size_bytes": 24640
+      },
+      "tags": []
+    },
+    {
+      "id": "meta.timestamps",
+      "category": "metadata",
+      "title": "طوابع زمنية لنظام الملفات",
+      "description": "mtime/ctime من نظام الملفات (قد لا تعكس وقت البناء)",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "metadata:stat",
+      "method": "stat.st_mtime/ctime",
+      "evidence_refs": [],
+      "data": {
+        "mtime": "2026-09-25T15:40:25.538983Z",
+        "ctime": "2026-09-25T15:41:05.335589Z",
+        "mode": "0o755"
+      },
+      "tags": []
+    },
+    {
+      "id": "meta.magic_bytes",
+      "category": "metadata",
+      "title": "Magic bytes",
+      "description": "أول 16 بايت hex: 7f454c46020101000000000000000000",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "metadata:read",
+      "method": "read first 16 bytes",
+      "evidence_refs": [],
+      "data": {
+        "magic_hex": "7f454c46020101000000000000000000"
+      },
+      "tags": []
+    },
+    {
+      "id": "platform.format",
+      "category": "platform",
+      "title": "صيغة الملف / المنصة",
+      "description": "الصيغة المكتشفة: ELF | المعمارية: x86-64 | البت: 64",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "platform:elf_magic",
+      "method": "elf_magic",
+      "evidence_refs": [],
+      "data": {
+        "format": "ELF",
+        "bitness": 64,
+        "endian": "little",
+        "arch": "x86-64",
+        "e_machine": 62,
+        "e_type": "DYN",
+        "osabi": "SystemV",
+        "ei_osabi_raw": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "platform.runtime_hints",
+      "category": "platform",
+      "title": "تلميحات Runtime / اللغة",
+      "description": "تلميحات لغوية/تقنية مستنتجة من strings و readelf",
+      "confidence": "low",
+      "provenance": "inferred",
+      "source": "platform:strings+readelf",
+      "method": "keyword search in strings",
+      "evidence_refs": [],
+      "data": {
+        "hints": [
+          "interpreter:/lib64/ld-linux-x86-64.so.2]"
+        ]
+      },
+      "tags": [
+        "heuristic"
+      ]
+    },
+    {
+      "id": "struct.elf.header",
+      "category": "structure",
+      "title": "ELF header",
+      "description": "Entry: 0x1480 | OSABI: SystemV",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "structure:readelf -h",
+      "method": "readelf -h",
+      "evidence_refs": [],
+      "data": {
+        "entry_point": "0x1480",
+        "header": "ELF Header:\n  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00 \n  Class:                             ELF64\n  Data:                              2's complement, little endian\n  Version:                           1 (current)\n  OS/ABI:                            UNIX - System V\n  ABI Version:                       0\n  Type:                              DYN (Position-Independent Executable file)\n  Machine:                           Advanced Micro Devices X86-64\n  Version:                           0x1\n  Entry point address:               0x1480\n  Start of program headers:          64 (bytes into file)\n  Start of section headers:          22144 (bytes into file)\n  Flags:                             0x0\n  Size of this header:               64 (bytes)\n  Size of program headers:           56 (bytes)\n  Number of program headers:         13\n  Size of section headers:           64 (bytes)\n  Number of section headers:         39\n  Section header string table index: 38\n"
+      },
+      "tags": []
+    },
+    {
+      "id": "struct.elf.sections",
+      "category": "structure",
+      "title": "Sections / Segments",
+      "description": "قائمة sections و segments كما أظهرها readelf",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "structure:readelf -S/-l",
+      "method": "readelf",
+      "evidence_refs": [],
+      "data": {
+        "sections_raw": "There are 39 section headers, starting at offset 0x5680:\n\nSection Headers:\n  [Nr] Name              Type             Address           Offset\n       Size              EntSize          Flags  Link  Info  Align\n  [ 0]                   NULL             0000000000000000  00000000\n       0000000000000000  0000000000000000           0     0     0\n  [ 1] .interp           PROGBITS         0000000000000318  00000318\n       000000000000001c  0000000000000000   A       0     0     1\n  [ 2] .note.gnu.pr[...] NOTE             0000000000000338  00000338\n       0000000000000020  0000000000000000   A       0     0     8\n  [ 3] .note.gnu.bu[...] NOTE             0000000000000358  00000358\n       0000000000000024  0000000000000000   A       0     0     4\n  [ 4] .note.ABI-tag     NOTE             000000000000037c  0000037c\n       0000000000000020  0000000000000000   A       0     0     4\n  [ 5] .gnu.hash         GNU_HASH         00000000000003a0  000003a0\n       0000000000000028  0000000000000000   A       6     0     8\n  [ 6] .dynsym           DYNSYM           00000000000003c8  000003c8\n       00000000000001e0  0000000000000018   A       7     1     8\n  [ 7] .dynstr           STRTAB           00000000000005a8  000005a8\n       00000000000000e1  0000000000000000   A       0     0     1\n  [ 8] .gnu.version      VERSYM           000000000000068a  0000068a\n       0000000000000028  0000000000000002   A       6     0     2\n  [ 9] .gnu.version_r    VERNEED          00000000000006b8  000006b8\n       0000000000000030  0000000000000000   A       7     1     8\n  [10] .rela.dyn         RELA             00000000000006e8  000006e8\n       00000000000000d8  0000000000000018   A       6     0     8\n  [11] .rela.plt         RELA             00000000000007c0  000007c0\n       0000000000000138  0000000000000018  AI       6    24     8\n  [12] .init             PROGBITS         0000000000001000  00001000\n       0000000000000017  0000000000000000  AX       0     0     4\n  [13] .plt              PROGBITS         0000000000001020  00001020\n       00000000000000e0  0000000000000010  AX       0     0     16\n  [14] .plt.got          PROGBITS         0000000000001100  00001100\n       0000000000000008  0000000000000008  AX       0     0     8\n  [15] .text             PROGBITS         0000000000001110  00001110\n       0000000000000710  0000000000000000  AX       0     0     16\n  [16] .fini             PROGBITS         0000000000001820  00001820\n       0000000000000009  0000000000000000  AX       0     0     4\n  [17] .rodata           PROGBITS         0000000000002000  00002000\n       00000000000004c1  0000000000000000   A       0     0     8\n  [18] .eh_frame_hdr     PROGBITS         00000000000024c4  000024c4\n       0000000000000054  0000000000000000   A       0     0     4\n  [19] .eh_frame         PROGBITS         0000000000002518  00002518\n       0000000000000198  0000000000000000   A       0     0     8\n  [20] .init_array       INIT_ARRAY       0000000000003dd0  00002dd0\n       0000000000000008  0000000000000008  WA       0     0     8\n  [21] .fini_array       FINI_ARRAY       0000000000003dd8  00002dd8\n       0000000000000008  0000000000000008  WA       0     0     8\n  [22] .dynamic          DYNAMIC          0000000000003de0  00002de0\n       00000000000001e0  0000000000000010  WA       7     0     8\n  [23] .got              PROGBITS         0000000000003fc0  00002fc0\n       0000000000000028  0000000000000008  WA       0     0     8\n  [24] .got.plt          PROGBITS         0000000000003fe8  00002fe8\n       0000000000000080  0000000000000008  WA       0     0     8\n  [25] .data             PROGBITS         0000000000004068  00003068\n       0000000000000010  0000000000000000  WA       0     0     8\n  [26] .bss              NOBITS           0000000000004080  00003078\n       0000000000000010  0000000000000000  WA       0     0     32\n  [27] .comment          PROGBITS         0000000000000000  00003078\n       0000000000000027  0000000000000001  MS       0     0     1\n  [28] .",
+        "segments_raw": "\nElf file type is DYN (Position-Independent Executable file)\nEntry point 0x1480\nThere are 13 program headers, starting at offset 64\n\nProgram Headers:\n  Type           Offset             VirtAddr           PhysAddr\n                 FileSiz            MemSiz              Flags  Align\n  PHDR           0x0000000000000040 0x0000000000000040 0x0000000000000040\n                 0x00000000000002d8 0x00000000000002d8  R      0x8\n  INTERP         0x0000000000000318 0x0000000000000318 0x0000000000000318\n                 0x000000000000001c 0x000000000000001c  R      0x1\n      [Requesting program interpreter: /lib64/ld-linux-x86-64.so.2]\n  LOAD           0x0000000000000000 0x0000000000000000 0x0000000000000000\n                 0x00000000000008f8 0x00000000000008f8  R      0x1000\n  LOAD           0x0000000000001000 0x0000000000001000 0x0000000000001000\n                 0x0000000000000829 0x0000000000000829  R E    0x1000\n  LOAD           0x0000000000002000 0x0000000000002000 0x0000000000002000\n                 0x00000000000006b0 0x00000000000006b0  R      0x1000\n  LOAD           0x0000000000002dd0 0x0000000000003dd0 0x0000000000003dd0\n                 0x00000000000002a8 0x00000000000002c0  RW     0x1000\n  DYNAMIC        0x0000000000002de0 0x0000000000003de0 0x0000000000003de0\n                 0x00000000000001e0 0x00000000000001e0  RW     0x8\n  NOTE           0x0000000000000338 0x0000000000000338 0x0000000000000338\n                 0x0000000000000020 0x0000000000000020  R      0x8\n  NOTE           0x0000000000000358 0x0000000000000358 0x0000000000000358\n                 0x0000000000000044 0x0000000000000044  R      0x4\n  GNU_PROPERTY   0x0000000000000338 0x0000000000000338 0x0000000000000338\n                 0x0000000000000020 0x0000000000000020  R      0x8\n  GNU_EH_FRAME   0x00000000000024c4 0x00000000000024c4 0x00000000000024c4\n                 0x0000000000000054 0x0000000000000054  R      0x4\n  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000\n                 0x0000000000000000 0x0000000000000000  RW     0x10\n  GNU_RELRO      0x0000000000002dd0 0x0000000000003dd0 0x0000000000003dd0\n                 0x0000000000000230 0x0000000000000230  R      0x1\n\n Section to Segment mapping:\n  Segment Sections...\n   00     \n   01     .interp \n   02     .interp .note.gnu.property .note.gnu.build-id .note.ABI-tag .gnu.hash .dynsym .dynstr .gnu.version .gnu.version_r .rela.dyn .rela.plt \n   03     .init .plt .plt.got .text .fini \n   04     .rodata .eh_frame_hdr .eh_frame \n   05     .init_array .fini_array .dynamic .got .got.plt .data .bss \n   06     .dynamic \n   07     .note.gnu.property \n   08     .note.gnu.build-id .note.ABI-tag \n   09     .note.gnu.property \n   10     .eh_frame_hdr \n   11     \n   12     .init_array .fini_array .dynamic .got \n"
+      },
+      "tags": []
+    },
+    {
+      "id": "strings.summary",
+      "category": "strings",
+      "title": "ملخص السلاسل",
+      "description": "إجمالي 241 سلسلة ascii (+ 0 utf16)",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "strings:strings(1)",
+      "method": "strings -a -n 4",
+      "evidence_refs": [],
+      "data": {
+        "ascii": 241,
+        "utf16": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "strings.urls",
+      "category": "strings",
+      "title": "URLs مكتشفة",
+      "description": "عناوين URL مستخرجة من السلاسل",
+      "confidence": "high",
+      "provenance": "observed",
+      "source": "strings:regex",
+      "method": "regex https?://",
+      "evidence_refs": [],
+      "data": {
+        "urls": [
+          "https://example.com/api/v1/status"
+        ]
+      },
+      "tags": [
+        "network",
+        "ioc"
+      ]
+    },
+    {
+      "id": "strings.ips",
+      "category": "strings",
+      "title": "عناوين IP",
+      "description": "عناوين IP محتملة",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "strings:regex",
+      "method": "ipv4 regex",
+      "evidence_refs": [],
+      "data": {
+        "ips": [
+          "127.0.0.1"
+        ]
+      },
+      "tags": [
+        "network"
+      ]
+    },
+    {
+      "id": "strings.keywords",
+      "category": "strings",
+      "title": "كلمات مفتاحية مثيرة",
+      "description": "كلمات دلالية قد تشير لوظائف حساسة",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "strings:keyword search",
+      "method": "case-insensitive substring count",
+      "evidence_refs": [],
+      "data": {
+        "keywords": {
+          "password": 1,
+          "secret": 2,
+          "token": 2,
+          "config": 12,
+          "http": 1,
+          "debug": 16,
+          "error": 3,
+          "fail": 3,
+          "key": 1,
+          "user": 1
+        }
+      },
+      "tags": [
+        "heuristic"
+      ]
+    },
+    {
+      "id": "strings.paths",
+      "category": "strings",
+      "title": "مسارات ملفات",
+      "description": "مسارات ملفات مستخرجة (عينة من 50)",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "strings:regex",
+      "method": "path regex",
+      "evidence_refs": [],
+      "data": {
+        "paths": [
+          "/usr/include",
+          "/tmp/demo_output.txt",
+          "/usr/lib/gcc/x86_64-linux-gnu/12/include",
+          "/config.ini",
+          "/usr/include/x86_64-linux-gnu/bits/types",
+          "/dev/tcp/127.0.0.1/9999",
+          "/dev/null",
+          "/example.com/api/v1/status",
+          "/usr/include/x86_64-linux-gnu/bits",
+          "/home/user/sss/samples/demo_app",
+          "/lib64/ld-linux-x86-64.so.2"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "deps.imports",
+      "category": "dependencies",
+      "title": "الرموز المستوردة",
+      "description": "عدد 14 رمز مستورد (عينة 100 أولى محفوظة)",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "imports_exports:nm/objdump/pefile",
+      "method": "nm -D / objdump",
+      "evidence_refs": [],
+      "data": {
+        "imports_sample": [
+          "__libc_start_main@GLIBC_2.34",
+          "access@GLIBC_2.2.5",
+          "fclose@GLIBC_2.2.5",
+          "fgets@GLIBC_2.2.5",
+          "fopen@GLIBC_2.2.5",
+          "fprintf@GLIBC_2.2.5",
+          "fwrite@GLIBC_2.2.5",
+          "perror@GLIBC_2.2.5",
+          "printf@GLIBC_2.2.5",
+          "puts@GLIBC_2.2.5",
+          "strcmp@GLIBC_2.2.5",
+          "strcspn@GLIBC_2.2.5",
+          "strstr@GLIBC_2.2.5",
+          "system@GLIBC_2.2.5"
+        ],
+        "total": 14
+      },
+      "tags": []
+    },
+    {
+      "id": "deps.suspicious_imports",
+      "category": "behavior",
+      "title": "استيرادات مثيرة للانتباه",
+      "description": "استيرادات قد تشير لقدرات حساسة (لا تعني خبثًا بحد ذاتها)",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "imports_exports:heuristic",
+      "method": "keyword match against imports",
+      "evidence_refs": [],
+      "data": {
+        "suspicious": [
+          "system@GLIBC_2.2.5"
+        ]
+      },
+      "tags": [
+        "heuristic",
+        "behavior"
+      ]
+    },
+    {
+      "id": "res.version_strings",
+      "category": "resources",
+      "title": "سلاسل إصدار",
+      "description": "سلاسل تشبه أرقام إصدار",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "resources:regex",
+      "method": "version regex",
+      "evidence_refs": [],
+      "data": {
+        "versions": [
+          "127.0.0.1",
+          "12.2.0",
+          "1.2.3"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "res.config_hints",
+      "category": "resources",
+      "title": "تلميحات ملفات إعداد",
+      "description": "مسارات تشبه ملفات إعداد/قواعد بيانات",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "resources:strings regex",
+      "method": "extension keyword",
+      "evidence_refs": [],
+      "data": {
+        "configs": [
+          "/config.ini"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "crypto.low_entropy",
+      "category": "crypto",
+      "title": "إنتروبي منخفض — نص/كود غير مضغوط",
+      "description": "إنتروبي 3.90 منخفض يشير لملف غير مشفر/غير مضغوط",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "crypto:entropy",
+      "method": "shannon",
+      "evidence_refs": [],
+      "data": {
+        "overall_entropy": 3.9046643117045687
+      },
+      "tags": []
+    },
+    {
+      "id": "crypto.constants",
+      "category": "crypto",
+      "title": "ثوابت تشفير معروفة",
+      "description": "تم العثور على ثوابت/علامات تشفير",
+      "confidence": "high",
+      "provenance": "observed",
+      "source": "crypto:constant search",
+      "method": "byte pattern search",
+      "evidence_refs": [],
+      "data": {
+        "constants": [
+          "base64 alphabet"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "disasm.objdump_ok",
+      "category": "disasm",
+      "title": "Disassembly عبر objdump",
+      "description": "تم تفكيك 557 سطر، 28 دالة محتملة",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "disasm:objdump -d",
+      "method": "objdump -d -M intel",
+      "evidence_refs": [],
+      "data": {
+        "lines": 557,
+        "funcs": [
+          "_init",
+          "puts@plt-0x10",
+          "puts@plt",
+          "fclose@plt",
+          "system@plt",
+          "printf@plt",
+          "strcspn@plt",
+          "fgets@plt",
+          "strcmp@plt",
+          "fprintf@plt",
+          "access@plt",
+          "fopen@plt",
+          "perror@plt",
+          "fwrite@plt",
+          "strstr@plt",
+          "__cxa_finalize@plt",
+          "main",
+          "_start",
+          "deregister_tm_clones",
+          "register_tm_clones",
+          "__do_global_dtors_aux",
+          "frame_dummy",
+          "print_help",
+          "print_version",
+          "read_config",
+          "write_output",
+          "try_connect",
+          "_fini"
+        ],
+        "total_funcs": 28
+      },
+      "tags": []
+    },
+    {
+      "id": "disasm.decompilation_limitation",
+      "category": "disasm",
+      "title": "قيود الاستعادة",
+      "description": "لا يمكن استعادة المصدر الأصلي حرفيًا من binary؛ ما نستعيده هو سلوك مكافئ عبر الملاحظة والتفكيك. Decompilation الحقيقي يتطلب Ghidra/IDA غير مضمنة هنا.",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "disasm:disclaimer",
+      "method": "design principle",
+      "evidence_refs": [],
+      "data": {},
+      "tags": []
+    },
+    {
+      "id": "behavior.network",
+      "category": "behavior",
+      "title": "سلوك محتمل: عمليات شبكة",
+      "description": "تم العثور على ['connect'] مطابقة للنمط \\b(socket|connect|bind|listen|accept|send|recv)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(socket|connect|bind|listen|accept|send|recv)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "network",
+        "description": "عمليات شبكة",
+        "hits": [
+          "connect"
+        ],
+        "pattern": "\\b(socket|connect|bind|listen|accept|send|recv)\\b"
+      },
+      "tags": [
+        "network",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.file-io",
+      "category": "behavior",
+      "title": "سلوك محتمل: عمليات ملفات",
+      "description": "تم العثور على ['fwrite', 'fopen', 'open'] مطابقة للنمط \\b(open|read|write|fopen|fwrite|fread|creat)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(open|read|write|fopen|fwrite|fread|creat)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "file-io",
+        "description": "عمليات ملفات",
+        "hits": [
+          "fwrite",
+          "fopen",
+          "open"
+        ],
+        "pattern": "\\b(open|read|write|fopen|fwrite|fread|creat)\\b"
+      },
+      "tags": [
+        "file-io",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.process",
+      "category": "behavior",
+      "title": "سلوك محتمل: إنشاء عمليات",
+      "description": "تم العثور على ['system'] مطابقة للنمط \\b(execve|execvp|system|popen|fork|clone)\\b",
+      "confidence": "medium",
+      "provenance": "inferred",
+      "source": "behavior:regex over imports+strings",
+      "method": "regex \\b(execve|execvp|system|popen|fork|clone)\\b",
+      "evidence_refs": [],
+      "data": {
+        "tag": "process",
+        "description": "إنشاء عمليات",
+        "hits": [
+          "system"
+        ],
+        "pattern": "\\b(execve|execvp|system|popen|fork|clone)\\b"
+      },
+      "tags": [
+        "process",
+        "heuristic"
+      ]
+    },
+    {
+      "id": "behavior.cli_hints",
+      "category": "interfaces",
+      "title": "تلميحات واجهة سطر الأوامر",
+      "description": "سلاسل تشبه خيارات CLI",
+      "confidence": "low",
+      "provenance": "inferred",
+      "source": "behavior:strings scan",
+      "method": "lines starting with -",
+      "evidence_refs": [],
+      "data": {
+        "cli_hints": [
+          "-h, --help       Show help",
+          "--help",
+          "--version",
+          "--connect",
+          "--debug",
+          "-v, --version    Show version"
+        ]
+      },
+      "tags": [
+        "interface"
+      ]
+    },
+    {
+      "id": "dynamic.exit_code",
+      "category": "dynamic",
+      "title": "رمز الخروج",
+      "description": "exit code = 0",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "dynamic:runner",
+      "method": "waitpid",
+      "evidence_refs": [],
+      "data": {
+        "returncode": 0,
+        "duration": 0.004324913024902344
+      },
+      "tags": []
+    },
+    {
+      "id": "dynamic.stdout",
+      "category": "dynamic",
+      "title": "مخرجات stdout",
+      "description": "[DEBUG] debug enabled, config=./config.ini output=/tmp/demo_output.txt\n[DEBUG] token=demo-secret-token-12345\n=== demo_app v1.2.3 ===\nPlatform: Linux x86-64 (ELF)\n[*] Config not found at ./config.ini, using defaults\n[*] Wrote output to /tmp/demo_output.txt\n[DEBUG] b64 alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/\n[*] Done. Exit 0.\n",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "dynamic:runner",
+      "method": "capture stdout",
+      "evidence_refs": [],
+      "data": {
+        "stdout": "[DEBUG] debug enabled, config=./config.ini output=/tmp/demo_output.txt\n[DEBUG] token=demo-secret-token-12345\n=== demo_app v1.2.3 ===\nPlatform: Linux x86-64 (ELF)\n[*] Config not found at ./config.ini, using defaults\n[*] Wrote output to /tmp/demo_output.txt\n[DEBUG] b64 alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/\n[*] Done. Exit 0.\n"
+      },
+      "tags": []
+    },
+    {
+      "id": "dynamic.stderr",
+      "category": "dynamic",
+      "title": "مخرجات stderr",
+      "description": "(لا يوجد stderr)",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "dynamic:runner",
+      "method": "capture stderr",
+      "evidence_refs": [],
+      "data": {
+        "stderr": ""
+      },
+      "tags": []
+    },
+    {
+      "id": "dynamic.no_strace",
+      "category": "dynamic",
+      "title": "strace غير متوفر",
+      "description": "لا يمكن تتبع syscalls بدون strace",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "dynamic:missing",
+      "method": "which strace",
+      "evidence_refs": [],
+      "data": {},
+      "tags": []
+    },
+    {
+      "id": "dynamic.limitation",
+      "category": "dynamic",
+      "title": "قيود التحليل الديناميكي",
+      "description": "السلوك المرصود يعتمد على المدخلات المقدمة والبيئة المعزولة؛ قد يختلف بمدخلات أخرى. لا يشمل كل المسارات.",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "dynamic:disclaimer",
+      "method": "design",
+      "evidence_refs": [],
+      "data": {},
+      "tags": []
+    },
+    {
+      "id": "compare.no_network_consistent",
+      "category": "comparison",
+      "title": "توافق عدم وجود شبكة",
+      "description": "لا يوجد دليل شبكة في الثابت ولا الديناميكي",
+      "confidence": "high",
+      "provenance": "inferred",
+      "source": "compare:static_vs_dynamic",
+      "method": "negative both",
+      "evidence_refs": [],
+      "data": {
+        "static_network_hint": false,
+        "dynamic_network_observed": false,
+        "static_paths_sample": [
+          "/usr/include",
+          "/tmp/demo_output.txt",
+          "/usr/lib/gcc/x86_64-linux-gnu/12/include",
+          "/config.ini",
+          "/usr/include/x86_64-linux-gnu/bits/types",
+          "/dev/tcp/127.0.0.1/9999",
+          "/dev/null",
+          "/example.com/api/v1/status",
+          "/lib64/ld-linux-x86-64.so.2",
+          "/home/user/sss/samples/demo_app"
+        ],
+        "dynamic_files_sample": [],
+        "overlap": []
+      },
+      "tags": []
+    },
+    {
+      "id": "compare.methodology",
+      "category": "comparison",
+      "title": "منهجية المقارنة",
+      "description": "المقارنة تزيد الثقة عند التوافق وتخفضها عند التعارض؛ كل تعارض يجب التحقيق بمدخلات إضافية.",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "compare:disclaimer",
+      "method": "design",
+      "evidence_refs": [],
+      "data": {
+        "static_network_hint": false,
+        "dynamic_network_observed": false,
+        "static_paths_sample": [
+          "/usr/include",
+          "/tmp/demo_output.txt",
+          "/usr/lib/gcc/x86_64-linux-gnu/12/include",
+          "/config.ini",
+          "/usr/include/x86_64-linux-gnu/bits/types",
+          "/dev/tcp/127.0.0.1/9999",
+          "/dev/null",
+          "/example.com/api/v1/status",
+          "/lib64/ld-linux-x86-64.so.2",
+          "/home/user/sss/samples/demo_app"
+        ],
+        "dynamic_files_sample": [],
+        "overlap": []
+      },
+      "tags": []
+    }
+  ],
+  "summary": {
+    "total_findings": 32,
+    "by_category": {
+      "metadata": 4,
+      "platform": 2,
+      "structure": 2,
+      "strings": 5,
+      "dependencies": 1,
+      "behavior": 4,
+      "resources": 2,
+      "crypto": 2,
+      "disasm": 2,
+      "interfaces": 1,
+      "dynamic": 5,
+      "comparison": 2
+    },
+    "confidence_histogram": {
+      "proven": 17,
+      "low": 2,
+      "high": 3,
+      "medium": 10
+    },
+    "provenance_histogram": {
+      "observed": 19,
+      "inferred": 13
+    },
+    "analyzers_run": 11,
+    "analyzers_status": {
+      "metadata": "ok",
+      "platform": "ok",
+      "structure": "ok",
+      "strings": "ok",
+      "imports_exports": "ok",
+      "resources": "ok",
+      "crypto": "ok",
+      "disasm": "ok",
+      "behavior": "ok",
+      "dynamic": "ok",
+      "compare": "ok"
+    }
+  },
+  "comparison": {
+    "static_network_hint": false,
+    "dynamic_network_observed": false,
+    "static_paths_sample": [
+      "/usr/include",
+      "/tmp/demo_output.txt",
+      "/usr/lib/gcc/x86_64-linux-gnu/12/include",
+      "/config.ini",
+      "/usr/include/x86_64-linux-gnu/bits/types",
+      "/dev/tcp/127.0.0.1/9999",
+      "/dev/null",
+      "/example.com/api/v1/status",
+      "/lib64/ld-linux-x86-64.so.2",
+      "/home/user/sss/samples/demo_app"
+    ],
+    "dynamic_files_sample": [],
+    "overlap": []
+  }
+}

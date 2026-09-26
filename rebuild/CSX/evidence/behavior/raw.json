@@ -1,0 +1,82 @@
+{
+  "detected": [
+    {
+      "tag": "network",
+      "description": "عمليات شبكة",
+      "hits": [
+        "socket",
+        "send"
+      ],
+      "pattern": "\\b(socket|connect|bind|listen|accept|send|recv)\\b"
+    },
+    {
+      "tag": "file-io",
+      "description": "عمليات ملفات",
+      "hits": [
+        "read",
+        "open"
+      ],
+      "pattern": "\\b(open|read|write|fopen|fwrite|fread|creat)\\b"
+    },
+    {
+      "tag": "process",
+      "description": "إنشاء عمليات",
+      "hits": [
+        "system"
+      ],
+      "pattern": "\\b(execve|execvp|system|popen|fork|clone)\\b"
+    },
+    {
+      "tag": "memory",
+      "description": "تلاعب بالذاكرة / حقن محتمل",
+      "hits": [
+        "mmap",
+        "VirtualProtect"
+      ],
+      "pattern": "\\b(mmap|mprotect|VirtualAlloc|VirtualProtect)\\b"
+    },
+    {
+      "tag": "injection",
+      "description": "حقن/تتبع عمليات",
+      "hits": [
+        "CreateRemoteThread",
+        "WriteProcessMemory"
+      ],
+      "pattern": "\\b(ptrace|CreateRemoteThread|WriteProcessMemory)\\b"
+    },
+    {
+      "tag": "crypto",
+      "description": "عمليات تشفير",
+      "hits": [
+        "RSA",
+        "AES"
+      ],
+      "pattern": "\\b(crypt|encrypt|decrypt|AES|RSA|EVP_)\\b"
+    }
+  ],
+  "raw": {
+    "network": [
+      "socket",
+      "send"
+    ],
+    "file-io": [
+      "read",
+      "open"
+    ],
+    "process": [
+      "system"
+    ],
+    "memory": [
+      "mmap",
+      "VirtualProtect"
+    ],
+    "injection": [
+      "CreateRemoteThread",
+      "WriteProcessMemory"
+    ],
+    "crypto": [
+      "RSA",
+      "AES"
+    ]
+  }
+}

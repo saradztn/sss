@@ -1,0 +1,135 @@
+{
+  "findings": [
+    {
+      "id": "deep.opcodes_summary",
+      "category": "disasm",
+      "title": "Opcodes (capstone) — 50001 تعليمة",
+      "description": "تم تفكيك 50001 تعليمة عبر capstone. أهمها: mov:12739, push:8970, call:3537, cmp:3409, lea:2637 | Blocks: 10626 | Functions: 0",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "deep:capstone",
+      "method": "capstone disassembly",
+      "evidence_refs": [],
+      "data": {
+        "total": 50001,
+        "top": [
+          [
+            "mov",
+            12739
+          ],
+          [
+            "push",
+            8970
+          ],
+          [
+            "call",
+            3537
+          ],
+          [
+            "cmp",
+            3409
+          ],
+          [
+            "lea",
+            2637
+          ],
+          [
+            "add",
+            2532
+          ],
+          [
+            "int3",
+            1815
+          ],
+          [
+            "pop",
+            1591
+          ],
+          [
+            "sub",
+            1253
+          ],
+          [
+            "je",
+            1220
+          ]
+        ],
+        "blocks": 10626,
+        "funcs": 0,
+        "cats": {
+          "data": 25953,
+          "control": 9239,
+          "other": 9463,
+          "arith": 5343,
+          "syscall": 3
+        }
+      },
+      "tags": []
+    },
+    {
+      "id": "deep.functions",
+      "category": "structure",
+      "title": "Functions مكتشفة: 0",
+      "description": "دوال عبر symbols أو prologue heuristics (push rbp; mov rbp,rsp)",
+      "confidence": "medium",
+      "provenance": "undetermined",
+      "source": "deep:nm+heuristic",
+      "method": "nm -S + prologue pattern",
+      "evidence_refs": [],
+      "data": {
+        "functions": [],
+        "total": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "deep.cfg",
+      "category": "behavior",
+      "title": "Control Flow — 10626 basic blocks",
+      "description": "متوسط 4.71 تعليمة لكل block. Jumps/Calls تحدد التدفق.",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "deep:cfg",
+      "method": "split on jmp/call/ret",
+      "evidence_refs": [],
+      "data": {
+        "blocks": 10626,
+        "avg": 4.71
+      },
+      "tags": []
+    },
+    {
+      "id": "deep.stripped",
+      "category": "disasm",
+      "title": "لا يوجد symbols — stripped",
+      "description": "البرنامج stripped، الدوال مستنتجة heuristics فقط. إعادة البناء ستحتاج تسمية يدوية.",
+      "confidence": "high",
+      "provenance": "observed",
+      "source": "deep:nm empty",
+      "method": "nm returned empty",
+      "evidence_refs": [],
+      "data": {},
+      "tags": []
+    },
+    {
+      "id": "deep.ai_ready",
+      "category": "disasm",
+      "title": "تقرير جاهز لإعادة البناء في C++",
+      "description": "يحتوي opcodes_full.json.gz + skeleton.cpp + ai_report.json — يمكن إرسالها لنموذج AI لبناء C++ مكافئ.",
+      "confidence": "proven",
+      "provenance": "observed",
+      "source": "deep:export",
+      "method": "capstone + skeleton gen",
+      "evidence_refs": [],
+      "data": {
+        "files": [
+          "opcodes_full.json.gz",
+          "skeleton.cpp",
+          "ai_report.json",
+          "cfg.dot"
+        ]
+      },
+      "tags": []
+    }
+  ]
+}
