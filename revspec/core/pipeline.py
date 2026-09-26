@@ -22,6 +22,7 @@ def default_analyzers(include_deep: bool = False) -> List[BaseAnalyzer]:
     from ..analyzers.crypto import CryptoAnalyzer
     from ..analyzers.disasm import DisasmAnalyzer
     from ..analyzers.behavior import BehaviorAnalyzer
+    from ..analyzers.serial_spoof import SerialSpoofAnalyzer
     from ..dynamic.tracer import DynamicAnalyzer
     from ..compare.comparator import ComparatorAnalyzer
     analyzers = [
@@ -34,6 +35,7 @@ def default_analyzers(include_deep: bool = False) -> List[BaseAnalyzer]:
         CryptoAnalyzer(),
         DisasmAnalyzer(),
         BehaviorAnalyzer(),
+        SerialSpoofAnalyzer(),
         DynamicAnalyzer(),
         ComparatorAnalyzer(),
     ]

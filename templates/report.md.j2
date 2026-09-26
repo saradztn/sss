@@ -120,6 +120,24 @@
 ```{% endif %}
 {% endfor %}
 
+### حكم كشف قدرة تغيير المعرّف (serial_spoof)
+
+{% set verd = by_cat.get('verdict', []) %}
+{% if verd %}
+{% for f in verd %}
+> **{{ f.title }}** — {{ f.confidence|badge }} / {{ f.provenance }}
+>
+> {{ f.description }}
+{% if f.data %}
+```json
+{{ f.data | tojson(indent=2) }}
+```
+{% endif %}
+{% endfor %}
+{% else %}
+- لم يعمل محلل `serial_spoof` على هذه العينة.
+{% endif %}
+
 ---
 
 ## 7) الواجهات والمدخلات والمخرجات

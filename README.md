@@ -17,6 +17,47 @@
 
 التقرير يحتوي 18 قسمًا مطلوبًا: معلومات العينة، البنية، الواجهات، الاعتمادات، التدفقات، الثقة، المثبت vs المستنتج، القيود، و **Specification جاهزة لإعادة التنفيذ**.
 
+### 🛡️ كاشف قدرة تغيير المعرّف (`serial_spoof`)
+
+محلل إضافي **لجهة الحماية**: يفحص أي ملف ثنائي (قراءة فقط، بلا تنفيذ) ويحكم هل
+يحتوي على **قدرة** تغيير معرّف العميل (serial/HWID) وقدرة حقن في عملية أخرى.
+
+```bash
+revspec analyze suspicious.exe -o ./runs
+# الحكم في runs/<run>/report.md → "حكم كشف قدرة تغيير المعرّف"
+```
+
+| العينة | serial_score | الحكم |
+|---|---|---|
+| `CSX.exe` (loader غش MTA) | 160 | `capable-serial-change` |
+| `samples/demo_app` (gcc) | 0 | `no-serial-change-indicator` |
+
+معه: قواعد YARA في `rules/serial_spoof.yar`، وأداة قراءة-فقط بلغة C++ في ملف
+واحد `tools/serial_change_probe.cpp` — تعرض الـ serial الحالي، وتجرد مدخلات
+الـ serial مع قابلية تزوير كل مدخل، وتحكم هل كان التغيير سينجح أم سيُحجب.
+التفاصيل والتقسية في [`docs/serial_hardening.md`](./docs/serial_hardening.md).
+
+### 🧭 منطق الحماية: هل تغيّر الـ serial شرعي أم تزوير؟
+
+`revspec/protection/serial_consistency.py` — يأخذ سجلّ قراءات معرّفات (JSON) ويقرر
+نمط التغيّر. **لا يعدّل ولا يزوّر شيئاً**: مدخله سجلّ، ومخرجه حكم.
+
+```bash
+revspec serial-check examples/serial_history_csx_pattern.json   # → block
+revspec serial-check examples/serial_history_reinstall.json     # → require-reauth
+```
+
+| الحكم | الشرط | الإجراء |
+|---|---|---|
+| `derivation-tamper` | الـ serial تغيّر ولا معرّف تغيّر | `block` |
+| `spoof-reset` | علامة اختفت ثم عادت بقيمة جديدة | `block` |
+| `spoof-partial` | الطيّع تغيّر والمراسي ثابتة | `require-reauth` |
+| `hardware-change` | مرساة تغيّرت فعلاً | `require-reauth` |
+| `legit-change` | ≥80% من المعرّفات تغيّرت معاً | `allow-with-note` |
+
+الفكرة: إعادة التثبيت الشرعية تغيّر `install_date` (مرساة)، وأداة التزوير لا تغيّره —
+وهذا ما يفرّق النمطين. 19 اختباراً في `tests/test_serial_consistency.py`.
+
 ---
 
 ## 🏗️ المعمارية

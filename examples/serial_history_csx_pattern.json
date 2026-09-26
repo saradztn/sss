@@ -1,0 +1,59 @@
+{
+  "_comment": "سجلّ قراءات مُصنَّع يطابق النمط الذي يتركه CSX.exe: MachineGuid يُستبدل، و SSO_RND_Device و mta_serial يُحذفان ثم يُعاد توليدهما، بينما المراسي (BIOS/اللوحة/القرص/MAC) ثابتة. هذا مدخل لاختبار منطق الحماية — لا يوجد فيه أي تعديل حقيقي.",
+  "readings": [
+    {
+      "session_id": "2026-09-20_01",
+      "timestamp": "2026-09-20T18:12:04Z",
+      "identifiers": {
+        "machine_guid": "7d671f0a-4c2e-4b81-9a55-31e0c8b2c585",
+        "bios_serial": "BIOS-9F21-AA07",
+        "board_serial": "BOARD-4471-C0DE",
+        "disk_serial": "WD-WX21A79K3T1P",
+        "mac_address": "02:f1:3c:88:20:05",
+        "volume_serial": "1A2B-3C4D",
+        "install_date": "1735689600",
+        "computer_name": "DESKTOP-7QK2M1",
+        "user_name": "player",
+        "sso_rnd_device": "rnd-88f1c2",
+        "mta_serial": "A1B2C3D4E5F60718293A4B5C6D7E8F90"
+      },
+      "client_serial": "SER-0F3A91C2B7"
+    },
+    {
+      "session_id": "2026-09-21_01",
+      "timestamp": "2026-09-21T09:03:47Z",
+      "identifiers": {
+        "machine_guid": "b91e0c44-77a3-4d90-82f6-1cd5e7ab9302",
+        "bios_serial": "BIOS-9F21-AA07",
+        "board_serial": "BOARD-4471-C0DE",
+        "disk_serial": "WD-WX21A79K3T1P",
+        "mac_address": "02:f1:3c:88:20:05",
+        "volume_serial": "1A2B-3C4D",
+        "install_date": "1735689600",
+        "computer_name": "DESKTOP-7QK2M1",
+        "user_name": "player",
+        "sso_rnd_device": null,
+        "mta_serial": null
+      },
+      "client_serial": "SER-0F3A91C2B7"
+    },
+    {
+      "session_id": "2026-09-21_02",
+      "timestamp": "2026-09-21T09:05:12Z",
+      "identifiers": {
+        "machine_guid": "b91e0c44-77a3-4d90-82f6-1cd5e7ab9302",
+        "bios_serial": "BIOS-9F21-AA07",
+        "board_serial": "BOARD-4471-C0DE",
+        "disk_serial": "WD-WX21A79K3T1P",
+        "mac_address": "02:f1:3c:88:20:05",
+        "volume_serial": "1A2B-3C4D",
+        "install_date": "1735689600",
+        "computer_name": "DESKTOP-7QK2M1",
+        "user_name": "player",
+        "sso_rnd_device": "rnd-02ba77",
+        "mta_serial": "9F8E7D6C5B4A39281706F5E4D3C2B1A0"
+      },
+      "client_serial": "SER-77CC40D1AE"
+    }
+  ]
+}

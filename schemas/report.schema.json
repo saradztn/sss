@@ -84,7 +84,7 @@
       "required": ["id", "category", "title", "description", "confidence", "provenance", "source", "method"],
       "properties": {
         "id": { "type": "string", "description": "معرف فريد للاستنتاج" },
-        "category": { "type": "string", "enum": ["metadata","platform","structure","strings","dependencies","resources","crypto","disasm","behavior","dynamic","comparison","interfaces"] },
+        "category": { "type": "string", "enum": ["metadata","platform","structure","strings","dependencies","resources","crypto","disasm","behavior","dynamic","comparison","interfaces","verdict"] },
         "title": { "type": "string" },
         "description": { "type": "string" },
         "confidence": { "enum": ["proven","high","medium","low","speculative","unknown"] },

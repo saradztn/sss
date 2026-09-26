@@ -1,0 +1,159 @@
+name: build-windows-exe
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # -------------------------------------------------------------------------
+  # Primary: MinGW-w64 (g++ is preinstalled on windows-latest)
+  # -------------------------------------------------------------------------
+  build-mingw:
+    name: Build serial_change_probe.exe (MinGW-w64)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain info
+        shell: pwsh
+        run: |
+          $g = Get-Command g++ -ErrorAction SilentlyContinue
+          if (-not $g) { Write-Error "g++ not found on runner"; exit 1 }
+          "g++ -> $($g.Source)" | Tee-Object -FilePath build.log -Append
+          g++ --version 2>&1 | Tee-Object -FilePath build.log -Append
+          "available libs:" | Tee-Object -FilePath build.log -Append
+          Get-ChildItem -Recurse -Filter "libwbemuuid*" -Path C:\ -ErrorAction SilentlyContinue |
+            Select-Object -First 5 FullName | Tee-Object -FilePath build.log -Append
+
+      - name: Compile (single source file)
+        shell: pwsh
+        run: |
+          $out = & g++ -O2 -std=c++17 -Wall -Wextra `
+              tools/serial_change_probe.cpp -o serial_change_probe.exe `
+              -ladvapi32 -lole32 -loleaut32 -lwbemuuid -liphlpapi 2>&1 | Out-String
+          $code = $LASTEXITCODE
+          $out | Out-File -FilePath build.log -Append -Encoding utf8
+          "```" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          $out | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          "```" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          if ($code -ne 0) {
+            foreach ($l in ($out -split "`r?`n" | Where-Object { $_ -ne "" } | Select-Object -First 15)) {
+              Write-Output "::error title=MinGW compile::$l"
+            }
+            exit $code
+          }
+          Write-Output "COMPILE OK"
+
+      - name: Smoke-test the exe on a real Windows host
+        if: success()
+        shell: pwsh
+        run: |
+          ./serial_change_probe.exe 2>&1 | Tee-Object -FilePath run.log
+          $code = $LASTEXITCODE
+          "exit code = $code" | Tee-Object -FilePath run.log -Append
+          if ($code -notin 0, 2, 3) {
+            "UNEXPECTED EXIT CODE" | Tee-Object -FilePath run.log -Append
+            exit 1
+          }
+
+      - name: Upload build log (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mingw-build-log
+          path: |
+            build.log
+            run.log
+          if-no-files-found: ignore
+
+      - name: Upload exe
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: serial_change_probe-mingw-x64
+          path: serial_change_probe.exe
+
+  # -------------------------------------------------------------------------
+  # Secondary: MSVC (cl) via the community MSVC dev-env action
+  # -------------------------------------------------------------------------
+  build-msvc:
+    name: Build serial_change_probe.exe (MSVC)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Compile with cl
+        shell: pwsh
+        run: |
+          $out = & cmd /c "cl /nologo /O2 /EHsc /W4 tools\serial_change_probe.cpp advapi32.lib ole32.lib oleaut32.lib wbemuuid.lib iphlpapi.lib /Fe:serial_change_probe.exe" 2>&1 | Out-String
+          $code = $LASTEXITCODE
+          $out | Out-File -FilePath build.log -Append -Encoding utf8
+          "```" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          $out | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          "```" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          if ($code -ne 0) {
+            foreach ($l in ($out -split "`r?`n" | Where-Object { $_ -ne "" } | Select-Object -First 15)) {
+              Write-Output "::error title=MSVC compile::$l"
+            }
+            exit $code
+          }
+          Write-Output "COMPILE OK"
+
+      - name: Smoke-test the exe on a real Windows host
+        if: success()
+        shell: pwsh
+        run: |
+          ./serial_change_probe.exe 2>&1 | Tee-Object -FilePath run.log
+          $code = $LASTEXITCODE
+          "exit code = $code" | Tee-Object -FilePath run.log -Append
+          if ($code -notin 0, 2, 3) {
+            "UNEXPECTED EXIT CODE" | Tee-Object -FilePath run.log -Append
+            exit 1
+          }
+
+      - name: Upload build log (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: msvc-build-log
+          path: |
+            build.log
+            run.log
+          if-no-files-found: ignore
+
+      - name: Upload exe
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: serial_change_probe-msvc-x64
+          path: serial_change_probe.exe
+
+  # -------------------------------------------------------------------------
+  # Tests: the Python suite (which also builds and runs the C++ unit tests)
+  # -------------------------------------------------------------------------
+  test-linux:
+    name: Tests (pytest + C++ unit tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest jinja2 pyyaml jsonschema
+
+      - name: pytest (includes the native build/run tests)
+        run: pytest -q
+
+      - name: C++ unit tests
+        run: make -C tools test

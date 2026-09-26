@@ -85,6 +85,49 @@ def cmd_list_analyzers(args):
     for a in default_analyzers():
         print(f"{a.name:20} {a.description} (v{a.version})")
 
+
+def cmd_serial_check(args):
+    """
+    يفحص سجلّ قراءات معرّفات ويقرر هل التغيّر شرعي أم تزوير.
+    قراءة فقط — لا يعدّل أي معرّف.
+    """
+    from .protection import load_history, analyze_history
+
+    readings = load_history(args.history)
+    report = analyze_history(readings)
+
+    if args.json:
+        print(json.dumps(report.to_dict(), ensure_ascii=False, indent=2))
+        return
+
+    print(f"سجلّ القراءات: {args.history}")
+    print(f"عدد القراءات : {report.readings}")
+    print(f"عدد الانتقالات: {len(report.transitions)}")
+    print()
+    for t in report.transitions:
+        print(f"  {t.from_session} → {t.to_session} : {t.verdict.value} "
+              f"(ثقة {t.confidence:.2f})")
+        if t.changed:
+            print(f"      تغيّر قيمة فعلي : {', '.join(t.changed)}")
+        if t.anchors_changed:
+            print(f"      مراسي تغيّرت    : {', '.join(t.anchors_changed)}")
+        if t.volatiles_changed:
+            print(f"      طيّعة تغيّرت    : {', '.join(t.volatiles_changed)}")
+        if t.reappeared_changed:
+            print(f"      حُذفت ثم عادت   : {', '.join(t.reappeared_changed)}")
+        if t.serial_changed:
+            print("      client_serial تغيّر")
+        for r in t.reasons:
+            print(f"      - {r}")
+        print()
+    print(f"الحكم الأسوأ : {report.worst_verdict.value} "
+          f"(ثقة {report.worst_confidence:.2f})")
+    print(f"الإجراء المقترح: {report.action}")
+    print()
+    print("ملاحظة: هذا حكم على نمط التغيّر، لا تنفيذ. "
+          "عدّل _action_for() في revspec/protection/serial_consistency.py "
+          "لملاءمة سياسة الحظر عندك.")
+
 def _preprocess_dynamic_args(argv):
     """Allow --dynamic-args value starting with '-' (e.g. --debug) without requiring =.
     We manually extract '--dynamic-args <value>' before argparse sees it."""
@@ -131,6 +174,12 @@ def main():
 
     p_ls = sub.add_parser("list-analyzers", help="عرض المحللات المتاحة")
     p_ls.set_defaults(func=cmd_list_analyzers)
+
+    p_sc = sub.add_parser("serial-check",
+                          help="فحص سجلّ قراءات المعرّفات: تغيّر شرعي أم تزوير (قراءة فقط)")
+    p_sc.add_argument("history", help="ملف JSON يحتوي سجلّ القراءات")
+    p_sc.add_argument("--json", action="store_true", help="إخراج JSON بدل نص مقروء")
+    p_sc.set_defaults(func=cmd_serial_check)
 
     p_ver = sub.add_parser("version", help="الإصدار")
     p_ver.set_defaults(func=lambda a: print("RevSpec 1.0.0"))
