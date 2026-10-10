@@ -52,7 +52,8 @@ static void usage(void)
            "  nrth_audit signatures\n"
            "  nrth_audit decode <file> --rva <0x..> --len <n>\n"
            "  nrth_audit sweep  <file> [--min <len>] [--vas]\n"
-           "  nrth_audit audit  <module-file> [--csv <out.csv>]\n\n"
+           "  nrth_audit audit  <module-file> [--csv <out.csv>]\n"
+           "  nrth_audit diff   <known-good-file> <loaded-file> [--csv <out.csv>]\n\n"
            "notes:\n"
            "  * read-only: this tool never opens another process, never writes, hooks\n"
            "    or injects; `audit` works on a file copy or an already-owned dump\n"
@@ -213,6 +214,100 @@ static int cmd_sweep(int argc, char **argv, const char *file)
     return 0;
 }
 
+static int cmd_diff(int argc, char **argv, const char *clean, const char *sus)
+{
+    const char *csv = NULL;
+    int showAll = 0;
+    for (int i = 0; i < argc; ++i) {
+        if (strcmp(argv[i], "--csv") == 0 && i + 1 < argc) {
+            csv = argv[++i];
+        } else if (strcmp(argv[i], "--all") == 0) {
+            showAll = 1;
+        }
+    }
+    NrthAuditDiffRow *rows =
+        (NrthAuditDiffRow *)malloc(sizeof(NrthAuditDiffRow) * NrthSigCount());
+    if (!rows) {
+        fprintf(stderr, "[!] out of memory\n");
+        return 2;
+    }
+    memset(rows, 0, sizeof(NrthAuditDiffRow) * NrthSigCount());
+    int32_t n = NrthAuditDiffFiles(clean, sus, rows, NrthSigCount());
+    if (n < 0) {
+        fprintf(stderr, "[!] diff failed (%d): unreadable file or not a PE image\n", n);
+        free(rows);
+        return 2;
+    }
+    printf("[*] nrth_audit %s — A/B module comparison\n", NRTH_AUDIT_VERSION);
+    printf("[*] baseline (known good) : %s\n", clean);
+    printf("[*] compared image        : %s\n", sus);
+    printf("[*] both must be the SAME build of the same module; differing builds make every\n"
+           "    row look changed. RVAs are module-relative and are not comparable across bases,\n"
+           "    which is why the diff works on located functions, not on absolute addresses.\n\n");
+    printf("%-4s %-14s %-14s %-22s %s\n", "id", "clean f/p", "loaded f/p", "change",
+           "footprint @rva / target");
+    int lost = 0;
+    for (uint32_t i = 0; i < NrthSigCount(); ++i) {
+        const NrthAuditDiffRow *d = &rows[i];
+        const NrthSignature *sg = NrthSigAt(i + 1);
+        if (!d->addedFootprint && !d->targetLost && !showAll) {
+            continue;
+        }
+        char change[64];
+        if (d->addedFootprint) {
+            snprintf(change, sizeof(change), "%s", NrthPrologueStateName(d->susState));
+        } else if (d->targetLost) {
+            snprintf(change, sizeof(change), "%s", "TARGET NOT FOUND IN LOADED IMAGE");
+            ++lost;
+        } else {
+            snprintf(change, sizeof(change), "%s", "unchanged");
+        }
+        char where[64] = "-";
+        if (d->susRva) {
+            snprintf(where, sizeof(where), "0x%06x (detail 0x%08x)", d->susRva, d->susDetail);
+        } else if (d->targetLost) {
+            snprintf(where, sizeof(where), "%s", "located in the baseline only");
+        }
+        printf("[%2u] %4u/%-8u %4u/%-8u %-22s %s\n", sg ? sg->id : d->sigId, d->cleanFull,
+               d->cleanPatched, d->susFull, d->susPatched, change, where);
+        if (sg) {
+            printf("     module=%s pattern=%.58s%s\n", sg->target, sg->pattern,
+                   strlen(sg->pattern) > 58 ? "..." : "");
+        }
+    }
+    if (n == 0 && lost == 0) {
+        printf("     (no differing located function)\n");
+    }
+    printf("\n[*] verdict: %d located function(s) carry a footprint the baseline does not have\n",
+           n);
+    if (lost) {
+        printf("[*] note: %d pattern(s) found in the baseline are absent from the loaded image —"
+               " that is normally a different MTA build, not a cheat; re-baseline before alerting.\n",
+               lost);
+    }
+    if (csv) {
+        FILE *o = fopen(csv, "wb");
+        if (o) {
+            fprintf(o, "sig_id,target,clean_full,clean_patched,sus_full,sus_patched,"
+                       "added_footprint,target_lost,state,sus_rva,detail\n");
+            for (uint32_t i = 0; i < NrthSigCount(); ++i) {
+                const NrthAuditDiffRow *d = &rows[i];
+                const NrthSignature *sg = NrthSigAt(i + 1);
+                fprintf(o, "%u,%s,%u,%u,%u,%u,%u,%u,%u,0x%x,0x%x\n", sg ? sg->id : d->sigId,
+                        sg ? sg->target : "", d->cleanFull, d->cleanPatched, d->susFull,
+                        d->susPatched, d->addedFootprint, d->targetLost, d->susState, d->susRva,
+                        d->susDetail);
+            }
+            fclose(o);
+            printf("[+] csv -> %s\n", csv);
+        } else {
+            fprintf(stderr, "[!] cannot write %s\n", csv);
+        }
+    }
+    free(rows);
+    return n ? 3 : 0;
+}
+
 static int cmd_audit(int argc, char **argv, const char *file)
 {
     const char *csv = NULL;
@@ -328,6 +423,13 @@ int main(int argc, char **argv)
     }
     if (strcmp(cmd, "sweep") == 0) {
         return cmd_sweep(argc - 3, argv + 3, argv[2]);
+    }
+    if (strcmp(cmd, "diff") == 0) {
+        if (argc < 4) {
+            fprintf(stderr, "[!] diff needs two files: <known-good> <loaded>\n");
+            return 2;
+        }
+        return cmd_diff(argc - 4, argv + 4, argv[2], argv[3]);
     }
     if (strcmp(cmd, "audit") == 0) {
         return cmd_audit(argc - 3, argv + 3, argv[2]);

@@ -8,7 +8,7 @@ WHY THIS FOLDER HAS NO BINARIES
 
   cd recovered_or_reconstructed_project
   ./build_audit.sh                 # host tests + self-test, then Zig cross-build
-  ->  bin/NRTH_audit.dll           PE32 x86 DLL, 21 exports (ordinals 1..21)
+  ->  bin/NRTH_audit.dll           PE32 x86 DLL, 23 exports (ordinals 1..21)
       bin/nrth_audit.exe           console CLI, statically includes the same module
       bin/nrth_audit.lib           import library (for linking a scanner instead of LoadLibrary)
 
@@ -22,12 +22,12 @@ WHAT IT IS
   Lua payload. That is the whole point of shipping it as a binary: it is detection, not capability.
 
 LAST VERIFIED BUILD (2026-10-10, Linux host, g++ 12.2 + ziglang 0.17.0)
-  bin/NRTH_audit.dll   292,352 bytes
-    sha256 95ac1144f6b16ab4803db2c5e11a47bc2764630fea57b94277db17e52a9929b7
-  bin/nrth_audit.exe   301,056 bytes
-    sha256 441977107d1d9920109e52bb3ffe49586c5220adca694b9ec96518b5d56a3014
+  bin/NRTH_audit.dll   293,888 bytes
+    sha256 46ce1da44d749a1b454578b2fce1cf6c6b0816cf38f7e4022fd3abc12f75e5e7
+  bin/nrth_audit.exe   304,640 bytes
+    sha256 47217128b54ced52c6fb901cd9545ae2303739971765c53185d983b02f5f3da4
   headers: machine 0x014c (I386), magic 0x10b (PE32), ImageBase 0x10000000 (same as the
-  original NRTH.dll), DLL subsystem, DYNAMICBASE + NX_COMPAT, 21 exported C names.
+  original NRTH.dll), DLL subsystem, DYNAMICBASE + NX_COMPAT, 23 exported C names.
   Verification logs: ../../test_results/audit_build.log,
   ../../test_results/audit_sample_differential.log, ../../test_results/yara_check.log.
 
@@ -39,12 +39,16 @@ EXPORTS (src/nrth_audit.def; ordinals are pinned and append-only)
    5 NrthPrologueIsTamper   12 NrthPatPatchHead        19 NrthAuditImageFile
    6 NrthXorTransform        13 NrthClassifyPrologue    20 NrthFindHiddenSignatures
    7 NrthXorCrack           14 NrthPeMap               21 NrthAuditSelfTest
+   22 NrthAuditDiff          23 NrthAuditDiffFiles      (A/B: baseline vs loaded module)
 
-FIRST RUN ON A WINDOWS HOST (always start with these two)
+FIRST RUN ON A WINDOWS HOST (always start with these)
   nrth_audit.exe selftest
       -> "result: all checks passed"  (21 checks whose ciphertexts come from the sample)
   nrth_audit.exe audit "C:\Path\To\MTA San Andreas\mods\deathmatch\client.dll"
       -> table per signature; exit code 0 clean, 3 = tamper footprint found, 2 = unreadable/not PE
+  nrth_audit.exe diff "<clean client.dll>" "<client.dll dumped from the suspect process>"
+      -> only the located functions whose state CHANGED; a pattern missing from the other build
+         is reported as "located in the baseline only" (re-baseline), never as tampering
       -> PRISTINE means the located function's entry bytes are intact *in that image*: for the
          on-disk file this is expected even on an infected client, because detours and the 0xC3
          writes live in memory. Audit a read-only dump of the loaded module for live evidence.

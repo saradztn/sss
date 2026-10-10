@@ -32,3 +32,5 @@ EXPORTS
     NrthAuditImageFile           @19
     NrthFindHiddenSignatures     @20
     NrthAuditSelfTest            @21
+    NrthAuditDiff                @22
+    NrthAuditDiffFiles           @23

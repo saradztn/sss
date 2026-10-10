@@ -29,6 +29,11 @@
  * everything a defender needs (module-relative offsets + patch state) is present.
  *
  * Inputs are UNTRUSTED data: malformed/truncated PE input must fail safely.
+ *
+ * Version 1.1.0 (2026-10-10): added NrthPrologueIsTamper, NrthPatPatchHead and the A/B
+ * comparison entry points (NrthAuditDiff / NrthAuditDiffFiles, ordinals 22-23). The patched-hit
+ * rule was also tightened: a widened hit now counts only when the entry carries a concrete
+ * footprint, which removed 5 false positives per 20 rows measured against NRTH.dll itself.
  * Builds as a Windows PE32 DLL (matching the sample's architecture) and also compiles
  * natively on Linux for unit testing — the logic is plain C++17 with no OS coupling.
  * ============================================================================
@@ -57,7 +62,7 @@
 #  define NRTH_AUDIT_C extern "C"
 #endif
 
-#define NRTH_AUDIT_VERSION "1.0.0"
+#define NRTH_AUDIT_VERSION "1.1.0"
 
 /* ---- status codes -------------------------------------------------------- */
 #define NVXA_OK             0
@@ -208,6 +213,35 @@ NRTH_AUDIT_C NRTH_AUDIT_API int32_t NrthAuditImageFile(const char *path,
                                                        uint32_t maxFindings);
 /* RVA (not VA) of the module's .text start, or 0 — helper for callers. */
 NRTH_AUDIT_C NRTH_AUDIT_API uint32_t NrthPeTextRva(const NrthPeView *pe);
+
+/* --- A/B comparison: known-good copy vs the copy actually loaded ------------ */
+/* The strongest form of this check, because it removes every judgement call about
+ * "is this prologue normal for this compiler": you give a clean `client.dll` (your
+ * baseline, from the same MTA build) and the module as loaded in the suspect process,
+ * and the diff says which located functions changed. Rows are per signature, in
+ * catalogue order; `addedFootprint` is the number you alert on. */
+typedef struct _NrthAuditDiffRow {
+    uint32_t sigId;
+    uint32_t cleanFull;        /* complete-pattern hits in the baseline image      */
+    uint32_t cleanPatched;
+    uint32_t susFull;          /* ... in the loaded/suspect image                  */
+    uint32_t susPatched;
+    uint32_t susState;         /* footprint at the suspect's first patched RVA     */
+    uint32_t susRva;
+    uint32_t susDetail;        /* detour target RVA, when the state carries one    */
+    uint32_t addedFootprint;   /* 1 when baseline had no footprint here and suspect has one */
+    uint32_t targetLost;       /* 1 when baseline found the pattern and suspect did not */
+} NrthAuditDiffRow;
+
+/* Returns the number of rows with an added footprint (>=0) or NVXA_E_*. Both inputs
+ * may be file images or dumps; they are only compared through the located-pattern
+ * offsets, so differing ImageBases are fine, but the two files must be the *same
+ * build* of the module or every row will look changed. */
+NRTH_AUDIT_C NRTH_AUDIT_API int32_t NrthAuditDiff(const uint8_t *cleanImg, uint32_t cleanSize,
+                                                 const uint8_t *susImg, uint32_t susSize,
+                                                 NrthAuditDiffRow *rows, uint32_t maxRows);
+NRTH_AUDIT_C NRTH_AUDIT_API int32_t NrthAuditDiffFiles(const char *cleanPath, const char *susPath,
+                                                       NrthAuditDiffRow *rows, uint32_t maxRows);
 
 /* --- hidden-signature discovery (variant triage) ---------------------------- */
 /* Prologue-anchored sweep for obfuscated pattern strings held in a sample of this

@@ -43,14 +43,14 @@ Audit module (NRTH_audit.dll) — 2026-10-10, same host (Linux, g++ 12.2, ziglan
 --------------------------------------------------------------------------------
 $ ./build_audit.sh
   [host]  g++ -std=c++17 -O2 -Wall -Wextra -Werror src/nrth_audit.cpp
-          + tests/test_nrth_audit.cpp  -> 21/21 checks passed
+          + tests/test_nrth_audit.cpp  -> 27/27 checks passed
           + tools/nrth_audit_cli.cpp   -> selftest: "result: all checks passed" (21 checks)
   [cross] zig c++ -target x86-windows-gnu -O2 -g0 -DNRTH_AUDIT_BUILD
-          -> bin/NRTH_audit.dll  292,352 B  sha256 95ac1144f6b16ab4803db2c5e11a47bc2764630fea57b94277db17e52a9929b7
+          -> bin/NRTH_audit.dll  293,888 B  sha256 46ce1da44d749a1b454578b2fce1cf6c6b0816cf38f7e4022fd3abc12f75e5e7
           zig c++ -target x86-windows-gnu -O2 -g0 -DNRTH_AUDIT_STATIC
-          -> bin/nrth_audit.exe  301,056 B  sha256 441977107d1d9920109e52bb3ffe49586c5220adca694b9ec96518b5d56a3014
+          -> bin/nrth_audit.exe  304,640 B  sha256 47217128b54ced52c6fb901cd9545ae2303739971765c53185d983b02f5f3da4
   [verify] tools/pe_summary.py: machine 0x014c, magic 0x10b (PE32), ImageBase 0x10000000,
-           subsystem 2 (DLL) / 3 (console), DYNAMICBASE+NX_COMPAT, 21 exports, ordinals 1..21
+           subsystem 2 (DLL) / 3 (console), DYNAMICBASE+NX_COMPAT, 23 exports, ordinals 1..21
            exactly as pinned in src/nrth_audit.def.
   [differential] nrth_audit audit working/NRTH.dll       -> 20 checked, 0 with a match
                   nrth_audit audit "working/NORTH LOADER.exe" -> 20 checked, 0 with a match
@@ -63,3 +63,38 @@ $ ./build_audit.sh
   [scope]  nrth_audit implements detection/verification only. The live Lua-VM exec hijack and the
            netc.dll 0xC3 check-kill are documented (mechanism_overview_ar.md §§3-4) but not
            implemented: they are the cheat, not the detector.
+
+--------------------------------------------------------------------------------
+Re-verification after the audit work — 2026-10-10 (later run, same host)
+--------------------------------------------------------------------------------
+$ bash fetch_vendor.sh && bash build.sh          # exit 0
+  [+] Vendor trees ready:
+      minhook 8af6b4acae5a9388fd742b56fa79ece89d96f823
+      imgui   01380c579715e62fb9a8d6ec0502c4ea83bfde6e (v1.92.9)
+  [x] bin/NRTH.dll         1,692,160 B  sha256 c5d000f6c1eb77bb49a1072fa0342c18a6ebcd2218faeba8bda162e3fc0f3f33
+      PE32 x86, 1 export: @1 NVXHookProc (rva 0x001000) — contract verified with tools/pe_summary.py
+  [x] bin/NORTH_LOADER.exe   280,064 B  sha256 7e46525c5245bd7152c011b331bc0cfae48d10e2030ec4d12d4c08eb37665ad3
+      PE32 x86 console
+  note: sizes differ from the entry above because the committed tree now links 46 objects
+        (Dear ImGui core+backends + Lua 5.4.6 + MinHook) into NRTH.dll; sources otherwise unchanged
+        apart from evidence comments in src/nrth_hook.cpp. No new capability was added.
+  note: NRTH.dll's menu feature slots and the two mechanism paths (live Lua-VM exec hijack,
+        netc.dll 0xC3 check-kill) remain unimplemented stubs — deliberate scope decision, see
+        README.md and mta_blue_team_case/mechanism_overview_ar.md §9.
+
+$ ./build_audit.sh                               # module v1.1.0 (adds NrthAuditDiff/NrthPatPatchHead/NrthPrologueIsTamper)
+  [x] host unit tests                27/27 checks passed
+  [x] module self-test               21 checks, "result: all checks passed"
+  [x] bin/NRTH_audit.dll             293,888 B  sha256 46ce1da44d749a1b454578b2fce1cf6c6b0816cf38f7e4022fd3abc12f75e5e7
+  [x] bin/nrth_audit.exe             304,640 B  sha256 47217128b54ced52c6fb901cd9545ae2303739971765c53185d983b02f5f3da4
+  [x] headers/exports                machine 0x014c, PE32, ImageBase 0x10000000, DYNAMICBASE+NX,
+                                     23 exports, ordinals 1..23 exactly as pinned in src/nrth_audit.def
+  [x] differential                   audit(working/NRTH.dll) -> 0 with a match; sweep --min 24 -> the
+                                     same 8 .data candidates as tools/nrth_sig_export.py;
+                                     diff(sample, sample) -> no delta; decode of two real records OK
+  [x] safety                         ASan+UBSan CLI over both samples: no findings
+  [x] full suite                     ./run_all_tests.sh -> 8 passed, 0 failed, 0 skipped
+  [ ] Windows execution              NOT done here (no Windows in the sandbox) — run
+                                     `nrth_audit.exe selftest` on a Windows host first
+  reproducibility                    zig's lld keeps a wall-clock TimeDateStamp, so hashes move on
+                                     every rebuild; compare size + the 23 exports, not hashes

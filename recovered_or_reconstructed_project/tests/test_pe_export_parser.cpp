@@ -108,10 +108,16 @@ bool findExportRva(const uint8_t* pBase, size_t fileSize, const char* targetExpo
     return false;
 }
 
-int main() {
-    printf("[*] Running test_pe_export_parser against working/NRTH.dll...\n");
-    FILE* fp = fopen("working/NRTH.dll", "rb");
-    assert(fp != nullptr);
+int main(int argc, char** argv) {
+    /* default matches the repo layout (run from the repository root); an explicit path is
+       also accepted so CI wrappers can pass working/NRTH.dll from anywhere */
+    const char* path = (argc > 1) ? argv[1] : "working/NRTH.dll";
+    printf("[*] Running test_pe_export_parser against %s...\n", path);
+    FILE* fp = fopen(path, "rb");
+    if (fp == nullptr) {
+        fprintf(stderr, "[!] cannot open %s — extract the sample first: unzip -o NORTH.zip -d working\n", path);
+        return 2;
+    }
 
     fseek(fp, 0, SEEK_END);
     long size = ftell(fp);

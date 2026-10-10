@@ -23,7 +23,8 @@ actually needs.
 | `.../tools/nrth_audit_cli.cpp` | CLI: `selftest` `signatures` `decode` `sweep` `audit` |
 | `.../tools/pe_summary.py` | dependency-free PE header/export verifier used by the build |
 | `.../tools/gen_nrth_audit_sigs_h.py` | regenerates the table from `working/sigs.json` |
-| `.../tests/test_nrth_audit.cpp` | 21 host unit tests |
+| `.../tests/test_nrth_audit.cpp` | 27 host unit tests |
+| `.../run_all_tests.sh` | one command that re-runs every test claim in this case (8 groups incl. YARA + the sample differentials) |
 | `.../build_audit.sh` | host tests first, then the PE32 x86 cross build |
 
 Generated artefacts land in `recovered_or_reconstructed_project/bin/`
@@ -46,15 +47,18 @@ in one sitting.
 Last verified run (2026-10-10, Linux host, g++ 12.2 + ziglang 0.17.0):
 
 ```
-[*] 21/21 checks passed                       # unit tests
+[*] 27/27 checks passed                       # unit tests
 result: all checks passed                     # NrthAuditSelfTest: 21 checks, all sample-derived
+$ ./run_all_tests.sh
+=== summary: 8 passed, 0 failed, 0 skipped        # incl. the YARA check and both sample differentials
 [+] Built:
-  bin/NRTH_audit.dll   292,352 B  sha256 95ac1144f6b16ab4803db2c5e11a47bc2764630fea57b94277db17e52a9929b7
-  bin/nrth_audit.exe   301,056 B  sha256 441977107d1d9920109e52bb3ffe49586c5220adca694b9ec96518b5d56a3014
+  bin/NRTH_audit.dll   293,888 B  sha256 46ce1da44d749a1b454578b2fce1cf6c6b0816cf38f7e4022fd3abc12f75e5e7
+  bin/nrth_audit.exe   304,640 B  sha256 47217128b54ced52c6fb901cd9545ae2303739971765c53185d983b02f5f3da4
      (reproducibility: zig's lld keeps a wall-clock PE TimeDateStamp, so rebuilding the same
       sources yields a different DLL hash — compare size/exports, and re-read these from a log)
   machine 0x014c IMAGE_FILE_MACHINE_I386, magic 0x10b (PE32), image base 0x10000000,
-  DYNAMICBASE + NX_COMPAT, 21 exports (ordinal 1 = NrthAuditVersion ... 21 = NrthAuditSelfTest)
+  DYNAMICBASE + NX_COMPAT, 23 exports (ordinal 1 = NrthAuditVersion ... 21 = NrthAuditSelfTest,
+  22 = NrthAuditDiff, 23 = NrthAuditDiffFiles)
 ```
 
 The architecture matches the original `NRTH.dll` (PE32 x86, same preferred image base), which
@@ -65,6 +69,7 @@ matters because the patterns are 32-bit x86 code.
 ```
 nrth_audit.exe audit   C:\...\MTA San Andreas\mods\deathmatch\client.dll
 nrth_audit.exe audit   C:\...\mods\deathmatch\netc.dll  --csv netc.csv
+nrth_audit.exe diff    C:\baseline\client.dll  C:\dumps\client-from-suspect.dll   # A/B (see below)
 nrth_audit.exe sweep   <suspicious-module> --min 24
 nrth_audit.exe decode  <module> --rva 0x13bd10 --len 156
 nrth_audit.exe selftest

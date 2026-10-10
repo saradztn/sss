@@ -914,6 +914,62 @@ extern "C" int32_t NrthFindHiddenSignatures(const uint8_t *img, uint32_t size, u
     return (int32_t)found;
 }
 
+extern "C" int32_t NrthAuditDiff(const uint8_t *cleanImg, uint32_t cleanSize,
+                               const uint8_t *susImg, uint32_t susSize,
+                               NrthAuditDiffRow *rows, uint32_t maxRows)
+{
+    if (rows && maxRows < NRTH_SIG_COUNT) {
+        return NVXA_E_INVALID;
+    }
+    NrthSigFinding clean[NRTH_SIG_COUNT], sus[NRTH_SIG_COUNT];
+    int32_t rc = NrthAuditImage(cleanImg, cleanSize, clean, NRTH_SIG_COUNT);
+    if (rc < 0) {
+        return rc;
+    }
+    rc = NrthAuditImage(susImg, susSize, sus, NRTH_SIG_COUNT);
+    if (rc < 0) {
+        return rc;
+    }
+    int32_t alerted = 0;
+    for (uint32_t i = 0; i < NRTH_SIG_COUNT; ++i) {
+        NrthAuditDiffRow *d = rows ? &rows[i] : NULL;
+        const int found = (clean[i].fullHits + clean[i].patchedHits) > 0;
+        const int patched = sus[i].patchedHits > 0;
+        if (!d) {
+            continue;
+        }
+        d->sigId = sus[i].sigId ? sus[i].sigId : clean[i].sigId;
+        d->cleanFull = clean[i].fullHits;
+        d->cleanPatched = clean[i].patchedHits;
+        d->susFull = sus[i].fullHits;
+        d->susPatched = sus[i].patchedHits;
+        d->susState = sus[i].state;
+        d->susRva = sus[i].firstPatchedRva;
+        d->susDetail = sus[i].detail;
+        d->addedFootprint = (patched && clean[i].patchedHits == 0) ? 1u : 0u;
+        d->targetLost = (found && (sus[i].fullHits + sus[i].patchedHits) == 0) ? 1u : 0u;
+        if (d->addedFootprint) {
+            ++alerted;
+        }
+    }
+    return alerted;
+}
+
+extern "C" int32_t NrthAuditDiffFiles(const char *cleanPath, const char *susPath,
+                                     NrthAuditDiffRow *rows, uint32_t maxRows)
+{
+    uint32_t asz = 0, bsz = 0;
+    uint8_t *a = nvxa_read_file(cleanPath, &asz);
+    uint8_t *b = a ? nvxa_read_file(susPath, &bsz) : NULL;
+    int32_t r = (a && b) ? NrthAuditDiff(a, asz, b, bsz, rows, maxRows) : NVXA_E_IO;
+    if (!b && rows && maxRows >= NRTH_SIG_COUNT) {
+        memset(rows, 0, sizeof(NrthAuditDiffRow) * NRTH_SIG_COUNT);
+    }
+    free(a);
+    free(b);
+    return r;
+}
+
 /* -------------------------------------------------------------------------- */
 /* self test — evidence vectors taken from the original sample                  */
 /* -------------------------------------------------------------------------- */

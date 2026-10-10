@@ -68,6 +68,10 @@ Deployment notes:
 - `exit 3` = at least one tamper footprint; `--csv` for one row per signature. Verified behaviour:
   `0 with a match` on `NRTH.dll` and on `NORTH LOADER.exe` (no self-flagging), `0 with a match` on
   a clean image, and the unit tests cover `C3`, `E9`, `FF 25` and the negative (normal-prologue) case.
+- **Best practice: `diff`, not `audit`, whenever you can.** Keep one known-good `client.dll` /
+  `netc.dll` per MTA build in your corpus and run `nrth_audit.exe diff <baseline> <dump>`; the tool
+  then only reports located functions whose state changed, which removes the judgement call about
+  what a "normal" prologue looks like for that compiler/build and makes the alert defensible.
 - If you write your own YARA instead: match the *concrete* footprint over the entry, never a
   wildcarded head. Wildcarding one token of a 20-token pattern produced 5 false positives out of
   20 rows on a benign image — see `audit_tool.md` §"Why the patched check is strict".

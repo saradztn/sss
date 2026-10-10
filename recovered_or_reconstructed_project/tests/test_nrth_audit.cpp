@@ -225,6 +225,40 @@ int main(void)
               "predicate: tamper states only");
     }
 
+    /* ---- 4c. A/B diff: baseline clean vs suspect carrying a footprint ------*/
+    {
+        FakeImage clean, suspect;
+        uint8_t body[256];
+        uint32_t len = materialise(sig->pattern, body, sizeof(body), 0x11);
+        memcpy(clean.text() + 0x40, body, len);          /* intact entry            */
+        body[0] = 0xC3;                                   /* the sample's check kill */
+        memcpy(suspect.text() + 0x40, body, len);
+        NrthAuditDiffRow d[64];
+        memset(d, 0, sizeof(d));
+        int32_t n = NrthAuditDiff(clean.b, IMG_SIZE, suspect.b, IMG_SIZE, d, 64);
+        CHECK(n == 1 && d[0].addedFootprint == 1, "diff: one located function changed state");
+        CHECK(d[0].cleanFull == 1 && d[0].cleanPatched == 0 && d[0].susFull == 0 &&
+                  d[0].susPatched == 1,
+              "diff: per-row hit counts split correctly");
+        CHECK(d[0].susState == NRTH_PRO_KILL_RET && d[0].susRva == TXT_RVA + 0x40,
+              "diff: footprint state and RVA reported");
+        memset(d, 0, sizeof(d));
+        CHECK(NrthAuditDiff(clean.b, IMG_SIZE, clean.b, IMG_SIZE, d, 64) == 0 &&
+                  d[0].targetLost == 0,
+              "diff: identical images produce no delta");
+        CHECK(NrthAuditDiff(clean.b, IMG_SIZE, suspect.b, IMG_SIZE, d, 1) == NVXA_E_INVALID,
+              "diff: undersized row buffer rejected");
+        /* a different build of the module: pattern gone -> targetLost, not an alert */
+        FakeImage other;
+        uint8_t junk[64];
+        memset(junk, 0x2A, sizeof(junk));
+        memcpy(other.text() + 0x40, junk, sizeof(junk));
+        memset(d, 0, sizeof(d));
+        CHECK(NrthAuditDiff(clean.b, IMG_SIZE, other.b, IMG_SIZE, d, 64) == 0 &&
+                  d[0].targetLost == 1 && d[0].addedFootprint == 0,
+              "diff: missing target is reported separately from tampering");
+    }
+
     /* ---- 5. obfuscated record of a *key-rotated variant* --------------------*/
     {
         FakeImage img;

@@ -350,24 +350,29 @@
     "build": "build_audit.sh (Zig 0.17.0 x86-windows-gnu)",
     "artifacts_in_this_clone": "bin/ (git-ignored)",
     "sha256": {
-      "NRTH_audit.dll": "95ac1144f6b16ab4803db2c5e11a47bc2764630fea57b94277db17e52a9929b7",
-      "nrth_audit.exe": "441977107d1d9920109e52bb3ffe49586c5220adca694b9ec96518b5d56a3014"
+      "NRTH_audit.dll": "46ce1da44d749a1b454578b2fce1cf6c6b0816cf38f7e4022fd3abc12f75e5e7",
+      "nrth_audit.exe": "47217128b54ced52c6fb901cd9545ae2303739971765c53185d983b02f5f3da4"
     },
-    "format": "PE32 x86, ImageBase 0x10000000, DYNAMICBASE+NX_COMPAT, 21 exports (ordinals 1-21)",
+    "format": "PE32 x86, ImageBase 0x10000000, DYNAMICBASE+NX_COMPAT, 23 exports (ordinals 1-23)",
     "capabilities": [
       "positional-XOR codec (encode/crack/decode-at-VA)",
       "wildcard pattern compile/scan (same semantics as the sample resolver 0x10002960)",
       "read-only PE section/RVA mapping for file images and dumps",
       "prologue tamper classification (E9/FF 25/68..C3/C3/C2/C7 05)",
       "hidden-record sweep anchored on 55 8B EC / 53 8B DC",
-      "20-signature audit with CSV output"
+      "20-signature audit with CSV output",
+      "A/B comparison of a known-good module against the loaded copy (NrthAuditDiff): reports only located functions whose state changed; \"pattern absent from the other build\" is separated from tampering"
     ],
     "explicit_non_goals": [
       "no process access, no injection, no hooking, no memory writes",
       "no Lua payload and no netc.dll check disable — those are the cheat, not the detector",
       "no obfuscation/stealth/persistence code of any kind"
     ],
-    "validated": "21 unit tests + 21 self-test checks on the host; audit returns \"0 with a match\" on both samples (no self-flagging); sweep returns exactly the same 8 .data candidates as the independent Python tool (test_results/audit_sample_differential.log)",
-    "docs": "detection/audit_tool.md"
+    "validated": "27 unit tests + 21 self-test checks on the host; audit returns \"0 with a match\" on both samples (no self-flagging); sweep returns exactly the same 8 .data candidates as the independent Python tool; self-diff returns no delta. One command for all of it: run_all_tests.sh (8 passed, 0 failed)",
+    "docs": "detection/audit_tool.md",
+    "verification_script": "recovered_or_reconstructed_project/run_all_tests.sh",
+    "version": "1.1.0",
+    "artifacts_note": "the PE TimeDateStamp is wall-clock (zig's lld ignores --no-insert-timestamp/--timestamp), so these hashes identify THIS build only; compare size and the 23 exports across machines",
+    "source_files": "src/nrth_audit.{h,cpp,def}, src/nrth_audit_sigs.h, tools/nrth_audit_cli.cpp, tests/test_nrth_audit.cpp, run_all_tests.sh"
   }
 }

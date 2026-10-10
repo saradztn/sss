@@ -44,10 +44,11 @@ Classification by component:
   - `R2` — behavioral reconstruction: newly authored C++ in `recovered_or_reconstructed_project/` reimplementing the observed loader contract (CLI parsing, PE export parsing, documented injection sequence) and the payload chain (NVXHookProc export contract, DllMain pin+thread, MinHook LdrLoadDll watch on `client.dll`/`netc.dll`, D3D9 Present/Reset hooks, Dear ImGui v1.92.9 overlay with INSERT toggle) for defensive/private-server validation. Menu **feature slots are labeled stubs** — the original's feature logic (0x10005b80 / 0x10020640) is class U and was deliberately not invented.
 - **Build status: BUILT** — cross-compiled to Windows PE32 x86 artifacts with Zig 0.17.0's MinGW sysroot (`build.sh`): `bin/NORTH_LOADER.exe` (SHA-256 `75a3dc17...fdd2b3dd`) and `bin/NRTH.dll` (SHA-256 `452c5848...d6e383f`), export contract verified (`NVXHookProc` @ ordinal 1). Full log: `test_results/build_cross.log`. Windows MSVC path (`build.ps1`) documented but not executed here.
 - **Delivered detector (built + tested): `NRTH_audit.dll` / `nrth_audit.exe`** — `build_audit.sh`, PE32 x86,
-  ImageBase 0x10000000, 21 exports (ordinals 1–21), DYNAMICBASE+NX_COMPAT;
-  `bin/NRTH_audit.dll` SHA-256 `95ac1144...a9929b7`, `bin/nrth_audit.exe` `44197710...d56a3014`.
+  ImageBase 0x10000000, 23 exports (ordinals 1–21), DYNAMICBASE+NX_COMPAT;
+  `bin/NRTH_audit.dll` SHA-256 `46ce1da4…2f75e5e7`, `bin/nrth_audit.exe` `47217128…2f5f3da4`.  Full suite (every claim in this case, one command): `run_all_tests.sh` → `8 passed, 0 failed, 0 skipped`
+  (log: `test_results/run_all_tests.log`).
   It implements the recovered codec, the 20-signature catalogue, the PE reader and the patch-footprint
-  classifier; 21/21 unit tests and 21/21 self-test vectors pass on the host, and `audit` returns
+  classifier; 27/27 unit tests and 21/21 self-test vectors pass on the host, and `audit` returns
   **0 with a match** on both samples (no self-flagging). Docs: `detection/audit_tool.md`.
 - **Scope decision (explicit):** the two mechanisms that would make this a working cheat — hijacking the
   game's live Lua `exec` trampoline (global `0x1013c94c`) and actually writing the `0xC3` kills into
@@ -136,9 +137,9 @@ $ g++ -std=c++17 -Wall -Wextra -o tests/test_pe_export_parser tests/test_pe_expo
 ```
 # Audit module (executed 2026-10-10, same host): host tests first, then the PE32 cross build
 $ cd recovered_or_reconstructed_project && ./build_audit.sh
-[*] 21/21 checks passed
+[*] 27/27 checks passed
 result: all checks passed            # NrthAuditSelfTest: 21 checks, vectors taken from the sample
-[+] Built:  bin/NRTH_audit.dll (292,352 B)  bin/nrth_audit.exe (301,056 B)
+[+] Built:  bin/NRTH_audit.dll (293,888 B)  bin/nrth_audit.exe (304,640 B)
   machine 0x014c (I386), magic 0x10b (PE32), image base 0x10000000, DYNAMICBASE NX_COMPAT
   exports: 21 names, undecorated, ordinals 1..21 as pinned in src/nrth_audit.def
 $ ./bin/host/nrth_audit audit working/NRTH.dll
@@ -147,7 +148,14 @@ $ ./bin/host/nrth_audit audit working/NRTH.dll
 $ ./bin/host/nrth_audit sweep working/NRTH.dll --min 24 --vas | head -1
 [*] working/NRTH.dll: 8 hidden pattern candidate(s) (>= 24 chars)     # == the Python tool's 8
 ```
-Logs: `test_results/audit_build.log`, `test_results/audit_sample_differential.log`,
+The reconstruction itself was rebuilt after these doc/code corrections (`fetch_vendor.sh` + `build.sh`,
+exit 0): `bin/NRTH.dll` 1,692,160 B `sha256 c5d000f6c1eb77bb49a1072fa0342c18a6ebcd2218faeba8bda162e3fc0f3f33`
+(single export `NVXHookProc` @ ordinal 1, PE32 x86) and `bin/NORTH_LOADER.exe` 280,064 B
+`sha256 7e46525c5245bd7152c011b331bc0cfae48d10e2030ec4d12d4c08eb37665ad3`. The size differs from the
+2026-10-10 entry above because the current tree links 46 objects (Dear ImGui 1.92.9 + Lua 5.4.6 + MinHook)
+into `NRTH.dll`; the export contract is unchanged and re-verified by `tools/pe_summary.py`.
+
+Logs: `test_results/audit_build.log`, `test_results/audit_sample_differential.log`, `test_results/run_all_tests.log`,
 `test_results/yara_check.log` (4 rules compile; `NRTH.dll` → 3 rules, loader → 1 rule; the two
 audit binaries we ship match none).
 

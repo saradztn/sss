@@ -1,6 +1,6 @@
-# audit differential vs the original samples — 2026-10-10
+# audit differential against the original samples — 2026-10-10 (module v1.1.0)
 $ ./bin/host/nrth_audit audit working/NRTH.dll
-[*] nrth_audit 1.0.0
+[*] nrth_audit 1.1.0
 [*] target file : ../working/NRTH.dll
 [*] signatures  : 20 checked, 0 with a match
     columns: full = complete pattern found (target present, prologue intact)
@@ -32,6 +32,13 @@ $ ./bin/host/nrth_audit sweep working/NRTH.dll --min 24 --vas   (C++ engine)
 # independent Python reference (tools/nrth_sig_export.py) found exactly these 8 .data records:
     8 entries: 0x1013b750 0x1013b8b8 0x1013b9d0 0x1013baa0 0x1013bb54 0x1013bb78 0x1013bc48 0x1013bd10
 
+$ ./bin/host/nrth_audit diff working/NRTH.dll working/NRTH.dll   (A/B negative control)
+[*] nrth_audit 1.1.0 — A/B module comparison
+[*] baseline (known good) : ../working/NRTH.dll
+[*] compared image        : ../working/NRTH.dll
+[*] verdict: 0 located function(s) carry a footprint the baseline does not have
+exit=0
+
 $ ./bin/host/nrth_audit decode working/NRTH.dll --rva 0x13bd10 --len 156   (contiguous .data record)
 [*] ../working/NRTH.dll  imagebase=0x10000000  rva=0x13bd10  len=156
 [*] raw            : cf c8 dc c5 bc df 44 42 22 3b 37 25 43 44 28 36 2a 33 3f 2d 4b 3b 30 2e 32 2b 27 35 55 23 38 26 
@@ -43,6 +50,7 @@ $ ./bin/host/nrth_audit decode working/NRTH.dll --rva 0xf2060 --len 16   (first 
 [+] decoded (key 0x2D): 55 8B EC 8B 45 ?
 
 [*] interpretation: same candidate set from two independent implementations (Python/capstone vs C++/PE reader).
-    The audit reports 0 matches on the cheat itself because its patterns target client.dll/
+    audit reports 0 matches on the cheat itself because its patterns target client.dll/
     netc.dll, not NRTH.dll — this run is the false-positive control, not a detection result.
-    Scanned under ASan+UBSan too (build with -fsanitize=address,undefined): no findings.
+    The positive control for the tamper path is the unit-test group (synthetic images with a
+    C3 / E9 / FF 25 footprint at a located function); ASan+UBSan over both samples: clean.
