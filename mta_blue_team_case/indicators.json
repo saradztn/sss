@@ -368,11 +368,11 @@
       "no Lua payload and no netc.dll check disable — those are the cheat, not the detector",
       "no obfuscation/stealth/persistence code of any kind"
     ],
-    "validated": "27 unit tests + 21 self-test checks on the host; audit returns \"0 with a match\" on both samples (no self-flagging); sweep returns exactly the same 8 .data candidates as the independent Python tool; self-diff returns no delta. One command for all of it: run_all_tests.sh (8 passed, 0 failed)",
+    "validated": "30 unit tests + 21 self-test checks on the host; audit returns \"0 with a match\" on both samples (no self-flagging); sweep returns exactly the same 8 .data candidates as the independent Python tool; self-diff returns no delta. One command for all of it: run_all_tests.sh (8 passed, 0 failed)",
     "docs": "detection/audit_tool.md",
     "verification_script": "recovered_or_reconstructed_project/run_all_tests.sh",
     "version": "1.2.0",
-    "artifacts_note": "the PE TimeDateStamp is wall-clock (zig's lld ignores --no-insert-timestamp/--timestamp), so these hashes identify THIS build only; compare size and the 23 exports across machines",
+    "artifacts_note": "build_audit.sh normalises both binaries with tools/pe_deterministic.py (TimeDateStamp, CodeView PDB GUID, build id zeroed), so these SHA-256 values are reproducible for this toolchain; a different compiler version changes code bytes - then compare size + the 23 exports",
     "source_files": "src/nrth_audit.{h,cpp,def}, src/nrth_audit_sigs.h, tools/nrth_audit_cli.cpp, tests/test_nrth_audit.cpp, run_all_tests.sh",
     "size_bytes": {
       "NRTH_audit.dll": 293376,
@@ -382,7 +382,7 @@
     "tests": {
       "unit": "30/30 (tests/test_nrth_audit.cpp)",
       "selftest": "21 checks via nrth_audit.exe selftest",
-      "suite": "bash recovered_or_reconstructed_project/run_all_tests.sh -> 8 passed, 0 failed, 0 skipped"
+      "suite": "bash recovered_or_reconstructed_project/run_all_tests.sh -> 9 passed, 0 failed, 0 skipped (8 + 1 skip when bin/ is absent)"
     },
     "diff_semantics": "added_footprint (alert, = function return value) requires the footprint to sit on the function the baseline located at the same RVA; target_lost and sus_unlocated are other-build artefacts and never alert. Rule added in 1.2.0 after diffing the sample against this repository's own reconstruction produced a false DETOUR_JMP32 row on a jump thunk.",
     "csv_columns": "sig_id,target,clean_full,clean_patched,sus_full,sus_patched,added_footprint,target_lost,sus_unlocated,state,sus_rva,detail",

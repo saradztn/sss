@@ -128,3 +128,24 @@ $ bash fetch_vendor.sh && bash build.sh          # after the comment/address cor
       export contract unchanged: tools/pe_summary.py -> NVXHookProc @1 rva 0x001000, PE32 i386
       size identical to the 2026-10-10 entry, hash differs only because the DLL carries a build id
       (the loader exe came out byte-identical, so the instability is in the DLL link step, not in our objects)
+$ (reproducibility work) python3 tools/pe_deterministic.py  — new, and wired into both build scripts
+  why: the docs kept carrying a caveat that "the SHA-256 moves on every rebuild" (zig's lld ignores
+       --no-insert-timestamp and rejects --timestamp). Inspecting two links of the SAME object file
+       2 s apart showed only 12 differing bytes, all per-link entropy:
+         0x000080 TimeDateStamp · 0x0042604 .buildid · 0x0042620.. debug dir + CodeView RSDS GUID
+         (+0x0041f39 = the module's own name, only differs when -o differs)
+       pe_deterministic.py zeroes exactly those, clears the DataDirectory[6] entry and is idempotent.
+       Code bytes, relocations and the export table are untouched.
+  [x] ./build_audit.sh twice (3 s apart)          -> NRTH_audit.dll + nrth_audit.exe byte-identical
+  [x] ./build.sh twice (2 s apart)                -> NRTH.dll + NORTH_LOADER.exe byte-identical
+  [x] pinned hashes (stable now, not "this build only"):
+        bin/NRTH_audit.dll    293,376 B  c13167666a0a3e16ed870e7b74871410eb848063d71a7682c6773b40e408fe9f
+        bin/nrth_audit.exe    304,640 B  1c24702ac10df6fc1f07cd74f193d36f1aa3ffc7ae9c343881d9ebe6b3fcdf0a
+        bin/NRTH.dll        1,692,160 B  42b1ea204d27ff4c9f4be34152d5129632548cc3a198136897505b88b12dd646
+        bin/NORTH_LOADER.exe  280,064 B  5e2eddaccdb9444ceb10c911771160f204158eaf0ca519205f5f720df1960668
+  [x] after normalisation: pe_summary still reports PE32 i386 / DYNAMICBASE+NX / 23 exports, and the
+      module's own PE reader (nrth_audit audit bin/NRTH_audit.dll) parses it -> no loader-visible field broke
+  [x] run_all_tests.sh                            -> 9 passed, 0 failed, 0 skipped
+      (new group-5 control: `pe_deterministic.py --check bin/NRTH_audit.dll` must be clean, so an
+       un-normalised artifact fails the suite instead of silently moving hashes)
+  note: README.md line "reproducible cross-build" was an overclaim before this; it is now measured.

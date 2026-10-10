@@ -61,6 +61,11 @@ echo "[*] Compiling NORTH_LOADER.exe reconstruction (src/north_loader.cpp)..."
 $ZIG c++ $TARGET -O2 -o "$OUT/NORTH_LOADER.exe" src/north_loader.cpp \
   -luser32 -ladvapi32 -lpsapi
 
+# Same normalisation as build_audit.sh: the reconstruction is evidence, so its hashes should be
+# quotable; only timestamp/CodeView/build-id entropy is removed (no code bytes are touched).
+python3 tools/pe_deterministic.py "$OUT/NRTH.dll" "$OUT/NORTH_LOADER.exe" || \
+  echo "[!] pe_deterministic.py failed - hashes will move on every rebuild" >&2
+
 echo "[+] Build complete:"
 ls -l "$OUT/NORTH_LOADER.exe" "$OUT/NRTH.dll"
 sha256sum "$OUT/NORTH_LOADER.exe" "$OUT/NRTH.dll"

@@ -100,9 +100,20 @@ $ZIG c++ $TARGET $STD -O2 -g0 "${WARN[@]}" "${AUDIT_INC[@]}" -DNRTH_AUDIT_STATIC
   -o "$OUT/nrth_audit.exe" tools/nrth_audit_cli.cpp src/nrth_audit.cpp
 
 # ---------------------------------------------------------------------------
-# 3. report
+# 3. deterministic normalisation + report
 # ---------------------------------------------------------------------------
 rm -f "$OUT"/*.pdb          # zig emits PDBs even with -g0; nothing here is meant to be debugged
+
+# Zero the per-link entropy (PE TimeDateStamp, CodeView PDB GUID, build id) so the SHA-256 of the
+# delivered binaries is a usable pin: two rebuilds of the same sources with the same toolchain then
+# hash identically (measured 2026-10-11, BUILD_LOG.txt). No loader-visible field is recomputed and
+# relocations are untouched.
+if python3 tools/pe_deterministic.py "$OUT/NRTH_audit.dll" "$OUT/nrth_audit.exe"; then
+  NORMALISED=1
+else
+  NORMALISED=0
+  echo "[!] normalisation failed - hashes will move on every rebuild" >&2
+fi
 
 echo "[*] Headers + export table (dependency-free parser, no objdump/dumpbin needed):"
 python3 tools/pe_summary.py "$OUT/NRTH_audit.dll" "$OUT/nrth_audit.exe" \
@@ -117,10 +128,15 @@ if [ -x "$HOST/nrth_audit" ] && [ -f ../working/NRTH.dll ]; then
   "$HOST/nrth_audit" audit ../working/NRTH.dll | sed -n '3p;/verdict/p' | sed 's/^/      /'
 fi
 
-echo "[!] Reproducibility note: zig's lld ignores --no-insert-timestamp / --timestamp, so the"
-echo "    embedded PE TimeDateStamp is wall-clock and the SHA-256 changes on every rebuild."
-echo "    Compare sizes + exports (verified below) across machines, not hashes; the hashes here are"
-echo "    the record of *this* build, also copied into BUILD_LOG.txt and the case test_results."
+if [ "${NORMALISED:-0}" = 1 ]; then
+  echo "[*] Reproducibility: the two binaries above are normalised (timestamp/CodeView GUID/build id"
+  echo "    zeroed), so re-running this script reproduces the same SHA-256 *with this toolchain*."
+  echo "    A different zig/gcc version changes code bytes - then compare size + the 23 exports, and"
+  echo "    re-run the unit tests and self-test, which is what actually gates the release."
+else
+  echo "[!] Reproducibility: NOT normalised this run, so the SHA-256 will move on every rebuild."
+  echo "    Compare size + exports instead, or run: python3 tools/pe_deterministic.py $OUT/*.dll $OUT/*.exe"
+fi
 
 echo
 echo "[!] Honest caveat: step 1 proves the logic on the host; the x86 binaries are"

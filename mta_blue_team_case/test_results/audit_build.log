@@ -1,6 +1,6 @@
-# NRTH_audit build + verification log — 2026-10-11 (Linux host, g++ 12.2 + ziglang 0.17.0) — module v1.2.0
+# NRTH_audit build + verification log — 2026-10-11 (Linux host, g++ 12.2 + ziglang 0.17.0) — module v1.2.0, normalised artifacts
 
-$ ./build_audit.sh   (excerpt)
+$ ./build_audit.sh   (excerpt, full flow: host tests -> cross build -> PE normalisation -> header/export check)
 [*] Host build: unit tests + CLI (g++, -std=c++17)
 [*] Running the unit tests...
 [*] nrth_audit unit tests
@@ -13,24 +13,30 @@ $ ./build_audit.sh   (excerpt)
   [ ok ] audit: E9 detour -> one patched match only
   [ ok ] audit: state classified as DETOUR_JMP32
   [ ok ] audit: detour target RVA captured for triage
+  [ ok ] audit: FF 25 detour -> one patched match
+  [ ok ] audit: far-jump target converted to an RVA
   ...
 [*] 30/30 checks passed
 result: all checks passed
-[*] Cross-compiling NRTH_audit.dll (x86-windows-gnu, PE32)...
-[*] Cross-compiling nrth_audit.exe (console CLI, same module)...
-bin/NRTH_audit.dll
+[+] bin/NRTH_audit.dll: 3 entropy source(s) removed
+    sha256 1d5d05f05272c068d011ebada9d0a23cb441340e069dbe83d6af070e1d689761 -> c13167666a0a3e16ed870e7b74871410eb848063d71a7682c6773b40e408fe9f
+[+] bin/nrth_audit.exe: 3 entropy source(s) removed
+    sha256 63b6aa83b5554acde9cd7359d6554fa6386d09ca619d6425585d7a0011bc730a -> 1c24702ac10df6fc1f07cd74f193d36f1aa3ffc7ae9c343881d9ebe6b3fcdf0a
   exports         : 23 name(s) / 23 function(s)  internal name NRTH_audit.dll
-bin/nrth_audit.exe
   exports         : (none)
--rwxr-xr-x 1 user user 293376 Oct 10 23:28 bin/NRTH_audit.dll
--rwxr-xr-x 1 user user 304640 Oct 10 23:28 bin/nrth_audit.exe
-68cc2d574c46c5deed4d07a5e66653532d2773cfab4cff5b3d547a8a1e9fb6c5  bin/NRTH_audit.dll
-63b6aa83b5554acde9cd7359d6554fa6386d09ca619d6425585d7a0011bc730a  bin/nrth_audit.exe
+[+] Built:
+[*] Reproducibility: the two binaries above are normalised (timestamp/CodeView GUID/build id
+
+$ python3 tools/pe_deterministic.py --check bin/NRTH_audit.dll bin/nrth_audit.exe
+[*] bin/NRTH_audit.dll: 0 entropy source(s)
+      (none: already deterministic)
+[*] bin/nrth_audit.exe: 0 entropy source(s)
+      (none: already deterministic)
 
 $ python3 tools/pe_summary.py bin/NRTH_audit.dll
 bin/NRTH_audit.dll
   size            : 293376 bytes
-  timestamp       : 0x6acaca34
+  timestamp       : 0x00000000
   machine         : 0x014c  IMAGE_FILE_MACHINE_I386 (x86)
   magic           : 0x10b (PE32)
   image base      : 0x10000000
@@ -38,20 +44,15 @@ bin/NRTH_audit.dll
   size of image   : 0x4e000
   subsystem       : WINDOWS_GUI
   DLL flags       : 0x0140  DYNAMICBASE NX_COMPAT
-  file chars      : 0x2102  [EXECUTABLE_IMAGE]
-  sections        :
-      .text    rva=0x0001000 vsize=0x0380e7 raw=0x000400 rsize=0x038200
-      .rdata   rva=0x003a000 vsize=0x00a001 raw=0x038600 rsize=0x00a200
-      .buildid rva=0x0045000 vsize=0x000043 raw=0x042800 rsize=0x000200
-      .data    rva=0x0046000 vsize=0x001090 raw=0x042a00 rsize=0x000200
-  ... 23 exports, ordinals 1..23 exactly as pinned in src/nrth_audit.def
-      @21  NrthAuditSelfTest            rva=0x003b90
-      @22  NrthAuditDiff                rva=0x003980
-      @23  NrthAuditDiffFiles           rva=0x003af0
+  exports         : 23 name(s) / 23 function(s), ordinals 1..23 exactly as pinned in src/nrth_audit.def
 
 $ sha256sum bin/NRTH_audit.dll bin/nrth_audit.exe
-68cc2d574c46c5deed4d07a5e66653532d2773cfab4cff5b3d547a8a1e9fb6c5  bin/NRTH_audit.dll
-63b6aa83b5554acde9cd7359d6554fa6386d09ca619d6425585d7a0011bc730a  bin/nrth_audit.exe
+c13167666a0a3e16ed870e7b74871410eb848063d71a7682c6773b40e408fe9f  bin/NRTH_audit.dll
+1c24702ac10df6fc1f07cd74f193d36f1aa3ffc7ae9c343881d9ebe6b3fcdf0a  bin/nrth_audit.exe
+
+$ (two full rebuilds, 3 s apart, then) sha256sum -c on the recorded hashes
+    bin/NRTH_audit.dll: OK
+    bin/nrth_audit.exe: OK          <- byte-identical across rebuilds; hashes are pinnable
 
 $ ./run_all_tests.sh
 === 1/6  audit module: unit tests
@@ -70,8 +71,9 @@ $ ./run_all_tests.sh
   [PASS] audit of the cheat module itself reports 0 footprints (patterns target client.dll/netc.dll)
   [PASS] sweep rediscovered 8 hidden .data records (expected 8, matches tools/nrth_sig_export.py)
   [PASS] self-diff and cross-build diff report no tamper alert (bin/NRTH.dll)
+  [PASS] delivered DLL is hash-pinnable (no timestamp / CodeView GUID / build id left)
 
 === 6/6  YARA rules compile and fire as documented
   [PASS] yara: rules compile, sample -> 3 rule(s), NRTH_audit.dll clean, nrth_audit.exe clean
 
-=== summary: 8 passed, 0 failed, 0 skipped (logs in /tmp/nrth_tests.4798)
+=== summary: 9 passed, 0 failed, 0 skipped (logs in /tmp/nrth_tests.5746)

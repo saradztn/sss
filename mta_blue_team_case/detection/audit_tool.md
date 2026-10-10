@@ -25,6 +25,7 @@ actually needs.
 | `.../tools/gen_nrth_audit_sigs_h.py` | regenerates the table from `working/sigs.json` |
 | `.../tests/test_nrth_audit.cpp` | 27 host unit tests |
 | `.../run_all_tests.sh` | one command that re-runs every test claim in this case (8 groups incl. YARA, the sample differentials and the cross-build diff control) |
+| `.../tools/pe_deterministic.py` | makes the delivered PE artifacts hash-pinnable (timestamp / CodeView GUID / build id zeroed); run by the build scripts |
 | `.../tools/nrth_string_va.py` | verifies any `"<string>" ... 0xADDR` claim in this folder's docs against the packed image (`--find`, `--check`, `--audit-docs`) |
 | `.../build_audit.sh` | host tests first, then the PE32 x86 cross build |
 
@@ -51,10 +52,10 @@ Last verified run (2026-10-10, Linux host, g++ 12.2 + ziglang 0.17.0):
 [*] 30/30 checks passed                       # unit tests
 result: all checks passed                     # NrthAuditSelfTest: 21 checks, all sample-derived
 $ ./run_all_tests.sh
-=== summary: 8 passed, 0 failed, 0 skipped        # incl. the YARA check and both sample differentials
+=== summary: 9 passed, 0 failed, 0 skipped (a clone without bin/ gives 8 passed + 1 skipped)        # incl. the YARA check and both sample differentials
 [+] Built:
-  bin/NRTH_audit.dll   293,376 B  sha256 68cc2d574c46c5deed4d07a5e66653532d2773cfab4cff5b3d547a8a1e9fb6c5
-  bin/nrth_audit.exe   304,640 B  sha256 63b6aa83b5554acde9cd7359d6554fa6386d09ca619d6425585d7a0011bc730a
+  bin/NRTH_audit.dll   293,376 B  sha256 c13167666a0a3e16ed870e7b74871410eb848063d71a7682c6773b40e408fe9f
+  bin/nrth_audit.exe   304,640 B  sha256 1c24702ac10df6fc1f07cd74f193d36f1aa3ffc7ae9c343881d9ebe6b3fcdf0a
      (reproducibility: zig's lld keeps a wall-clock PE TimeDateStamp, so rebuilding the same
       sources yields a different DLL hash — compare size/exports, and re-read these from a log)
   machine 0x014c IMAGE_FILE_MACHINE_I386, magic 0x10b (PE32), image base 0x10000000,

@@ -21,13 +21,18 @@ WHAT IT IS
   It never opens another process, never writes, never injects, never hooks, and contains no
   Lua payload. That is the whole point of shipping it as a binary: it is detection, not capability.
 
-LAST VERIFIED BUILD (2026-10-10, Linux host, g++ 12.2 + ziglang 0.17.0)
+LAST VERIFIED BUILD (2026-10-11, Linux host, g++ 12.2 + ziglang 0.17.0)
   bin/NRTH_audit.dll   293,376 bytes
-    sha256 68cc2d574c46c5deed4d07a5e66653532d2773cfab4cff5b3d547a8a1e9fb6c5
+    sha256 c13167666a0a3e16ed870e7b74871410eb848063d71a7682c6773b40e408fe9f
   bin/nrth_audit.exe   304,640 bytes
-    sha256 63b6aa83b5554acde9cd7359d6554fa6386d09ca619d6425585d7a0011bc730a
+    sha256 1c24702ac10df6fc1f07cd74f193d36f1aa3ffc7ae9c343881d9ebe6b3fcdf0a
   headers: machine 0x014c (I386), magic 0x10b (PE32), ImageBase 0x10000000 (same as the
   original NRTH.dll), DLL subsystem, DYNAMICBASE + NX_COMPAT, 23 exported C names.
+  These hashes are pinnable: ./build_audit.sh normalises the binaries
+  (tools/pe_deterministic.py zeroes TimeDateStamp, the CodeView PDB GUID and
+  the build id), so two consecutive rebuilds of the same sources produced the
+  same SHA-256 (measured 2026-10-11). A different compiler version changes code
+  bytes - then compare size + the 23 exports and re-run the tests.
   Verification logs: ../../test_results/audit_build.log,
   ../../test_results/audit_sample_differential.log, ../../test_results/yara_check.log.
 

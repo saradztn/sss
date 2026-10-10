@@ -45,7 +45,7 @@ Classification by component:
 - **Build status: BUILT** — cross-compiled to Windows PE32 x86 artifacts with Zig 0.17.0's MinGW sysroot (`build.sh`): `bin/NORTH_LOADER.exe` (SHA-256 `75a3dc17...fdd2b3dd`) and `bin/NRTH.dll` (SHA-256 `452c5848...d6e383f`), export contract verified (`NVXHookProc` @ ordinal 1). Full log: `test_results/build_cross.log`. Windows MSVC path (`build.ps1`) documented but not executed here.
 - **Delivered detector (built + tested): `NRTH_audit.dll` / `nrth_audit.exe`** — `build_audit.sh`, PE32 x86,
   ImageBase 0x10000000, 23 exports (ordinals 1–21), DYNAMICBASE+NX_COMPAT;
-  `bin/NRTH_audit.dll` SHA-256 `68cc2d57…1e9fb6c5`, `bin/nrth_audit.exe` `47217128…2f5f3da4`.  Full suite (every claim in this case, one command): `run_all_tests.sh` → `8 passed, 0 failed, 0 skipped`
+  `bin/NRTH_audit.dll` SHA-256 `c1316766…e408fe9f`, `bin/nrth_audit.exe` `1c24702a…b3fcdf0a`.  Full suite (every claim in this case, one command): `run_all_tests.sh` → `9 passed, 0 failed, 0 skipped (8 + 1 skip without bin/)`
   (log: `test_results/run_all_tests.log`).
   It implements the recovered codec, the 20-signature catalogue, the PE reader and the patch-footprint
   classifier; 30/30 unit tests and 21/21 self-test vectors pass on the host, and `audit` returns
@@ -160,9 +160,9 @@ file offsets can no longer be read as VAs.  (2) `nrth_audit` gained the alignmen
 false "new detour" row.
 
 The reconstruction itself was rebuilt after these doc/code corrections (`fetch_vendor.sh` + `build.sh`,
-exit 0): `bin/NRTH.dll` 1,692,160 B `sha256 643b1446c29f757bea360f40458061149fd9856caab769f2d7b940c6a3976c59`
+exit 0): `bin/NRTH.dll` 1,692,160 B `sha256 42b1ea204d27ff4c9f4be34152d5129632548cc3a198136897505b88b12dd646`
 (single export `NVXHookProc` @ ordinal 1, PE32 x86) and `bin/NORTH_LOADER.exe` 280,064 B
-`sha256 7e46525c5245bd7152c011b331bc0cfae48d10e2030ec4d12d4c08eb37665ad3`. The size differs from the
+`sha256 5e2eddaccdb9444ceb10c911771160f204158eaf0ca519205f5f720df1960668`. The size differs from the
 2026-10-10 entry above because the current tree links 46 objects (Dear ImGui 1.92.9 + Lua 5.4.6 + MinHook)
 into `NRTH.dll`; the export contract is unchanged and re-verified by `tools/pe_summary.py`.
 

@@ -1,4 +1,4 @@
-# audit differential against the original samples + build controls — 2026-10-11 (module v1.2.0)
+# audit differential + build controls — 2026-10-11 (module v1.2.0, normalised artifacts)
 
 $ ./bin/host/nrth_audit audit working/NRTH.dll
 [*] nrth_audit 1.2.0
@@ -51,21 +51,20 @@ id   clean f/p      loaded f/p     change                 footprint @rva / targe
 [*] note: 1 pattern(s) matched a function the baseline does not locate at all — different build or unrelated code, NOT tampering (alert on the verdict line only).
 exit=0  <- 0 although a footprint is visible: it is not on a function the baseline locates
 
+$ ./bin/host/nrth_audit audit bin/NRTH_audit.dll   (our own normalised artifact still parses with our PE reader)
+[*] signatures  : 20 checked, 0 with a match
+[*] verdict: 0 signature(s) found with a replaced prologue
+
 $ ./bin/host/nrth_audit decode working/NRTH.dll --rva 0x13bd10 --len 156
 [*] ../working/NRTH.dll  imagebase=0x10000000  rva=0x13bd10  len=156
 [*] raw            : cf c8 dc c5 bc df 44 42 22 3b 37 25 43 44 28 36 2a 33 3f 2d 4b 3b 30 2e 32 2b 27 35 55 23 38 26 
 [+] decoded (key 0x06): 53 8B DC 83 EC ? 83 E4 ? 83 C4 ? 55 8B 6B ? 89 6C 24 ? 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 53 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 
-
-$ python3 tools/nrth_string_va.py ../working/NRTH.dll 'North Cheat' 'C:\NVX' '@custom'
-'North Cheat'                      off=0xe90d8   rva=0xea0d8 va=0x100ea0d8 ..rdata
-'C:\\NVX'                          off=0xafd18   rva=0xb0d18 va=0x100b0d18 ..rdata
-'@custom'                          off=0xe9890   rva=0xea890 va=0x100ea890 ..rdata
 
 [*] interpretation:
     - audit on the cheat module reports 0 footprints by construction (its patterns target
       client.dll/netc.dll); the positive control for the tamper path is the unit-test group
       (synthetic images with C3 / E9 / FF 25 footprints at located functions): 30/30.
     - sweep reproduces exactly the 8 .data records found independently by tools/nrth_sig_export.py.
-    - the cross-build diff case is what 1.2.0 was written for: a footprint in the compared
-      image that the baseline never located is reported informationally and does not alert.
+    - the cross-build diff case is what 1.2.0 was written for: a footprint the baseline never
+      locates is informational (sus_unlocated) and does not alert.
     - ASan+UBSan over both samples: no findings.

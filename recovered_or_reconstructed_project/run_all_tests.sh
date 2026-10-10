@@ -9,7 +9,8 @@
 #   2. audit module self-test (21 sample-derived vectors) via the CLI
 #   3. loader reconstruction tests            tests/test_cli_parser.cpp
 #   4. export-contract differential           tests/test_pe_export_parser.cpp  (needs working/NRTH.dll)
-#   5. false-positive control + negative      nrth_audit audit / diff on the sample
+#   5. false-positive control + negative      nrth_audit audit / diff on the sample,
+#      + deliverable hygiene    bin/NRTH_audit.dll free of per-link entropy
 #   6. YARA rule compile + scan               (needs python3 -c "import yara")
 #
 # Exit status: 0 = everything that could run passed; 1 = a test failed; the number of
@@ -117,6 +118,15 @@ if [ -n "$SAMPLE" ] && [ -x "$OUT/cli" ]; then
     else
       bad "self-diff reported a delta (rc=$rc)"
     fi
+  if [ -f bin/NRTH_audit.dll ]; then
+    if python3 tools/pe_deterministic.py --check bin/NRTH_audit.dll > "$OUT/t5e.log" 2>&1; then
+      ok "delivered DLL is hash-pinnable (no timestamp / CodeView GUID / build id left)"
+    else
+      bad "bin/NRTH_audit.dll still carries per-link entropy - run tools/pe_deterministic.py"
+    fi
+  else
+    skip "no bin/NRTH_audit.dll to check for per-link entropy (run ./build_audit.sh)"
+  fi
   fi
 else
   skip "needs the sample and the audit CLI"
