@@ -24,7 +24,7 @@ actually needs.
 | `.../tools/pe_summary.py` | dependency-free PE header/export verifier used by the build |
 | `.../tools/gen_nrth_audit_sigs_h.py` | regenerates the table from `working/sigs.json` |
 | `.../tests/test_nrth_audit.cpp` | 27 host unit tests |
-| `.../run_all_tests.sh` | one command that re-runs every test claim in this case (8 groups incl. YARA, the sample differentials and the cross-build diff control) |
+| `.../run_all_tests.sh` | one command that re-runs every test claim in this case (6 stages / 9 checks: unit tests, self-test, loader CLI, export differential vs the ORIGINAL sample, detector controls incl. the cross-build diff and artifact-entropy hygiene, YARA) |
 | `.../tools/pe_deterministic.py` | makes the delivered PE artifacts hash-pinnable (timestamp / CodeView GUID / build id zeroed); run by the build scripts |
 | `.../tools/nrth_string_va.py` | verifies any `"<string>" ... 0xADDR` claim in this folder's docs against the packed image (`--find`, `--check`, `--audit-docs`) |
 | `.../build_audit.sh` | host tests first, then the PE32 x86 cross build |
