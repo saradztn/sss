@@ -41,6 +41,16 @@ Recommended event sources: Sysmon (EID 1, 7, 8, 10, 25), Windows Security 4688 w
 - Log module-load attestations if your anti-cheat supports client module inventories; alert on unsigned DLLs mapped into `gta_sa.exe` after game start.
 - Enable verbose netcode logging around reserved/cheat packet IDs during investigations; capture with server resources, not by inspecting third-party players' machines.
 
+## Layer 4 — tooling now available in this case folder
+
+| Tool | Covers | Status |
+|---|---|---|
+| `server_validation/nrth_guard/` (MTA server resource) | impossible/rate-invalid replicated state: health, armor, money, ammo, travel, vehicle velocity, jetpack, godmode-corroboration | **built + 42 checks passing off-server** (`../test_results/server_guard_logic_tests.log`); NOT yet run on a live MTA server |
+| `integrity_probe/nrth_probe.py` (host, read-only) | in-memory `.text` diffs of `client.dll`/`netc.dll`/`ntdll.dll`/`d3d9.dll` vs a clean baseline; classifies `HOOK_JMP`, `HOOK_PUSH_RET`, `EARLY_RET` (the sample's `0xC3` kill-switch shape) | **logic unit-tested (36 checks, `../test_results/integrity_probe_logic.log`)**; live baseline/check not executed (no Windows/MTA here) |
+| `private_server_tests/expected_alerts.csv` | per-stage "which tool must light up" matrix, wired to `behavior_timeline.md` | prepared; to be filled with real results during T0–T6 |
+
+Deployment order that keeps false positives survivable: run `nrth_guard` in `report_only` for a full T0 baseline → calibrate → keep `nrth_probe` baselines per client build → only then enable `warn`/`kick`.
+
 ## Regression tests for your detections
 
 1. Run the clean MTA:SA client → record baseline telemetry (must generate zero alerts from rules 1–5 except known overlay FP list).

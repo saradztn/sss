@@ -1,0 +1,49 @@
+[*] no lua interpreter; creating a venv with lupa (PyPI)...
+--- test_guard.lua
+== nrth_guard logic tests ==
+  [PASS] clean player -> 0 findings
+  [PASS] clean player -> score stays ~0
+  [PASS] first sample never flags (no prev reference)
+  [PASS] HEALTH_ABOVE_MAX on health>100
+  [PASS] damage down never flags heal rules
+  [PASS] HEALTH_JUMP on 34 -> 100 in 0.5s without grant
+  [PASS] grant(spawn/health) suppresses HEALTH_JUMP
+  [PASS] MONEY_RATE fires on +2.5M in 0.5s
+  [PASS] MONEY_RATE severity is high
+  [PASS] report_only policy never kicks
+  [PASS] normal reward (+50/s) is not flagged
+  [PASS] AMMO_RATE on ammo 30 -> 9000
+  [PASS] AMMO_ABOVE_MAX/AMMO_RATE quiet after clamp back to 60
+  [PASS] TRAVEL_RATE on 7071u in 0.5s
+  [PASS] after admin reset, next sample is a baseline
+  [PASS] VEHICLE_SPEED quiet at |v|=2.00 u/s (below 2.40)
+  [PASS] VEHICLE_SPEED flags |v|=9.00 u/s (airbreak shape)
+  [PASS] config-listed exempt model does not flag
+  [PASS] JETPACK flags weapon 46 without grant
+  [PASS] jetpack granted by server is allowed
+  [PASS] no godmode verdict before the window elapses
+  [PASS] GODMODE fires: 55 damage applied, health pinned
+  [PASS] health actually dropping clears the godmode ledger
+  [PASS] ARMOR_JUMP/ceiling on armor 250
+  [PASS] kick action produced once over threshold
+  [PASS] kick cooldown blocks a second action
+  [PASS] NaN/nil fields do not crash the engine
+  [PASS] missing position does not crash TRAVEL_RATE
+  [PASS] summary reports 1 tracked player
+== result: 29 passed, 0 failed ==
+--- test_main_integration.lua
+== nrth_guard MTA-glue integration tests (test doubles, NOT live MTA) ==
+  [PASS] onResourceStart created a poll timer
+  [PASS] startup banner logged
+  [PASS] clean player produced no FINDING lines
+  [PASS] FINDING/MONEY_RATE logged for instant money jump
+  [PASS] finding row written to sqlite
+  [PASS] default policy is report (no kick)
+  [PASS] spawn grant suppresses HEALTH_JUMP in glue
+  [PASS] respawn after waste is not flagged
+  [PASS] nrthGuard:grant event registered
+  [PASS] nrthGuard:serverDamage event registered
+  [PASS] JETPACK finding surfaces through poll timer
+  [PASS] quit player is dropped from tracking
+  [PASS] no post-quit findings recorded
+== result: 13 passed, 0 failed ==

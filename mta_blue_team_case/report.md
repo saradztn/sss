@@ -114,11 +114,30 @@ Windows build script for the reconstruction (`recovered_or_reconstructed_project
 ## 8. How to detect / How to defend
 
 - **Detect:** see `detection/telemetry.md` (layered file + host + server signals with FP caveats) and `detection/yara_rules.yar` (3 candidate rules; exact-sample strength). Never rely on a single import/string.
-- **Defend (server-side first):** treat client state as untrusted — server-side validation of aim/movement/weapon sync; module-inventory attestation for `gta_sa.exe`; alert on unsigned DLLs mapped post-start; verbose logging around reserved/cheat packet IDs during investigations; regression-test detections with T0/T2/T5 of the test plan on the team-owned server only.
+- **Defend (server-side first):** treat client state as untrusted — server-side validation of aim/movement/weapon sync (implemented in `detection/server_validation/nrth_guard/`); module-inventory attestation for `gta_sa.exe`; alert on unsigned DLLs mapped post-start; verbose logging around reserved/cheat packet IDs during investigations; regression-test detections with T0/T2/T5 of the test plan on the team-owned server only.
 
 ## 9. Statement on source recovery
 
 **Was the exact original source recovered? NO.** The deliverable `recovered_or_reconstructed_project/` is an **R2 behavioral reconstruction** (plus **D2** decompiler output documented in `analysis/`), clearly separated from the untouched samples in `evidence/`. Comments, original identifiers, and project structure of the authors' source were not recoverable from the compiled binaries.
+
+## 10. 2026-10-10 scope decision: "apply the real mechanism to the source and build the DLL"
+
+**Request (operator):** replace the neutralised core of `recovered_or_reconstructed_project/src` with the real mechanism documented in `mechanism_overview_ar.md`, then build `NRTH.dll`.
+
+**Declined, in full, as an enhancement request.** The gap between the current source and the documented mechanism is exactly three things: (a) resolving `client.dll` functions by code-signature and MinHooking the Lua-VM registration + execute-chunk routines so the editor's `Execute` calls the *game's* `exec` trampoline (`0x10025c3d`, `@custom`/`@auto_inject`); (b) the `netc.dll` `0xC3` kill-switch (`0x10020640` → byte writer `0x10011870`); (c) making the feature flags actually mutate game state. Delivering those in a compilable DLL produces a working MTA:SA cheat — usable on any server, not just the authorized one — and (b) is anti-cheat/protocol-check disabling, which the engagement rules list as a stop condition. It also contradicts this case's own notes: `mechanism_vm_injection.md` ("a working re-implementation of game-VM injection is deliberately NOT provided — it is the active cheat weapon") and `mechanism_overview_ar.md` §8 ("the documentation above is enough to build protection without building the tool").
+
+**No build of a weaponised variant was performed, and none is pending.** Rebuilding the existing (neutralised) sources would not close any gap: it would only re-emit the artifacts already logged in §2 / `test_results/build_cross.log`.
+
+**What was built instead — the same gaps, on the defensive side of the boundary:**
+
+| Gap the reconstruction could not close | Defensive artifact added | Validation status |
+|---|---|---|
+| Per-feature effect of the flag system (§6, Tentative) could not be proven, and no client-side trust can be trusted anyway | `detection/server_validation/nrth_guard/` — server-side rules engine (health/armor/money/ammo/travel/vehicle-velocity/jetpack + damage-ledger godmode corroboration), grant-window FP suppression, `report_only` ladder, SQLite event log | **Built; 29/29 logic + 13/13 glue checks pass** (`test_results/server_guard_logic_tests.log`, real Lua under lupa). Not run against a live MTA server — thresholds need T0 calibration |
+| Hooking/patching footprint of §2/§3/§4 was only described, not measurable | `detection/integrity_probe/nrth_probe.py` — read-only baseline-diff of in-memory `.text`, classifying `HOOK_JMP`/`HOOK_PUSH_RET`/`EARLY_RET` (the sample's `C3` shape) with module-relative RVAs | **Logic built; 36/36 checks pass** (`test_results/integrity_probe_logic.log`). Live `baseline`/`check` **not executed** (no Windows/MTA on this host) |
+| `test_plan.md` had no per-stage "which signal must light up" mapping | `private_server_tests/expected_alerts.csv` — T0–T6 matrix wired to `behavior_timeline.md` and both tools, with pre-run confidence per row | Prepared only; results still `U` until run on the team's server |
+| Divergences between source and mechanism were implicit | `mechanism_gap_ar.md` — 12-row item-by-item gap table with per-row disposition (implemented / defensive-only / refused) | Documentation; reviewed against source line references |
+
+**Effect on the case:** every `Tentative` row in `mechanism_overview_ar.md` §7 stays `Tentative` — they are answerable by observing the **original** sample on the team's server (`expected_alerts.csv` T5a–T5f), not by running a rebuilt variant. `recovered_or_reconstructed_project/` remains R2 with its stubs intact and its documented deviations unchanged.
 
 ---
 
@@ -138,4 +157,12 @@ Windows build script for the reconstruction (`recovered_or_reconstructed_project
 | `detection/telemetry.md` | Layered telemetry + FP caveats + regression tests + blind spots |
 | `private_server_tests/test_plan.md` | Real client/server test matrix (T0–T6) |
 | `private_server_tests/results.md` | Honest status: NOT EXECUTED + what was validated instead |
+| `private_server_tests/expected_alerts.csv` | T0–T6 matrix: action → expected signal → tool/rule → pre-run confidence |
+| `mechanism_gap_ar.md` | Real mechanism vs. reconstruction source: 12-row gap table + dispositions |
+| `detection/server_validation/nrth_guard/` | Defensive MTA:SA server resource (rules engine + glue + meta.xml) |
+| `detection/server_validation/tests/` | 29 logic + 13 glue checks, mock MTA API, runner (system Lua or lupa) |
+| `detection/integrity_probe/nrth_probe.py` | Read-only in-memory code-integrity probe (baseline/check/offline diff) |
+| `detection/integrity_probe/test_probe_logic.py` | 36 checks incl. an AST guardrail that the probe has no write APIs |
+| `test_results/server_guard_logic_tests.log` | Actual runner output for the guard (42 checks, exit 0) |
+| `test_results/integrity_probe_logic.log` | Actual runner output for the probe logic (36 checks, exit 0) |
 | `test_results/*.log` | Actual unit-test output (CLI parser, PE export differential) |

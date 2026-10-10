@@ -1,0 +1,13 @@
+<meta>
+    <info author="mta_blue_team_case" type="misc" version="1.0.0"
+          description="Server-side impossible-state validator (defensive; report-only by default)"/>
+
+    <!-- Loaded in order; both files share this resource's single Lua VM -->
+    <script src="server/guard_logic.lua" type="server"/>
+    <script src="server/guard_config.lua" type="server"/>
+    <script src="server/main.lua"        type="server"/>
+
+    <!-- No client script ships in this resource BY DESIGN: client-side trust is
+         what the NORTH/NRTH family bypasses (mechanism_overview_ar.md §3/§4). -->
+    <min_mta_version client="1.5.9" server="1.5.9"/>
+</meta>

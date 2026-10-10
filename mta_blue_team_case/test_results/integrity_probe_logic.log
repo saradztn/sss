@@ -1,0 +1,38 @@
+== nrth_probe logic tests ==
+  [PASS] E9 -> HOOK_JMP
+  [PASS] FF25 -> HOOK_JMP
+  [PASS] EB (short jmp) -> HOOK_JMP
+  [PASS] C3 -> EARLY_RET (netc kill-switch shape)
+  [PASS] C2 04 00 -> EARLY_RET
+  [PASS] push addr; ret -> HOOK_PUSH_RET
+  [PASS] CC -> BREAKPOINT_OR_STUB
+  [PASS] 90 -> PATCHED
+  [PASS] empty -> None
+  [PASS] identical images -> no anomalies
+  [PASS] one differing byte -> exactly one block record
+  [PASS] offset points at the first changed byte
+  [PASS] RVA reported as hex string
+  [PASS] classification = HOOK_JMP
+  [PASS] severity = high for HOOK_JMP
+  [PASS] 0xC3 write classified EARLY_RET
+  [PASS] widespread patching reported block-by-block
+  [PASS] size change reported as SIZE_MISMATCH
+  [PASS] base_rva shifts the reported RVA
+  [PASS] parses .text (rva,size) from an in-memory image header
+  [PASS] missing section returns None
+  [PASS] garbage input returns None (fail safe)
+  [PASS] AST: no writeprocessmemory call site in the probe
+  [PASS] AST: no virtualprotectex call site in the probe
+  [PASS] AST: no createremotethread call site in the probe
+  [PASS] AST: no virtualallocex call site in the probe
+  [PASS] AST: no queueuserapcall call site in the probe
+  [PASS] AST: no setwindowshookexa call site in the probe
+  [PASS] AST: no flushinstructioncache call site in the probe
+  [PASS] AST: no ntunmapviewofsection call site in the probe
+  [PASS] AST: OpenProcess is the only process handle API
+  [PASS] AST: ReadProcessMemory present (read path)
+  [PASS] CLI diff exits 1 when code differs
+  [PASS] CLI diff reports the EARLY_RET block
+  [PASS] CLI diff exits 0 on identical input
+  [PASS] live modes fail safe off-Windows (no silent pass)
+== result: 36 passed, 0 failed ==
