@@ -1,0 +1,445 @@
+======================================================================
+FILE: working/NORTH LOADER.exe
+======================================================================
+Machine: 0x14c (IMAGE_FILE_MACHINE_I386)
+Characteristics: 0x102
+Magic: 0x10b (PE32)
+Subsystem: 0x3
+ImageBase: 0x400000
+AddressOfEntryPoint: 0x11212
+
+--- SECTIONS ---
+Section .textbss   VA: 0x00001000 VSize: 0x00010000 RawSize: 0x00000000 Entropy: 0.00
+Section .text      VA: 0x00011000 VSize: 0x00007577 RawSize: 0x00007600 Entropy: 4.75
+Section .rdata     VA: 0x00019000 VSize: 0x00002999 RawSize: 0x00002a00 Entropy: 2.42
+Section .data      VA: 0x0001c000 VSize: 0x00000240 RawSize: 0x00000200 Entropy: 0.44
+Section .idata     VA: 0x0001d000 VSize: 0x00000fe2 RawSize: 0x00001000 Entropy: 4.56
+Section .msvcjmc   VA: 0x0001e000 VSize: 0x0000017e RawSize: 0x00000200 Entropy: 0.73
+Section .00cfg     VA: 0x0001f000 VSize: 0x0000010e RawSize: 0x00000200 Entropy: 0.11
+Section .rsrc      VA: 0x00020000 VSize: 0x00000446 RawSize: 0x00000600 Entropy: 2.18
+Section .reloc     VA: 0x00021000 VSize: 0x000006b2 RawSize: 0x00000800 Entropy: 4.62
+
+--- EXPORTS ---
+None (No export directory)
+
+--- IMPORTS ---
+Module: KERNEL32.dll
+  [0x0041d038] WaitForSingleObject
+  [0x0041d03c] Sleep
+  [0x0041d040] GetCurrentProcess
+  [0x0041d044] CreateRemoteThread
+  [0x0041d048] GetExitCodeThread
+  [0x0041d04c] OpenProcess
+  [0x0041d050] VirtualAllocEx
+  [0x0041d054] WriteProcessMemory
+  [0x0041d058] MapViewOfFile
+  [0x0041d05c] VirtualFreeEx
+  [0x0041d060] UnmapViewOfFile
+  [0x0041d064] FreeLibrary
+  [0x0041d068] GetModuleFileNameA
+  [0x0041d06c] GetModuleHandleA
+  [0x0041d070] GetProcAddress
+  [0x0041d074] GetLastError
+  [0x0041d078] LoadLibraryA
+  [0x0041d07c] CreateFileMappingA
+  [0x0041d080] SetConsoleTitleA
+  [0x0041d084] CreateToolhelp32Snapshot
+  [0x0041d088] Process32First
+  [0x0041d08c] Process32Next
+  [0x0041d090] Thread32First
+  [0x0041d094] Thread32Next
+  [0x0041d098] K32EnumProcessModules
+  [0x0041d09c] K32GetModuleBaseNameA
+  [0x0041d0a0] VirtualQuery
+  [0x0041d0a4] GetProcessHeap
+  [0x0041d0a8] HeapFree
+  [0x0041d0ac] HeapAlloc
+  [0x0041d0b0] GetModuleHandleW
+  [0x0041d0b4] CloseHandle
+  [0x0041d0b8] GetFileAttributesA
+  [0x0041d0bc] LoadLibraryExA
+  [0x0041d0c0] CreateFileA
+  [0x0041d0c4] GetStartupInfoW
+  [0x0041d0c8] SetUnhandledExceptionFilter
+  [0x0041d0cc] InitializeSListHead
+  [0x0041d0d0] GetSystemTimeAsFileTime
+  [0x0041d0d4] GetCurrentProcessId
+  [0x0041d0d8] QueryPerformanceCounter
+  [0x0041d0dc] WideCharToMultiByte
+  [0x0041d0e0] MultiByteToWideChar
+  [0x0041d0e4] RaiseException
+  [0x0041d0e8] IsDebuggerPresent
+  [0x0041d0ec] GetCurrentThreadId
+  [0x0041d0f0] IsProcessorFeaturePresent
+
+Module: USER32.dll
+  [0x0041d144] UnhookWindowsHookEx
+  [0x0041d148] PostThreadMessageA
+  [0x0041d14c] SetWindowsHookExA
+
+Module: ADVAPI32.dll
+  [0x0041d000] AdjustTokenPrivileges
+  [0x0041d004] OpenProcessToken
+  [0x0041d008] LookupPrivilegeValueA
+
+Module: VCRUNTIME140D.dll
+  [0x0041d17c] strrchr
+  [0x0041d180] memset
+  [0x0041d184] __std_type_info_destroy_list
+  [0x0041d188] __current_exception
+  [0x0041d18c] __current_exception_context
+  [0x0041d190] _except_handler4_common
+  [0x0041d194] __vcrt_GetModuleFileNameW
+  [0x0041d198] __vcrt_GetModuleHandleW
+  [0x0041d19c] __vcrt_LoadLibraryExW
+  [0x0041d1a0] memcpy
+
+Module: ucrtbased.dll
+  [0x0041d1d8] _exit
+  [0x0041d1dc] _set_fmode
+  [0x0041d1e0] __p___argc
+  [0x0041d1e4] __p___argv
+  [0x0041d1e8] _cexit
+  [0x0041d1ec] _c_exit
+  [0x0041d1f0] _register_thread_local_exe_atexit_callback
+  [0x0041d1f4] _configthreadlocale
+  [0x0041d1f8] _set_new_mode
+  [0x0041d1fc] __p__commode
+  [0x0041d200] strcpy_s
+  [0x0041d204] strcmp
+  [0x0041d208] _initterm_e
+  [0x0041d20c] _seh_filter_dll
+  [0x0041d210] _initialize_onexit_table
+  [0x0041d214] _register_onexit_function
+  [0x0041d218] _execute_onexit_table
+  [0x0041d21c] _crt_atexit
+  [0x0041d220] _crt_at_quick_exit
+  [0x0041d224] _controlfp_s
+  [0x0041d228] terminate
+  [0x0041d22c] _wmakepath_s
+  [0x0041d230] _wsplitpath_s
+  [0x0041d234] wcscpy_s
+  [0x0041d238] __acrt_iob_func
+  [0x0041d23c] exit
+  [0x0041d240] _initterm
+  [0x0041d244] _get_initial_narrow_environment
+  [0x0041d248] _initialize_narrow_environment
+  [0x0041d24c] _configure_narrow_argv
+  [0x0041d250] __setusermatherr
+  [0x0041d254] _set_app_type
+  [0x0041d258] _seh_filter_exe
+  [0x0041d25c] _CrtDbgReportW
+  [0x0041d260] _CrtDbgReport
+  [0x0041d264] __stdio_common_vsprintf_s
+  [0x0041d268] __stdio_common_vfprintf
+  [0x0041d26c] strlen
+  [0x0041d270] strcat_s
+  [0x0041d274] _stricmp
+  [0x0041d278] getchar
+
+
+
+======================================================================
+FILE: working/NRTH.dll
+======================================================================
+Machine: 0x14c (IMAGE_FILE_MACHINE_I386)
+Characteristics: 0x2102
+Magic: 0x10b (PE32)
+Subsystem: 0x3
+ImageBase: 0x10000000
+AddressOfEntryPoint: 0xa8bb0
+
+--- SECTIONS ---
+Section .text      VA: 0x00001000 VSize: 0x000aca1b RawSize: 0x000acc00 Entropy: 6.62
+Section .rdata     VA: 0x000ae000 VSize: 0x0004ab96 RawSize: 0x0004ac00 Entropy: 7.06
+Section .data      VA: 0x000f9000 VSize: 0x00050600 RawSize: 0x00043a00 Entropy: 6.48
+Section .rsrc      VA: 0x0014a000 VSize: 0x000001e0 RawSize: 0x00000200 Entropy: 4.72
+Section .reloc     VA: 0x0014b000 VSize: 0x00006450 RawSize: 0x00006600 Entropy: 6.69
+
+--- EXPORTS ---
+Ordinal    1 | Name: NVXHookProc | RVA: 0x0000b9e0
+
+--- IMPORTS ---
+Module: ADVAPI32.dll
+  [0x100ae000] RegEnumKeyExA
+  [0x100ae004] CredDeleteW
+  [0x100ae008] RegOpenKeyExA
+  [0x100ae00c] RegSetValueExA
+  [0x100ae010] GetUserNameA
+  [0x100ae014] RegDeleteKeyA
+  [0x100ae018] RegCloseKey
+
+Module: KERNEL32.dll
+  [0x100ae034] DisableThreadLibraryCalls
+  [0x100ae038] LoadLibraryA
+  [0x100ae03c] CloseHandle
+  [0x100ae040] CreateThread
+  [0x100ae044] GetProcAddress
+  [0x100ae048] LocalFree
+  [0x100ae04c] GetSystemTimeAsFileTime
+  [0x100ae050] VirtualProtect
+  [0x100ae054] GetSystemDirectoryA
+  [0x100ae058] GetLocalTime
+  [0x100ae05c] MultiByteToWideChar
+  [0x100ae060] GetFileAttributesA
+  [0x100ae064] DeleteFileA
+  [0x100ae068] WideCharToMultiByte
+  [0x100ae06c] FindFirstFileA
+  [0x100ae070] FindNextFileA
+  [0x100ae074] FindClose
+  [0x100ae078] VirtualFree
+  [0x100ae07c] VirtualAlloc
+  [0x100ae080] HeapCreate
+  [0x100ae084] HeapFree
+  [0x100ae088] Thread32Next
+  [0x100ae08c] Thread32First
+  [0x100ae090] GetCurrentThreadId
+  [0x100ae094] SuspendThread
+  [0x100ae098] ResumeThread
+  [0x100ae09c] CreateToolhelp32Snapshot
+  [0x100ae0a0] HeapReAlloc
+  [0x100ae0a4] HeapAlloc
+  [0x100ae0a8] HeapDestroy
+  [0x100ae0ac] GetThreadContext
+  [0x100ae0b0] GetCurrentProcessId
+  [0x100ae0b4] FlushInstructionCache
+  [0x100ae0b8] SetThreadContext
+  [0x100ae0bc] OpenThread
+  [0x100ae0c0] OutputDebugStringA
+  [0x100ae0c4] GlobalAlloc
+  [0x100ae0c8] GlobalFree
+  [0x100ae0cc] GlobalLock
+  [0x100ae0d0] GlobalUnlock
+  [0x100ae0d4] GetLocaleInfoA
+  [0x100ae0d8] QueryPerformanceFrequency
+  [0x100ae0dc] IsDBCSLeadByte
+  [0x100ae0e0] FreeLibrary
+  [0x100ae0e4] QueryPerformanceCounter
+  [0x100ae0e8] GetCurrentProcess
+  [0x100ae0ec] InitializeSListHead
+  [0x100ae0f0] IsProcessorFeaturePresent
+  [0x100ae0f4] SleepConditionVariableSRW
+  [0x100ae0f8] WakeAllConditionVariable
+  [0x100ae0fc] AcquireSRWLockExclusive
+  [0x100ae100] ReleaseSRWLockExclusive
+  [0x100ae104] GetFileInformationByHandleEx
+  [0x100ae108] GetLastError
+  [0x100ae10c] AreFileApisANSI
+  [0x100ae110] CreateFile2
+  [0x100ae114] SetFileInformationByHandle
+  [0x100ae118] Sleep
+  [0x100ae11c] GetFileAttributesExW
+  [0x100ae120] FindNextFileW
+  [0x100ae124] FindFirstFileExW
+  [0x100ae128] FindFirstFileW
+  [0x100ae12c] FreeLibraryAndExitThread
+  [0x100ae130] VirtualQuery
+  [0x100ae134] CreateDirectoryA
+  [0x100ae138] GetLocaleInfoEx
+  [0x100ae13c] FormatMessageA
+  [0x100ae140] GetModuleHandleExA
+  [0x100ae144] GetModuleHandleA
+  [0x100ae148] K32GetModuleInformation
+
+Module: USER32.dll
+  [0x100ae240] GetCapture
+  [0x100ae244] ScreenToClient
+  [0x100ae248] ClientToScreen
+  [0x100ae24c] LoadCursorA
+  [0x100ae250] GetMessageExtraInfo
+  [0x100ae254] GetKeyState
+  [0x100ae258] DefWindowProcW
+  [0x100ae25c] GetKeyboardLayout
+  [0x100ae260] GetForegroundWindow
+  [0x100ae264] SetCapture
+  [0x100ae268] SetCursor
+  [0x100ae26c] GetClientRect
+  [0x100ae270] IsWindowUnicode
+  [0x100ae274] ReleaseCapture
+  [0x100ae278] OpenClipboard
+  [0x100ae27c] CloseClipboard
+  [0x100ae280] EmptyClipboard
+  [0x100ae284] GetClipboardData
+  [0x100ae288] SetClipboardData
+  [0x100ae28c] TrackMouseEvent
+  [0x100ae290] GetKeyNameTextA
+  [0x100ae294] MapVirtualKeyA
+  [0x100ae298] ClipCursor
+  [0x100ae29c] SetWindowLongW
+  [0x100ae2a0] ShowCursor
+  [0x100ae2a4] SetCursorPos
+  [0x100ae2a8] GetCursorPos
+  [0x100ae2ac] CallNextHookEx
+  [0x100ae2b0] GetAsyncKeyState
+
+Module: SHELL32.dll
+  [0x100ae234] ShellExecuteA
+  [0x100ae238] ShellExecuteW
+
+Module: MSVCP140.dll
+  [0x100ae150] ?_Throw_Cpp_error@std@@YAXH@Z
+  [0x100ae154] ?_Xout_of_range@std@@YAXPBD@Z
+  [0x100ae158] ?_Random_device@std@@YAIXZ
+  [0x100ae15c] ?_Xlength_error@std@@YAXPBD@Z
+  [0x100ae160] _Mtx_lock
+  [0x100ae164] _Mtx_unlock
+  [0x100ae168] _Query_perf_frequency
+  [0x100ae16c] _Query_perf_counter
+  [0x100ae170] ??1_Lockit@std@@QAE@XZ
+  [0x100ae174] ??0_Lockit@std@@QAE@H@Z
+  [0x100ae178] ?id@?$time_put@DV?$ostreambuf_iterator@DU?$char_traits@D@std@@@std@@@std@@2V0locale@2@A
+  [0x100ae17c] ?uncaught_exceptions@std@@YAHXZ
+  [0x100ae180] ?_Getgloballocale@locale@std@@CAPAV_Locimp@12@XZ
+  [0x100ae184] ?_Id_cnt@id@locale@std@@0HA
+  [0x100ae188] ?_Winerror_map@std@@YAHH@Z
+  [0x100ae18c] ?_Syserror_map@std@@YAPBDH@Z
+  [0x100ae190] _Xtime_get_ticks
+  [0x100ae194] ??0?$basic_streambuf@DU?$char_traits@D@std@@@std@@IAE@XZ
+  [0x100ae198] ?_Osfx@?$basic_ostream@DU?$char_traits@D@std@@@std@@QAEXXZ
+  [0x100ae19c] ?flush@?$basic_ostream@DU?$char_traits@D@std@@@std@@QAEAAV12@XZ
+  [0x100ae1a0] ?_Getcat@?$time_put@DV?$ostreambuf_iterator@DU?$char_traits@D@std@@@std@@@std@@SAIPAPBVfacet@locale@2@PBV42@@Z
+  [0x100ae1a4] ?setstate@?$basic_ios@DU?$char_traits@D@std@@@std@@QAEXH_N@Z
+  [0x100ae1a8] ??0?$basic_ios@DU?$char_traits@D@std@@@std@@IAE@XZ
+  [0x100ae1ac] ??0?$basic_iostream@DU?$char_traits@D@std@@@std@@QAE@PAV?$basic_streambuf@DU?$char_traits@D@std@@@1@@Z
+  [0x100ae1b0] ?put@?$time_put@DV?$ostreambuf_iterator@DU?$char_traits@D@std@@@std@@@std@@QBE?AV?$ostreambuf_iterator@DU?$char_traits@D@std@@@2@V32@AAVios_base@2@DPBUtm@@PBD3@Z
+  [0x100ae1b4] ??1?$basic_ios@DU?$char_traits@D@std@@@std@@UAE@XZ
+  [0x100ae1b8] ??1?$basic_streambuf@DU?$char_traits@D@std@@@std@@UAE@XZ
+  [0x100ae1bc] ?_Lock@?$basic_streambuf@DU?$char_traits@D@std@@@std@@UAEXXZ
+  [0x100ae1c0] ?_Unlock@?$basic_streambuf@DU?$char_traits@D@std@@@std@@UAEXXZ
+  [0x100ae1c4] ?showmanyc@?$basic_streambuf@DU?$char_traits@D@std@@@std@@MAE_JXZ
+  [0x100ae1c8] ?uflow@?$basic_streambuf@DU?$char_traits@D@std@@@std@@MAEHXZ
+  [0x100ae1cc] ?xsgetn@?$basic_streambuf@DU?$char_traits@D@std@@@std@@MAE_JPAD_J@Z
+  [0x100ae1d0] ?xsputn@?$basic_streambuf@DU?$char_traits@D@std@@@std@@MAE_JPBD_J@Z
+  [0x100ae1d4] ?setbuf@?$basic_streambuf@DU?$char_traits@D@std@@@std@@MAEPAV12@PAD_J@Z
+  [0x100ae1d8] ?sync@?$basic_streambuf@DU?$char_traits@D@std@@@std@@MAEHXZ
+  [0x100ae1dc] ?imbue@?$basic_streambuf@DU?$char_traits@D@std@@@std@@MAEXABVlocale@2@@Z
+  [0x100ae1e0] ??1?$basic_iostream@DU?$char_traits@D@std@@@std@@UAE@XZ
+  [0x100ae1e4] ?getloc@ios_base@std@@QBE?AVlocale@2@XZ
+  [0x100ae1e8] ?good@ios_base@std@@QBE_NXZ
+  [0x100ae1ec] _Strxfrm
+  [0x100ae1f0] ?_Init@locale@std@@CAPAV_Locimp@12@_N@Z
+  [0x100ae1f4] ?_Xregex_error@std@@YAXW4error_type@regex_constants@1@@Z
+  [0x100ae1f8] ?id@?$ctype@D@std@@2V0locale@2@A
+  [0x100ae1fc] ?id@?$collate@D@std@@2V0locale@2@A
+  [0x100ae200] _Strcoll
+  [0x100ae204] ?_Getcat@?$ctype@D@std@@SAIPAPBVfacet@locale@2@PBV42@@Z
+  [0x100ae208] ?tolower@?$ctype@D@std@@QBEDD@Z
+  [0x100ae20c] ??1facet@locale@std@@MAE@XZ
+  [0x100ae210] ??0facet@locale@std@@IAE@I@Z
+  [0x100ae214] ?_Decref@facet@locale@std@@UAEPAV_Facet_base@3@XZ
+  [0x100ae218] ?_Incref@facet@locale@std@@UAEXXZ
+  [0x100ae21c] ?_Getcoll@_Locinfo@std@@QBE?AU_Collvec@@XZ
+  [0x100ae220] ??1_Locinfo@std@@QAE@XZ
+  [0x100ae224] ??0_Locinfo@std@@QAE@PBD@Z
+  [0x100ae228] __crtLCMapStringA
+  [0x100ae22c] ?_Xbad_alloc@std@@YAXXZ
+
+Module: gdiplus.dll
+  [0x100ae414] GdiplusShutdown
+  [0x100ae418] GdiplusStartup
+
+Module: IMM32.dll
+  [0x100ae020] ImmSetCompositionWindow
+  [0x100ae024] ImmGetContext
+  [0x100ae028] ImmReleaseContext
+  [0x100ae02c] ImmSetCandidateWindow
+
+Module: VCRUNTIME140.dll
+  [0x100ae2b8] strchr
+  [0x100ae2bc] __std_type_info_compare
+  [0x100ae2c0] __std_exception_destroy
+  [0x100ae2c4] __current_exception
+  [0x100ae2c8] __RTtypeid
+  [0x100ae2cc] __std_exception_copy
+  [0x100ae2d0] __std_terminate
+  [0x100ae2d4] _purecall
+  [0x100ae2d8] memchr
+  [0x100ae2dc] memcpy
+  [0x100ae2e0] __std_type_info_destroy_list
+  [0x100ae2e4] _CxxThrowException
+  [0x100ae2e8] _except_handler4_common
+  [0x100ae2ec] __current_exception_context
+  [0x100ae2f0] __CxxFrameHandler3
+  [0x100ae2f4] memset
+  [0x100ae2f8] memmove
+
+Module: api-ms-win-crt-heap-l1-1-0.dll
+  [0x100ae30c] free
+  [0x100ae310] realloc
+  [0x100ae314] _callnewh
+  [0x100ae318] malloc
+
+Module: api-ms-win-crt-stdio-l1-1-0.dll
+  [0x100ae398] fopen
+  [0x100ae39c] fclose
+  [0x100ae3a0] fwrite
+  [0x100ae3a4] __stdio_common_vsprintf
+  [0x100ae3a8] ftell
+  [0x100ae3ac] fseek
+  [0x100ae3b0] __stdio_common_vsscanf
+  [0x100ae3b4] _wfopen
+  [0x100ae3b8] fread
+  [0x100ae3bc] __stdio_common_vfprintf
+  [0x100ae3c0] fflush
+  [0x100ae3c4] __acrt_iob_func
+  [0x100ae3c8] __stdio_common_vfscanf
+  [0x100ae3cc] __stdio_common_vsprintf_s
+
+Module: api-ms-win-crt-convert-l1-1-0.dll
+  [0x100ae300] atof
+  [0x100ae304] strtoul
+
+Module: api-ms-win-crt-string-l1-1-0.dll
+  [0x100ae3d4] isxdigit
+  [0x100ae3d8] isalnum
+  [0x100ae3dc] tolower
+  [0x100ae3e0] strncpy
+  [0x100ae3e4] _wcsnicmp
+  [0x100ae3e8] strncmp
+  [0x100ae3ec] toupper
+  [0x100ae3f0] isblank
+  [0x100ae3f4] isspace
+
+Module: api-ms-win-crt-time-l1-1-0.dll
+  [0x100ae3fc] _time64
+  [0x100ae400] _localtime64
+  [0x100ae404] _ctime64_s
+
+Module: api-ms-win-crt-utility-l1-1-0.dll
+  [0x100ae40c] qsort
+
+Module: api-ms-win-crt-locale-l1-1-0.dll
+  [0x100ae320] ___lc_collate_cp_func
+  [0x100ae324] ___lc_locale_name_func
+  [0x100ae328] ___lc_codepage_func
+
+Module: api-ms-win-crt-runtime-l1-1-0.dll
+  [0x100ae364] _initterm_e
+  [0x100ae368] _initterm
+  [0x100ae36c] terminate
+  [0x100ae370] _cexit
+  [0x100ae374] _crt_atexit
+  [0x100ae378] _execute_onexit_table
+  [0x100ae37c] _register_onexit_function
+  [0x100ae380] _initialize_onexit_table
+  [0x100ae384] _configure_narrow_argv
+  [0x100ae388] _seh_filter_dll
+  [0x100ae38c] abort
+  [0x100ae390] _initialize_narrow_environment
+
+Module: api-ms-win-crt-math-l1-1-0.dll
+  [0x100ae330] _libm_sse2_sin_precise
+  [0x100ae334] _libm_sse2_sqrt_precise
+  [0x100ae338] _libm_sse2_tan_precise
+  [0x100ae33c] _CIfmod
+  [0x100ae340] ceil
+  [0x100ae344] floor
+  [0x100ae348] _libm_sse2_pow_precise
+  [0x100ae34c] _libm_sse2_log_precise
+  [0x100ae350] _libm_sse2_cos_precise
+  [0x100ae354] _libm_sse2_acos_precise
+  [0x100ae358] _fdclass
+  [0x100ae35c] _CIatan2
+
+
+
