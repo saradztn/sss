@@ -1,0 +1,13 @@
+[*] Functional test of the embedded Lua VM (the Execute path) — 2026-10-10
+[*] Same code as nrth_ui.cpp RunLuaBuffer/LuaPrint, compiled natively (g++) against vendor/lua (Lua 5.4.6).
+
+[+] run ok=1
+[--- console ---]
+hello from NORTH editor
+3	20	12.0
+[---------------]
+[+] error path ok=0 (must be 0)
+
+Result: editor Execute path WORKS (prints output to console; syntax/runtime
+errors are reported to the console). Runs in the DLL-local sandbox VM only —
+no MTA VM injection.

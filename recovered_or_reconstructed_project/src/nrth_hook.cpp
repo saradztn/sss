@@ -99,6 +99,7 @@ static HRESULT WINAPI Hooked_Reset(IDirect3DDevice9 *, D3DPRESENT_PARAMETERS *);
 static LRESULT CALLBACK GameWndProc(HWND, UINT, WPARAM, LPARAM);
 static void BuildOverlayMenu(void);
 static void EnsureOverlayInitialized(IDirect3DDevice9 *pDevice);
+static void UpdateOverlayInput(void);
 static const char *BaseNameA(const char *path);
 
 // ===========================================================================
@@ -344,6 +345,36 @@ static void BuildOverlayMenu(void)
     NrthUI_Build();
 }
 
+// ---------------------------------------------------------------------------
+// Input bridging — the game reads mouse/keyboard via DirectInput, so raw
+// WM_* mouse messages often never reach the WndProc. Poll cursor + buttons
+// each frame and feed ImGui directly; draw a software cursor while open.
+// ---------------------------------------------------------------------------
+static void UpdateOverlayInput(void)
+{
+    ImGuiIO &io = ImGui::GetIO();
+
+    if (!g_bMenuOpen) {
+        io.MouseDrawCursor = false;
+        return;
+    }
+
+    // Software cursor (works even while the game hides the hardware cursor)
+    io.MouseDrawCursor = true;
+
+    // Mouse position in client space
+    POINT pt;
+    if (GetCursorPos(&pt) && g_hGameWnd) {
+        ScreenToClient(g_hGameWnd, &pt);
+        io.MousePos = ImVec2((float)pt.x, (float)pt.y);
+    }
+
+    // Buttons + wheel-safe click state
+    io.MouseDown[0] = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
+    io.MouseDown[1] = (GetAsyncKeyState(VK_RBUTTON) & 0x8000) != 0;
+    io.MouseDown[2] = (GetAsyncKeyState(VK_MBUTTON) & 0x8000) != 0;
+}
+
 // ===========================================================================
 // Hooked_Present — evidence VA 0x10014d50: renders the Dear ImGui overlay each
 // frame; toggled with VK_INSERT.
@@ -355,9 +386,22 @@ static HRESULT WINAPI Hooked_Present(IDirect3DDevice9 *pDevice, const RECT *pSrc
 
     if (g_bOverlayInit) {
         // Observed toggle: INSERT (loader console hint + ImGui key name 'Insert').
+        bool wasOpen = g_bMenuOpen;
         if (GetAsyncKeyState(VK_INSERT) & 1) {
             g_bMenuOpen = !g_bMenuOpen;
         }
+        if (g_bMenuOpen != wasOpen) {
+            if (g_bMenuOpen) {
+                // Free the cursor from the game and show the hardware cursor too.
+                while (ShowCursor(TRUE) < 0) { }
+                ClipCursor(NULL);
+                ReleaseCapture();
+            } else {
+                while (ShowCursor(FALSE) >= 0) { }
+            }
+        }
+
+        UpdateOverlayInput();
 
         ImGui_ImplDX9_NewFrame();
         ImGui_ImplWin32_NewFrame();

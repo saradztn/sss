@@ -70,6 +70,68 @@
 #include "nrth_ui.h"
 #include "nrth_vehicle_names.inc"
 
+// Embedded Lua 5.4.6 — a LOCAL sandbox VM living inside the DLL.
+// The Execute button runs the editor buffer here and prints output to the
+// in-menu console. It does NOT inject into MTA's Lua VMs (that mechanism is
+// the original's core exploit path and is deliberately not re-implemented).
+extern "C" {
+#include "lua.h"
+#include "lauxlib.h"
+#include "lualib.h"
+}
+
+static lua_State *s_L = nullptr;
+static std::string s_console;
+
+static int LuaPrint(lua_State *L)
+{
+    int n = lua_gettop(L);
+    for (int i = 1; i <= n; ++i) {
+        size_t len = 0;
+        const char *s = luaL_tolstring(L, i, &len);
+        s_console.append(s ? s : "nil", s ? len : 3);
+        lua_pop(L, 1);
+        if (i < n) s_console += "\t";
+    }
+    s_console += "\n";
+    return 0;
+}
+
+static void EnsureLuaVM()
+{
+    if (s_L) return;
+    s_L = luaL_newstate();
+    if (!s_L) return;
+    luaL_openlibs(s_L);
+    lua_pushcfunction(s_L, LuaPrint);
+    lua_setglobal(s_L, "print");
+    // Convenience API available to scripts (sandbox only — no game access):
+    lua_pushcfunction(s_L, LuaPrint);
+    lua_setglobal(s_L, "log");
+}
+
+// Runs a buffer in the sandbox VM; returns true on success. Errors -> console.
+static bool RunLuaBuffer(const char *code, size_t len, const char *chunkName)
+{
+    EnsureLuaVM();
+    if (!s_L) {
+        s_console += "[error] Lua VM unavailable\n";
+        return false;
+    }
+    lua_settop(s_L, 0);
+    int rc = luaL_loadbuffer(s_L, code, len, chunkName);
+    if (rc == LUA_OK) rc = lua_pcall(s_L, 0, LUA_MULTRET, 0);
+    if (rc != LUA_OK) {
+        const char *err = lua_tostring(s_L, -1);
+        s_console += "[error] ";
+        s_console += err ? err : "?";
+        s_console += "\n";
+        lua_pop(s_L, 1);
+        return false;
+    }
+    return true;
+}
+
 // ---------------------------------------------------------------------------
 // State
 // ---------------------------------------------------------------------------
@@ -289,7 +351,7 @@ static void StatusLine()
 static void DrawEditor()
 {
     // Line-number gutter + code editor ("##lua_editor")
-    ImGui::BeginChild("##lua_gutter", ImVec2(48, -70), true);
+    ImGui::BeginChild("##lua_gutter", ImVec2(48, -140), true);
     int lines = 1;
     for (const char *p = s_editorBuf; *p; ++p) if (*p == '\n') ++lines;
     for (int i = 1; i <= lines && i < 2000; ++i) {
@@ -299,21 +361,37 @@ static void DrawEditor()
     ImGui::SameLine();
     ImGui::PushItemWidth(-1);
     ImGui::InputTextMultiline("##lua_editor", s_editorBuf, sizeof(s_editorBuf),
-                              ImVec2(-1, -70), ImGuiInputTextFlags_AllowTabInput);
+                              ImVec2(-1, -140), ImGuiInputTextFlags_AllowTabInput);
     ImGui::PopItemWidth();
 
     // Execute row
     if (ImGui::Button("Execute", ImVec2(110, 34))) {
-        // Original: compiles buffer and injects into MTA Lua VM(s) ("Default VM").
-        // VM-injection internals = class U / not re-implemented (see header note).
-        FeatureAction("Script executed");   // status string [evidence 0xe98b8]
+        // REAL behavior: compile + run in the embedded sandbox Lua VM and show
+        // output below. (The original injects into MTA's Lua VMs — not rebuilt.)
+        s_console.clear();
+        if (RunLuaBuffer(s_editorBuf, strlen(s_editorBuf), "editor")) {
+            FeatureAction("Script executed");   // status string [evidence 0xe98b8]
+        } else {
+            FeatureAction("Script error (see console)");
+        }
     }
     ImGui::SameLine();
     const char *vms[] = {"Default VM", "@custom"};   // [0xe9884 / 0xe9890]
     ImGui::SetNextItemWidth(160);
     ImGui::Combo("##vm_combo", &s_vmIndex, vms, 2);
     ImGui::SameLine();
-    ImGui::TextDisabled("Target: %s", vms[s_vmIndex]);
+    if (ImGui::Button("Clear##console")) s_console.clear();
+    ImGui::SameLine();
+    ImGui::TextDisabled("Output:");
+
+    // Console output (real execution results/errors)
+    ImGui::BeginChild("##lua_console", ImVec2(-1, -1), true);
+    if (s_console.empty()) {
+        ImGui::TextDisabled("print(...) output appears here");
+    } else {
+        ImGui::TextUnformatted(s_console.c_str());
+    }
+    ImGui::EndChild();
 }
 
 static void DrawScriptsList()
@@ -351,21 +429,66 @@ static void DrawScriptsList()
         FeatureAction(msg);                               // [0xe9970]
     }
     ImGui::SameLine();
+    if (ImGui::Button("Run##script") && s_scriptSel >= 0) {
+        // REAL: execute the selected .lua file in the sandbox VM.
+        std::string path = "lua\\" + s_scripts[s_scriptSel].name;
+        FILE *fp = fopen(path.c_str(), "rb");
+        if (fp) {
+            std::string code;
+            char buf[4096];
+            size_t n;
+            while ((n = fread(buf, 1, sizeof(buf), fp)) > 0) code.append(buf, n);
+            fclose(fp);
+            s_console.clear();
+            if (RunLuaBuffer(code.c_str(), code.size(), s_scripts[s_scriptSel].name.c_str()))
+                FeatureAction("Script executed");
+            else
+                FeatureAction("Script error (see console)");
+        }
+    }
+    ImGui::SameLine();
     ImGui::TextDisabled("view: ##script_editor_view | \"File big, no view script\"");
 }
 
 static void DrawResources()
 {
-    ImGui::TextDisabled("Resources (stop/block — server side effects not re-implemented)");
+    // REAL behavior: list resources from the local MTA install on disk.
+    if (s_resources.empty()) {
+        static const char *kRoots[] = {
+            "mods\\deathmatch\\resources",   // server-style install
+            "mods\\deathmatch\\cache",       // client downloaded cache
+        };
+        for (const char *root : kRoots) {
+            WIN32_FIND_DATAA fd;
+            std::string pattern = std::string(root) + "\\*";
+            HANDLE h = FindFirstFileA(pattern.c_str(), &fd);
+            if (h == INVALID_HANDLE_VALUE) continue;
+            do {
+                if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                    if (strcmp(fd.cFileName, ".") && strcmp(fd.cFileName, ".."))
+                        s_resources.push_back(fd.cFileName);
+                }
+            } while (FindNextFileA(h, &fd));
+            FindClose(h);
+        }
+    }
+    ImGui::TextDisabled("Source: .\\mods\\deathmatch\\resources / cache (disk)");
     static char search[64] = "";
     ImGui::InputTextWithHint("##res_search", "Search...", search, sizeof(search));
     static int resSel = 0;
+    std::string preview = s_resources.empty() ? "Select Resource" : s_resources[resSel];
     ImGui::SetNextItemWidth(260);
-    ImGui::BeginCombo("##res_combo", s_resources.empty() ? "Select Resource" : s_resources[resSel].c_str());
-    for (int i = 0; i < (int)s_resources.size(); ++i)
-        if (ImGui::Selectable(s_resources[i].c_str(), resSel == i)) resSel = i;
-    ImGui::EndCombo();
+    if (ImGui::BeginCombo("##res_combo", preview.c_str())) {
+        for (int i = 0; i < (int)s_resources.size(); ++i) {
+            if (search[0] && s_resources[i].find(search) == std::string::npos) continue;
+            if (ImGui::Selectable(s_resources[i].c_str(), resSel == i)) resSel = i;
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::SameLine();
+    ImGui::TextDisabled("(%d found)", (int)s_resources.size());
     if (ImGui::Button("Stop Resource")) {                 // [0xeab20]
+        // Server-side stop action — stub (requires netcode; not re-implemented).
         if (!s_resources.empty()) {
             char msg[128];
             snprintf(msg, sizeof(msg), "Resource stopped: %s", s_resources[resSel].c_str());
