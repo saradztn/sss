@@ -1,6 +1,6 @@
 
 === 1/6  audit module: unit tests
-  [PASS] [*] 27/27 checks passed
+  [PASS] [*] 30/30 checks passed
 
 === 2/6  audit module: self-test against sample-derived evidence vectors
   [PASS] 21 checks passed (codec, patterns, footprints, PE reader, catalogue)
@@ -14,9 +14,9 @@
 === 5/6  detector controls: false-positive + A/B negative on the sample
   [PASS] audit of the cheat module itself reports 0 footprints (patterns target client.dll/netc.dll)
   [PASS] sweep rediscovered 8 hidden .data records (expected 8, matches tools/nrth_sig_export.py)
-  [PASS] diff of an image against itself reports no delta
+  [PASS] self-diff and cross-build diff report no tamper alert (bin/NRTH.dll)
 
 === 6/6  YARA rules compile and fire as documented
   [PASS] yara: rules compile, sample -> 3 rule(s), NRTH_audit.dll clean, nrth_audit.exe clean
 
-=== summary: 8 passed, 0 failed, 0 skipped (logs in /tmp/nrth_tests.4073)
+=== summary: 8 passed, 0 failed, 0 skipped (logs in /tmp/nrth_tests.4798)

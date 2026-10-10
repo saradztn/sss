@@ -17,7 +17,7 @@ Case: `mta_blue_team_case`. All signals below are tied to observed behavior (see
 | `C:\ProgramData\MTA San Andreas All\Common\data\cache` | K=0x2D, site 0x1001e601 | Low (legit MTA path) | MTA itself uses it — an indicator only when *written by an unsigned injected module* |
 | Registry reads `...\Multi Theft Auto: San Andreas All\1.5\1.6\Settings\general`, `...\Internet Settings\Connections`, `...\Explorer\CLSID` | K=0x06 records, sites 0x1001ea1b / 0x1001efbc / 0x1001e484 / 0x1001e3ad | Low–Medium | MTA reads its own keys; the signal is *a non-MTA module* querying them (Sysmon EID 12/13 with the game's image loaded from an unexpected module list) |
 | Console/error strings `Error #1019/1029/1031/1036/1038/10395/1099 Send screen error dev-cheat` | K=0x20 / 0x06 records, sites in 0x10020825-0x1002155d | High for this family | Developer-facing error labels: they also prove a `screen`-capture/report path exists in the payload (functionality not traced) |
-| Watch filename `NRTH.dll` / `nvx.dll` loaded into `gta_sa.exe` | loader default path + NRTH.dll string 0x1000f5cb2 | High in this context | DLL names are changeable; module-in-game-context is the key part |
+| Watch filename `NRTH.dll` / `nvx.dll` loaded into `gta_sa.exe` | loader default path + NRTH.dll string 0x100f6cb2 | High in this context | DLL names are changeable; module-in-game-context is the key part |
 
 > Every decoded string above is reproducible: `python3 recovered_or_reconstructed_project/tools/nrth_strings_recover.py working/NRTH.dll` (see `recovered_strings.txt` for the full table, including which records are *not* usable as indicators).
 
@@ -68,6 +68,10 @@ Deployment notes:
 - `exit 3` = at least one tamper footprint; `--csv` for one row per signature. Verified behaviour:
   `0 with a match` on `NRTH.dll` and on `NORTH LOADER.exe` (no self-flagging), `0 with a match` on
   a clean image, and the unit tests cover `C3`, `E9`, `FF 25` and the negative (normal-prologue) case.
+- Alert only on the `added_footprint` count (the diff's return value). `sus_unlocated` and
+  `target_lost` rows are what *different builds* produce and must never page anyone — measured: our
+  own reconstruction diffed against the original sample yields `verdict: 0` with one informational
+  `unlocated footprint (other build)` row, which is the behaviour 1.2.0 added the alignment rule for.
 - **Best practice: `diff`, not `audit`, whenever you can.** Keep one known-good `client.dll` /
   `netc.dll` per MTA build in your corpus and run `nrth_audit.exe diff <baseline> <dump>`; the tool
   then only reports located functions whose state changed, which removes the judgement call about

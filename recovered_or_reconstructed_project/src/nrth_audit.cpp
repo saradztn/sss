@@ -931,6 +931,7 @@ extern "C" int32_t NrthAuditDiff(const uint8_t *cleanImg, uint32_t cleanSize,
         return rc;
     }
     int32_t alerted = 0;
+    /* one memset per call: rows is caller memory, so zero it before filling */
     for (uint32_t i = 0; i < NRTH_SIG_COUNT; ++i) {
         NrthAuditDiffRow *d = rows ? &rows[i] : NULL;
         const int found = (clean[i].fullHits + clean[i].patchedHits) > 0;
@@ -946,7 +947,15 @@ extern "C" int32_t NrthAuditDiff(const uint8_t *cleanImg, uint32_t cleanSize,
         d->susState = sus[i].state;
         d->susRva = sus[i].firstPatchedRva;
         d->susDetail = sus[i].detail;
-        d->addedFootprint = (patched && clean[i].patchedHits == 0) ? 1u : 0u;
+        /* Alignment: within one build a signature locates one function, so the RVA is the key
+         * that says "this row in the suspect image is the same function as this row in the
+         * baseline". Without that requirement, any jump thunk that happens to match a pattern in
+         * a different build is reported as a new detour - measured on NRTH.dll vs the
+         * reconstruction, where signature #18 matched a thunk at 0x0d9f91. */
+        const int sameFn = found && (sus[i].firstPatchedRva == clean[i].firstFullRva ||
+                                    sus[i].firstPatchedRva == clean[i].firstPatchedRva);
+        d->addedFootprint = (patched && sameFn && clean[i].patchedHits == 0) ? 1u : 0u;
+        d->susUnlocated = (patched && !sameFn) ? 1u : 0u;
         d->targetLost = (found && (sus[i].fullHits + sus[i].patchedHits) == 0) ? 1u : 0u;
         if (d->addedFootprint) {
             ++alerted;

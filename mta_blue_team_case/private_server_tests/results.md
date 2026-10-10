@@ -18,7 +18,7 @@ analysis host (full log: `../test_results/run_all_tests.log` — `8 passed, 0 fa
 
 | Check | Command | Result |
 |---|---|---|
-| Detector logic | `./run_all_tests.sh` groups 1–2 | 27/27 unit tests, 21/21 self-test vectors (ciphertexts taken from the sample) |
+| Detector logic | `./run_all_tests.sh` groups 1–2 | 30/30 unit tests, 21/21 self-test vectors (ciphertexts taken from the sample) |
 | Interface contract of the reconstruction | group 4 | `NVXHookProc` located at RVA `0x0000B9E0` in the ORIGINAL `working/NRTH.dll` + negative case |
 | False-positive control | group 5 | `nrth_audit audit` on `NRTH.dll` **and** `NORTH LOADER.exe` → 0 located-function footprints |
 | Independent cross-implementation | group 5 | C++ `sweep --min 24` → the same 8 hidden `.data` records as `tools/nrth_sig_export.py` |

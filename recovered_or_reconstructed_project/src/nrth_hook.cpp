@@ -132,7 +132,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 // MainInitThread — evidence VA 0x1000a850
 // Original behavior (strings XOR/SSE-encrypted; see nrth_audit for the codec):
 //   1. references the folder "C:\NVX"  — provenance corrected after the decode pass: this is a
-//      PLAIN .rdata string (VA 0x1000afd18), not a decrypted record. The config path the payload
+//      PLAIN .rdata string (VA 0x100b0d18), not a decrypted record. The config path the payload
 //      actually decrypts is "C:\Overwack\loader_config.cfg" (K=0x20, call site 0x1001fcff), and it
 //      also touches an alternate data stream "C:\ProgramData:NT2" (site 0x1001e530).
 //   2. resolves ntdll.dll!LdrLoadDll            (strings 'ntdll.dll','LdrLoadDll')
@@ -145,7 +145,7 @@ static DWORD WINAPI MainInitThread(LPVOID lpParam)
     // Step 1: config directory referenced by the sample (use Tentative — exact
     // I/O unknown). We only record its presence marker like the original did
     // before hooking (no file writes performed here).
-    // "C:\NVX"  [evidence VA 0x1000afd18]
+    // "C:\NVX"  [evidence VA 0x100b0d18]
     DWORD attr = GetFileAttributesA("C:\\NVX");
     (void)attr;
 

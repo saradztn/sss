@@ -22,10 +22,10 @@ WHAT IT IS
   Lua payload. That is the whole point of shipping it as a binary: it is detection, not capability.
 
 LAST VERIFIED BUILD (2026-10-10, Linux host, g++ 12.2 + ziglang 0.17.0)
-  bin/NRTH_audit.dll   293,888 bytes
-    sha256 46ce1da44d749a1b454578b2fce1cf6c6b0816cf38f7e4022fd3abc12f75e5e7
+  bin/NRTH_audit.dll   293,376 bytes
+    sha256 68cc2d574c46c5deed4d07a5e66653532d2773cfab4cff5b3d547a8a1e9fb6c5
   bin/nrth_audit.exe   304,640 bytes
-    sha256 47217128b54ced52c6fb901cd9545ae2303739971765c53185d983b02f5f3da4
+    sha256 63b6aa83b5554acde9cd7359d6554fa6386d09ca619d6425585d7a0011bc730a
   headers: machine 0x014c (I386), magic 0x10b (PE32), ImageBase 0x10000000 (same as the
   original NRTH.dll), DLL subsystem, DYNAMICBASE + NX_COMPAT, 23 exported C names.
   Verification logs: ../../test_results/audit_build.log,
@@ -47,8 +47,16 @@ FIRST RUN ON A WINDOWS HOST (always start with these)
   nrth_audit.exe audit "C:\Path\To\MTA San Andreas\mods\deathmatch\client.dll"
       -> table per signature; exit code 0 clean, 3 = tamper footprint found, 2 = unreadable/not PE
   nrth_audit.exe diff "<clean client.dll>" "<client.dll dumped from the suspect process>"
-      -> only the located functions whose state CHANGED; a pattern missing from the other build
-         is reported as "located in the baseline only" (re-baseline), never as tampering
+      -> only the located functions whose state CHANGED. Alignment is by the located function's
+         RVA, so the two files need no common image base - but alert ONLY on the verdict line
+         (= number of added_footprint rows, also the function's return value):
+             target_lost      pattern present in the baseline, absent in the compared copy
+             sus_unlocated    a footprint at an RVA the baseline never locates
+         both mean "different build / unrelated code", and 1.2.0 exists precisely so neither can
+         page anyone (measured: baseline=original NRTH.dll vs this repository's own reconstruction
+         shows a DETOUR_JMP32 at 0x0d9f91 that is a thunk of the other build - verdict stays 0).
+      -> --csv columns: sig_id,target,clean_full,clean_patched,sus_full,sus_patched,
+         added_footprint,target_lost,sus_unlocated,state,sus_rva,detail
       -> PRISTINE means the located function's entry bytes are intact *in that image*: for the
          on-disk file this is expected even on an infected client, because detours and the 0xC3
          writes live in memory. Audit a read-only dump of the loaded module for live evidence.

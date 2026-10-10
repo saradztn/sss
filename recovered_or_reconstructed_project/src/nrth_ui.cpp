@@ -3,16 +3,21 @@
  * nrth_ui.cpp — UI reconstruction of the REAL "North Cheat" menu (R2)
  * ============================================================================
  * Evidence sources (see analysis/strings_catalog.txt + runtime screenshot):
- *   - Window title "North Cheat"                         (VA 0x1000e90d8)
+ *
+ * Address convention in this file: `off 0x...` is a **raw file offset** into the packed NRTH.dll
+ * (the values read straight out of strings_catalog.txt); `VA 0x...` is ImageBase + RVA as loaded.
+ * In this module .rdata RVA = off + 0x1000, so `off 0xe90d8` == `VA 0x100ea0d8`.  Every claim was
+ * re-verified with tools/nrth_string_va.py (find / --check / --audit-docs); do not re-derive one by eye.
+ *   - Window title "North Cheat"                         (VA 0x100ea0d8)
  *   - Top tabs  "%s##nvx_top_%d"  -> Scripts | Dumper | Cheat | Vehicle | Config
- *     labels: "Scripts" 0xe9480, "Dumper" 0xe8588*, "Cheat" 0xe94a0,
- *             "Vehicle" 0xe9498, "Config" 0xe91bc  (*also a vehicle name)
+ *     labels: "Scripts" off 0xe9480, "Dumper" off 0xe8588*, "Cheat" off 0xe94a0,
+ *             "Vehicle" off 0xe9498, "Config" off 0xe91bc  (*also a vehicle name)
  *   - Scripts sub-tabs "%s##nvx_ssub_%d" -> Editor | Scripts | Resources |
- *             Events | Events Table | Packets   (0xe94a8-0xe94dc)
- *   - Cheat sub-tabs  "%s##nvx_csub_%d"  -> Player | Other | Markers (0xe94ec-0xe950c)
- *   - Editor: "##lua_editor", "Default VM" 0xe9884, "@custom" 0xe9890,
- *             "Execute" 0xe9898, "Script executed" 0xe98b8
- *   - Scripts: "\\lua\\*.*" 0xe985c, "%s\\lua\\%s" 0xe9868, "##scripts_list",
+ *             Events | Events Table | Packets   (off 0xe94a8-0xe94dc)
+ *   - Cheat sub-tabs  "%s##nvx_csub_%d"  -> Player | Other | Markers (off 0xe94ec-0xe950c)
+ *   - Editor: "##lua_editor", "Default VM" off 0xe9884, "@custom" off 0xe9890,
+ *             "Execute" off 0xe9898, "Script executed" off 0xe98b8
+ *   - Scripts: "\\lua\\*.*" off 0xe985c, "%s\\lua\\%s" off 0xe9868, "##scripts_list",
  *             "Inject##%d", "Auto-inj##%d", "Injected: %s", "Dump", "Dump all",
  *             "Dump all scripts saved (%d)", "Dump script saved: %s",
  *             "File big, no view script", "Select script...", "No scripts found"
@@ -24,11 +29,11 @@
  *             "Clear All" "Unblock All" "No packets detected." "Name: %s"
  *             "Time: %s" "ID: %d" "BLOCKED"/"UNBLOCKED" "Block Packet"
  *             "Resend" "Resending packet: %s" "Copy Name" "Select a packet"
- *             + full MTA PACKET_ID_* table (0xe9be4-0xeaaa4)
+ *             + full MTA PACKET_ID_* table (off 0xe9be4-0xeaaa4)
  *   - Player: " (you)" "No players found" "##player_combo" "##player_filter"
  *             "Teleport" "Bomb" "Add Friend" "Delete Friend" "Friend's list"
  *             "No friends added" "%s (%.1f, %.1f, %.1f)"
- *   - Cheat features (0xe8e08-0xe8f2c settings, 0xe8fa4-0xe9098 toggles):
+ *   - Cheat features (off 0xe8e08-0xe8f2c settings, off 0xe8fa4-0xe9098 toggles):
  *             GodMode, Give HP, Give Armor, Infinite Ammo, Anti-Spread,
  *             Anti-ScreenShot ("Hide obs/discord"), Crasher ("Crasher player"),
  *             Anti-AFK, AirBreak (Speed/Increment/Keybinds), Click Warp
@@ -48,7 +53,9 @@
  *   - Color editor: "Color Settings" "##picker" "##color_list" "##filter"
  *             "Search color..." "Reset Colors" "Colors reset" + ~30 color names
  *   - Status (screenshot): "No connected server."
- *   - Dumper tab: "Address: 0x" (0x916d) memory/class dump display
+ *   - Dumper tab: an "Address: 0x%08X"-style field for the memory/class dump. No such literal
+ *     exists in the packed image (checked with tools/nrth_string_va.py): wording from the runtime
+ *     screenshot, kept as unverified reconstruction detail.
  *
  * CLASSIFICATION NOTE (truth policy):
  *   UI + local file/state handling = reconstructed behavior (R2).
@@ -173,7 +180,7 @@ struct MarkerRow { std::string name; float x, y, z; };
 static std::vector<MarkerRow> s_markers;
 static char s_markerName[64] = "";
 
-// Feature toggles (14 Cheat-Other + 9 Vehicle) — evidence 0xe8fa4-0xe9098
+// Feature toggles (14 Cheat-Other + 9 Vehicle) — evidence off 0xe8fa4-off 0xe9098
 struct Feature { const char *label; const char *settings; bool on; int key; int mode; };
 static Feature s_cheatFeatures[] = {
     {"GodMode",        "GodMode Settings",        false, 0, 1},
@@ -370,13 +377,13 @@ static void DrawEditor()
         // output below. (The original injects into MTA's Lua VMs — not rebuilt.)
         s_console.clear();
         if (RunLuaBuffer(s_editorBuf, strlen(s_editorBuf), "editor")) {
-            FeatureAction("Script executed");   // status string [evidence 0xe98b8]
+            FeatureAction("Script executed");   // status string [evidence off 0xe98b8]
         } else {
             FeatureAction("Script error (see console)");
         }
     }
     ImGui::SameLine();
-    const char *vms[] = {"Default VM", "@custom"};   // [0xe9884 / 0xe9890]
+    const char *vms[] = {"Default VM", "@custom"};   // [off 0xe9884 / off 0xe9890]
     ImGui::SetNextItemWidth(160);
     ImGui::Combo("##vm_combo", &s_vmIndex, vms, 2);
     ImGui::SameLine();
@@ -400,33 +407,33 @@ static void DrawScriptsList()
     ImGui::TextDisabled("Path: .\\lua\\   (evidence: \"%%s\\\\lua\\\\%%s\")");
     ImGui::BeginChild("##scripts_list", ImVec2(-1, -80), true);
     if (s_scripts.empty()) {
-        ImGui::TextDisabled("No scripts found");          // [0xe98c8]
+        ImGui::TextDisabled("No scripts found");          // [off 0xe98c8]
     }
     for (int i = 0; i < (int)s_scripts.size(); ++i) {
         ImGui::PushID(i);
         if (ImGui::Selectable(s_scripts[i].name.c_str(), s_scriptSel == i)) s_scriptSel = i;
         ImGui::SameLine(220);
         char lbl[64];
-        snprintf(lbl, sizeof(lbl), "Inject##%d", i);      // [0xe98ec]
+        snprintf(lbl, sizeof(lbl), "Inject##%d", i);      // [off 0xe98ec]
         if (ImGui::SmallButton(lbl)) FeatureAction(("Injected: " + s_scripts[i].name).c_str());
         ImGui::SameLine();
-        snprintf(lbl, sizeof(lbl), "Auto-inj##%d", i);    // [0xe98fc]
+        snprintf(lbl, sizeof(lbl), "Auto-inj##%d", i);    // [off 0xe98fc]
         ImGui::Checkbox(lbl, &s_scripts[i].autoInject);
         ImGui::PopID();
     }
     ImGui::EndChild();
-    if (ImGui::Button("Dump")) {                          // [0xe9950]
+    if (ImGui::Button("Dump")) {                          // [ off 0xe9950]
         if (s_scriptSel >= 0) {
             char msg[256];
             snprintf(msg, sizeof(msg), "Dump script saved: %s", s_scripts[s_scriptSel].name.c_str());
-            FeatureAction(msg);                           // [0xe99a0]
+            FeatureAction(msg);                           // [off 0xe99a0]
         }
     }
     ImGui::SameLine();
-    if (ImGui::Button("Dump all")) {                      // [0xe99b8]
+    if (ImGui::Button("Dump all")) {                      // [off 0xe99b8]
         char msg[128];
         snprintf(msg, sizeof(msg), "Dump all scripts saved (%d)", (int)s_scripts.size());
-        FeatureAction(msg);                               // [0xe9970]
+        FeatureAction(msg);                               // [off 0xe9970]
     }
     ImGui::SameLine();
     if (ImGui::Button("Run##script") && s_scriptSel >= 0) {
@@ -487,12 +494,12 @@ static void DrawResources()
     }
     ImGui::SameLine();
     ImGui::TextDisabled("(%d found)", (int)s_resources.size());
-    if (ImGui::Button("Stop Resource")) {                 // [0xeab20]
+    if (ImGui::Button("Stop Resource")) {                 // [off 0xeab20]
         // Server-side stop action — stub (requires netcode; not re-implemented).
         if (!s_resources.empty()) {
             char msg[128];
             snprintf(msg, sizeof(msg), "Resource stopped: %s", s_resources[resSel].c_str());
-            FeatureAction(msg);                           // [0xeaaf0]
+            FeatureAction(msg);                           // [off 0xeaaf0]
         }
     }
     ImGui::Separator();
@@ -510,24 +517,24 @@ static void DrawEvents()
     for (int i = 0; i < 6; ++i) if (ImGui::Selectable(kEvents[i], evSel == i)) evSel = i;
     ImGui::EndCombo();
     ImGui::SameLine();
-    if (ImGui::Button("Block##event")) {                    // [0xeab30]
+    if (ImGui::Button("Block##event")) {                    // [off 0xeab30]
         s_blockedEvents.push_back(kEvents[evSel]);
-        FeatureAction(("Event blocked: " + std::string(kEvents[evSel])).c_str());  // [0xeab40]
+        FeatureAction(("Event blocked: " + std::string(kEvents[evSel])).c_str());  // [off 0xeab40]
     }
     ImGui::SameLine();
     if (ImGui::Button("Unblock##event") && !s_blockedEvents.empty()) {
-        FeatureAction(("Event unblocked: " + s_blockedEvents.back()).c_str());     // [0xeaba8]
+        FeatureAction(("Event unblocked: " + s_blockedEvents.back()).c_str());     // [off 0xeaba8]
         s_blockedEvents.pop_back();
     }
     static char trig[96] = "";
     ImGui::InputTextWithHint("##trigger_input", "triggerServerEvent name...", trig, sizeof(trig));
     ImGui::SameLine();
-    if (ImGui::Button("Add to Block List") && trig[0]) {    // [0xeab84]
+    if (ImGui::Button("Add to Block List") && trig[0]) {    // [off 0xeab84]
         s_blockedEvents.push_back(trig);
         trig[0] = 0;
     }
     ImGui::Separator();
-    ImGui::Text("Recent Triggers:");                        // [0xeabe4]
+    ImGui::Text("Recent Triggers:");                        // [off 0xeabe4]
     if (s_recentTriggers.empty()) ImGui::TextDisabled("No triggers");
     for (auto &t : s_recentTriggers) ImGui::BulletText("%s", t.c_str());
 }
@@ -559,20 +566,20 @@ static void DrawEventsTable()
 static void DrawPackets()
 {
     // Toolbar: "Refresh" "Packets: %zu" "Clear All" "Unblock All" + search
-    if (ImGui::Button("Refresh")) FeatureAction("Refresh");       // [0xeac5c]
+    if (ImGui::Button("Refresh")) FeatureAction("Refresh");       // [off 0xeac5c]
     ImGui::SameLine();
-    ImGui::Text("Packets: %zu", s_packets.size());                // [0xeac64]
+    ImGui::Text("Packets: %zu", s_packets.size());                // [off 0xeac64]
     ImGui::SameLine();
-    if (ImGui::Button("Clear All")) s_packets.clear();            // [0xeac74]
+    if (ImGui::Button("Clear All")) s_packets.clear();            // [off 0xeac74]
     ImGui::SameLine();
-    if (ImGui::Button("Unblock All"))                             // [0xeac80]
+    if (ImGui::Button("Unblock All"))                             // [off 0xeac80]
         for (auto &p : s_packets) p.blocked = false;
     ImGui::SameLine();
     ImGui::InputTextWithHint("##packet_search", "Search packet...", s_packetSearch, sizeof(s_packetSearch));
 
-    ImGui::BeginChild("packets_left", ImVec2(-320, -1), true);    // IDs [0xeac94/0xeacd4]
+    ImGui::BeginChild("packets_left", ImVec2(-320, -1), true);    // IDs [ off 0xeac94/0xeac94]
     if (s_packets.empty()) {
-        ImGui::TextDisabled("No packets detected.");              // [0xeaca4]
+        ImGui::TextDisabled("No packets detected.");              // [off 0xeaca4]
     }
     for (int i = 0; i < (int)s_packets.size(); ++i) {
         ImGui::PushID(i);
@@ -586,33 +593,33 @@ static void DrawPackets()
     ImGui::BeginChild("packets_right", ImVec2(0, -1), true);
     if (s_packetSel >= 0 && s_packetSel < (int)s_packets.size()) {
         const PacketRow &p = s_packets[s_packetSel];
-        ImGui::Text("Name: %s", p.name.c_str());                  // [0xeacbc]
-        ImGui::Text("Time: %s", p.time.c_str());                  // [0xeacc8]
+        ImGui::Text("Name: %s", p.name.c_str());                  // [off 0xeacbc]
+        ImGui::Text("Time: %s", p.time.c_str());                  // [off 0xeacc8]
         ImGui::Text("ID: %d", p.id);                              // [0eace4]
         ImGui::TextColored(kAccentHover, "%s", p.blocked ? "BLOCKED" : "UNBLOCKED");
-        if (ImGui::Button("Block Packet"))                        // [0xead08]
+        if (ImGui::Button("Block Packet"))                        // [off 0xead08]
             s_packets[s_packetSel].blocked = !s_packets[s_packetSel].blocked;
         ImGui::SameLine();
-        if (ImGui::Button("Resend")) {                            // [0xead20]
+        if (ImGui::Button("Resend")) {                            // [off 0xead20]
             char msg[160];
             snprintf(msg, sizeof(msg), "Resending packet: %s", p.name.c_str());
-            FeatureAction(msg);                                   // [0xead28]
+            FeatureAction(msg);                                   // [off 0xead28]
         }
         ImGui::SameLine();
-        if (ImGui::Button("Copy Name")) {                         // [0xead40]
+        if (ImGui::Button("Copy Name")) {                         // [off 0xead40]
             ImGui::SetClipboardText(p.name.c_str());
             char msg[160];
             snprintf(msg, sizeof(msg), "Packet name copied: %s", p.name.c_str());
-            FeatureAction(msg);                                   // [0xead4c]
+            FeatureAction(msg);                                   // [off 0xead4c]
         }
     } else {
-        ImGui::TextDisabled("Select a packet");                   // [0xead64]
+        ImGui::TextDisabled("Select a packet");                   // [off 0xead64]
     }
     ImGui::EndChild();
 }
 
 // ===========================================================================
-// Dumper tab — "Address: 0x" memory/class dump display (evidence 0x916d)
+// Dumper tab — "Address: 0x" memory/class dump display (wording from the runtime screenshot - no such literal in the packed image)
 // ===========================================================================
 static void DrawDumper()
 {
@@ -635,26 +642,26 @@ static void DrawPlayerTab()
     ImGui::SetNextItemWidth(280);
     std::string preview = s_players.empty() ? "Select player..." :
         (s_players[s_playerSel].name + (s_players[s_playerSel].isYou ? " (you)" : ""));
-    if (ImGui::BeginCombo("##player_combo", preview.c_str())) {   // " (you)" [0xe99d4]
+    if (ImGui::BeginCombo("##player_combo", preview.c_str())) {   // " (you)" [ off 0xe99d4]
         for (int i = 0; i < (int)s_players.size(); ++i) {
             std::string lbl = s_players[i].name + (s_players[i].isYou ? " (you)" : "");
             if (ImGui::Selectable(lbl.c_str(), s_playerSel == i)) s_playerSel = i;
         }
-        if (s_players.empty()) ImGui::TextDisabled("No players found");   // [0xe99dc]
+        if (s_players.empty()) ImGui::TextDisabled("No players found");   // [off 0xe99dc]
         ImGui::EndCombo();
     }
-    if (ImGui::Button("Teleport")) FeatureAction("Teleport");    // [0xe9a30]
+    if (ImGui::Button("Teleport")) FeatureAction("Teleport");    // [off 0xe9a30]
     ImGui::SameLine();
-    if (ImGui::Button("Bomb")) FeatureAction("Bomb");            // [0xe9a3c]
+    if (ImGui::Button("Bomb")) FeatureAction("Bomb");            // [ off 0xe9a3c]
     ImGui::SameLine();
-    if (ImGui::Button("Add Friend")) {                           // [0xe9a24]
+    if (ImGui::Button("Add Friend")) {                           // [off 0xe9a24]
         if (!s_players.empty()) s_friends.push_back(s_players[s_playerSel].name);
     }
     ImGui::SameLine();
-    if (ImGui::Button("Delete Friend") && !s_friends.empty())    // [0xe9a14]
+    if (ImGui::Button("Delete Friend") && !s_friends.empty())    // [off 0xe9a14]
         s_friends.pop_back();
     ImGui::Separator();
-    ImGui::Text("Friend's list");                                // [0xe9a58]
+    ImGui::Text("Friend's list");                                // [off 0xe9a58]
     if (s_friends.empty()) ImGui::TextDisabled("No friends added");
     for (auto &f : s_friends) ImGui::BulletText("%s", f.c_str());
 }
@@ -664,39 +671,39 @@ static void FeatureRow(Feature &f, const char *id)
     ImGui::PushID(id);
     ImGui::Checkbox(f.label, &f.on);
     ImGui::SameLine();
-    if (ImGui::SmallButton("##gear")) ImGui::OpenPopup("##settings_panel");  // [0xe9554]
+    if (ImGui::SmallButton("##gear")) ImGui::OpenPopup("##settings_panel");  // [ off 0xe9554]
     if (ImGui::BeginPopup("##settings_panel")) {
         ImGui::TextUnformatted(f.settings);                      // e.g. "GodMode Settings"
         ImGui::Separator();
         if (strcmp(f.label, "Give HP") == 0) {
-            ImGui::SliderFloat("HP Value##sp", &s_hpValue, 1, 200);         // [0xe95f8]
+            ImGui::SliderFloat("HP Value##sp", &s_hpValue, 1, 200);         // [off 0xe95f8]
         } else if (strcmp(f.label, "Give Armor") == 0) {
-            ImGui::SliderFloat("Armor Value##sp", &s_armorValue, 1, 200);   // [0xe95e8]
+            ImGui::SliderFloat("Armor Value##sp", &s_armorValue, 1, 200);   // [off 0xe95e8]
         } else if (strcmp(f.label, "AirBreak") == 0) {
-            ImGui::SliderFloat("Speed: %.2f", &s_abSpeed, 0.1f, 10.f);     // label fmt [0xe9578]
-            ImGui::SliderFloat("Increment: %.2f", &s_abIncr, 0.05f, 2.f);  // [0xe9594]
+            ImGui::SliderFloat("Speed: %.2f", &s_abSpeed, 0.1f, 10.f);     // label fmt [ off 0xe9578]
+            ImGui::SliderFloat("Increment: %.2f", &s_abIncr, 0.05f, 2.f);  // [off 0xe9594]
             ImGui::Separator();
-            ImGui::Text("Keybinds");                                             // [0xe95a8]
+            ImGui::Text("Keybinds");                                             // [off 0xe95a8]
             ImGui::BulletText("Forward:"); ImGui::BulletText("Back:");
             ImGui::BulletText("Left:");    ImGui::BulletText("Right:");
             ImGui::BulletText("Down:");
         } else if (strcmp(f.label, "Click Warp") == 0) {
-            ImGui::SliderFloat("Max Distance##sp", &s_maxDist, 10, 1000);   // [0xe961c]
-            ImGui::SliderFloat("Crosshair Size##sp", &s_crossSize, 2, 40);  // [0xe9608]
-            ImGui::Checkbox("Ground Warp##sp", &s_groundWarp);              // [0xe9630]
-            ImGui::Checkbox("Enter Vehicle##sp", &s_enterVehicle);          // [0xe9640]
+            ImGui::SliderFloat("Max Distance##sp", &s_maxDist, 10, 1000);   // [off 0xe9608]
+            ImGui::SliderFloat("Crosshair Size##sp", &s_crossSize, 2, 40);  // [off 0xe961c]
+            ImGui::Checkbox("Ground Warp##sp", &s_groundWarp);              // [off 0xe9630]
+            ImGui::Checkbox("Enter Vehicle##sp", &s_enterVehicle);          // [off 0xe9640]
         } else if (strcmp(f.label, "Anti-ScreenShot") == 0) {
-            ImGui::Checkbox("Hide obs/discord", &s_hideObsDiscord);         // [0xe9b14]
+            ImGui::Checkbox("Hide obs/discord", &s_hideObsDiscord);         // [off 0xe9b14]
         } else if (strcmp(f.label, "Anti-AFK") == 0) {
-            ImGui::Checkbox("Anti-AFK", &s_antiAfk);                        // [0xe9b3c]
+            ImGui::Checkbox("Anti-AFK", &s_antiAfk);                        // [off 0xe9b3c]
         } else {
             ImGui::TextDisabled("settings shell (U)");
         }
         ImGui::Separator();
-        // keybind capture: "Press a key..." [0xe9534 / 0xeb124]
+        // keybind capture: "Press a key..." [off 0xe9534 / off 0xeb124]
         if (ImGui::Button("Press a key...")) s_bindCapture = -2;
         ImGui::SameLine();
-        ImGui::TextDisabled("mode: Toggle/Hold");                           // [0xe90b8/0xe9098]
+        ImGui::TextDisabled("mode: Toggle/Hold");                           // [off 0xe90b8 / off 0xe9098]
         ImGui::EndPopup();
     }
     ImGui::PopID();
@@ -717,16 +724,16 @@ static void DrawMarkersTab()
 {
     ImGui::InputTextWithHint("##marker_name", "marker name...", s_markerName, sizeof(s_markerName));
     ImGui::SameLine();
-    if (ImGui::Button("Save") && s_markerName[0]) {              // [0xe9a98]
+    if (ImGui::Button("Save") && s_markerName[0]) {              // [ off 0xe9a98]
         MarkerRow m = {s_markerName, 0.f, 0.f, 0.f};
         s_markers.push_back(m);
         s_markerName[0] = 0;
     }
-    if (s_markers.empty()) ImGui::TextDisabled("No markers saved");   // [0xe9aa0]
+    if (s_markers.empty()) ImGui::TextDisabled("No markers saved");   // [off 0xe9aa0]
     for (auto &m : s_markers) {
         char line[128];
         snprintf(line, sizeof(line), "%s (%.1f, %.1f, %.1f)", m.name.c_str(), m.x, m.y, m.z);
-        ImGui::BulletText("%s", line);                            // fmt [0xe9a7c]
+        ImGui::BulletText("%s", line);                            // fmt [off 0xe9a7c]
         ImGui::SameLine(280);
         if (ImGui::SmallButton("Teleport")) FeatureAction("Teleport");
         ImGui::SameLine();
@@ -741,7 +748,7 @@ static void DrawVehicleTab()
 {
     ImGui::Columns(2, "##vehcols", false);
     ImGui::SetColumnWidth(0, 300);
-    ImGui::Text("Vehicle's");                                    // [0xe91c4]
+    ImGui::Text("Vehicle's");                                    // [off 0xe91c4]
     ImGui::Separator();
     for (int i = 0; i < (int)(sizeof(s_vehicleFeatures) / sizeof(Feature)); ++i) {
         char id[32];
@@ -750,27 +757,27 @@ static void DrawVehicleTab()
     }
     ImGui::NextColumn();
 
-    ImGui::Text("Vehicles List");                                // [0xeaf0c]
+    ImGui::Text("Vehicles List");                                // [off 0xeaf0c]
     ImGui::SetNextItemWidth(-1);
-    std::string prev = std::string(kVehicleNames[s_vehicleSel]) + " (HP: 1000)"; // fmt [0xeaf64]
+    std::string prev = std::string(kVehicleNames[s_vehicleSel]) + " (HP: 1000)"; // fmt [off 0xeaf64]
     if (ImGui::BeginCombo("##vehicles_combo", s_vehicleSel >= 0 ? prev.c_str() : "Select vehicle...")) {
         for (int i = 0; i < (int)(sizeof(kVehicleNames) / sizeof(kVehicleNames[0])); ++i) {
             if (ImGui::Selectable(kVehicleNames[i], s_vehicleSel == i)) s_vehicleSel = i;
         }
         ImGui::EndCombo();
     }
-    if (ImGui::Button("Teleport to Vehicle")) FeatureAction("Teleport to Vehicle");  // [0xeaf50]
+    if (ImGui::Button("Teleport to Vehicle")) FeatureAction("Teleport to Vehicle");  // [off 0xeaf50]
     ImGui::SameLine();
-    if (ImGui::Button("Teleport Vehicle")) FeatureAction("Vehicle teleported to you"); // [0xeaf88]
+    if (ImGui::Button("Teleport Vehicle")) FeatureAction("Vehicle teleported to you"); // [off 0xeaf88]
     ImGui::SameLine();
-    if (ImGui::Button("Bomb Car")) FeatureAction("Vehicle destroyed");               // [0xeaf9c]
-    if (ImGui::Button("Repair Car")) FeatureAction("Vehicle repaired");              // [0xeadf0]
+    if (ImGui::Button("Bomb Car")) FeatureAction("Vehicle destroyed");               // [off 0xeaf9c]
+    if (ImGui::Button("Repair Car")) FeatureAction("Vehicle repaired");              // [off 0xe9070]
     ImGui::SameLine();
-    if (ImGui::Button("Start Engine")) FeatureAction("Engine started");              // [0xeae04]
+    if (ImGui::Button("Start Engine")) FeatureAction("Engine started");              // [off 0xe9060]
     ImGui::SameLine();
-    if (ImGui::Button("Stop")) FeatureAction("Vehicle stopped");                     // [0xeadc0]
+    if (ImGui::Button("Stop")) FeatureAction("Vehicle stopped");                     // [off 0xeadc0]
     ImGui::SameLine();
-    if (ImGui::Button("Unlock Car")) FeatureAction("Unlocked nearest vehicle");      // [0xeada4]
+    if (ImGui::Button("Unlock Car")) FeatureAction("Unlocked nearest vehicle");      // [off 0xe9044]
     ImGui::Columns(1);
 }
 
@@ -779,9 +786,9 @@ static void DrawVehicleTab()
 // ===========================================================================
 static void DrawColorSettings()
 {
-    if (ImGui::TreeNode("Color Settings")) {                    // [0xe91ec]
+    if (ImGui::TreeNode("Color Settings")) {                    // [off 0xe91ec]
         static char filter[64] = "";
-        ImGui::InputTextWithHint("##filter", "Search color...", filter, sizeof(filter)); // [0xe91dc]
+        ImGui::InputTextWithHint("##filter", "Search color...", filter, sizeof(filter)); // [off 0xe920c]
         static const struct { const char *name; ImGuiCol col; } kColors[] = {
             {"Text", ImGuiCol_Text}, {"Text Disabled", ImGuiCol_TextDisabled},
             {"Window BG", ImGuiCol_WindowBg}, {"Child BG", ImGuiCol_ChildBg},
@@ -811,9 +818,9 @@ static void DrawColorSettings()
             {"Resize Grip Active", ImGuiCol_ResizeGripActive},
             {"Text Selected BG", ImGuiCol_TextSelectedBg},
         };
-        if (ImGui::BeginTable("##ColorTable", 2, ImGuiTableFlags_Borders)) {   // [0xe943c]
-            ImGui::TableSetupColumn("Name");                                    // [0xe9460]
-            ImGui::TableSetupColumn("Color");                                   // [0xe9458]
+        if (ImGui::BeginTable("##ColorTable", 2, ImGuiTableFlags_Borders)) {   // [off 0xe943c]
+            ImGui::TableSetupColumn("Name");                                    // [ off 0xe9460]
+            ImGui::TableSetupColumn("Color");                                   // [off 0xe9458]
             ImGui::TableHeadersRow();
             for (auto &k : kColors) {
                 if (filter[0] && !strstr(k.name, filter)) continue;
@@ -826,10 +833,10 @@ static void DrawColorSettings()
             }
             ImGui::EndTable();
         }
-        if (ImGui::Button("Reset Colors")) {                                    // [0xe9468]
+        if (ImGui::Button("Reset Colors")) {                                    // [off 0xe9468]
             ImGui::StyleColorsDark();
             NrthUI_ApplyTheme();
-            FeatureAction("Colors reset");                                      // [0xe9488]
+            FeatureAction("Colors reset");                                      // [off 0xe9488]
         }
         ImGui::TreePop();
     }
@@ -840,9 +847,9 @@ static void DrawConfigTab()
     if (!s_configsScanned) ScanConfigs();
     ImGui::Columns(2, "##cfgcols", false);
     ImGui::SetColumnWidth(0, 260);
-    ImGui::Text("Configs");                                       // [0xe9b0b0]
+    ImGui::Text("Configs");                                       // [off 0xeb0b0]
     ImGui::BeginChild("##cfgitem", ImVec2(-1, -1), true);
-    if (s_configs.empty()) ImGui::TextDisabled("No configs found"); // [0xe9b090]
+    if (s_configs.empty()) ImGui::TextDisabled("No configs found"); // [off 0xeb090]
     for (int i = 0; i < (int)s_configs.size(); ++i) {
         if (ImGui::Selectable(s_configs[i].name.c_str(), s_cfgSel == i)) s_cfgSel = i;
     }
@@ -850,52 +857,52 @@ static void DrawConfigTab()
     ImGui::NextColumn();
 
     ImGui::BeginChild("##cfg_right", ImVec2(0, -1), true);
-    ImGui::InputText("Name##sa", s_cfgName, sizeof(s_cfgName));    // [0xe9b0b8]
-    if (ImGui::Button("Save")) {                                   // [0xe9a98]
-        std::string f = std::string(s_cfgName) + ".ovr";           // ".ovr" [0xe9b034]
+    ImGui::InputText("Name##sa", s_cfgName, sizeof(s_cfgName));    // [off 0xeb0b8]
+    if (ImGui::Button("Save")) {                                   // [ off 0xe9a98]
+        std::string f = std::string(s_cfgName) + ".ovr";           // ".ovr" [ off 0xe9b034]
         FILE *fp = fopen(f.c_str(), "w");
         if (fp) {
-            fputs("OVRCFG\n", fp);                                 // "OVRCFG" [0xe9b018]
+            fputs("OVRCFG\n", fp);                                 // "OVRCFG" [off 0xeb018]
             fclose(fp);
         }
         char msg[128];
-        snprintf(msg, sizeof(msg), "Config saved: %s", f.c_str()); // [0xe9b020]
+        snprintf(msg, sizeof(msg), "Config saved: %s", f.c_str()); // [off 0xeb020]
         FeatureAction(msg);
         s_configsScanned = false;
     }
     ImGui::SameLine();
-    if (ImGui::Button("Save As...")) {                             // [0xe9b0d8]
+    if (ImGui::Button("Save As...")) {                             // [off 0xeb0d8]
         s_cfgName[0] = 0;
     }
     ImGui::SameLine();
-    if (ImGui::Button("Load") && s_cfgSel >= 0) {                  // [0xe9b104]
+    if (ImGui::Button("Load") && s_cfgSel >= 0) {                  // [ off 0xe9b104]
         char msg[128];
         snprintf(msg, sizeof(msg), "Config loaded: %s", s_configs[s_cfgSel].name.c_str());
-        FeatureAction(msg);                                        // [0xe9b05c]
+        FeatureAction(msg);                                        // [off 0xe9b05c]
     }
     ImGui::SameLine();
-    if (ImGui::Button("Delete") && s_cfgSel >= 0) {                // [0xe9b10c]
+    if (ImGui::Button("Delete") && s_cfgSel >= 0) {                // [off 0xf6454]
         DeleteFileA(s_configs[s_cfgSel].name.c_str());
         char msg[128];
         snprintf(msg, sizeof(msg), "Config deleted: %s", s_configs[s_cfgSel].name.c_str());
-        FeatureAction(msg);                                        // [0xe9b070]
+        FeatureAction(msg);                                        // [off 0xe9b070]
         s_configsScanned = false;
     }
     ImGui::SameLine();
-    if (ImGui::Button("Reset to Default")) {                       // [0xe9b0e4]
-        FeatureAction("Reset to default style");                   // [0xe9b03c]
+    if (ImGui::Button("Reset to Default")) {                       // [off 0xeb0e4]
+        FeatureAction("Reset to default style");                   // [off 0xeb03c]
     }
     ImGui::Separator();
-    ImGui::Checkbox("Watermark", &s_watermark);                    // [0xe9b0f8]
+    ImGui::Checkbox("Watermark", &s_watermark);                    // [off 0xeb0f8]
     ImGui::SameLine();
-    ImGui::Checkbox("Notifications", &s_notifications);            // [0xe9b13c]
+    ImGui::Checkbox("Notifications", &s_notifications);            // [off 0xeb13c]
     ImGui::Separator();
 
-    // Menu Toggle Key (evidence [0xe9b114]) + key capture
+    // Menu Toggle Key (evidence [off 0xe9b114]) + key capture
     ImGui::Text("Menu Toggle Key");
     ImGui::SameLine();
     if (s_waitingForKey) {
-        ImGui::Button("Press...");                                 // [0xe9b124]
+        ImGui::Button("Press...");                                 // [off 0xeb124]
         for (int k = 0; k < 256; ++k)
             if (ImGui::IsKeyPressed((ImGuiKey)k, false)) { s_toggleKey = k; s_waitingForKey = false; }
     } else if (ImGui::Button("Set")) {
@@ -905,13 +912,13 @@ static void DrawConfigTab()
     ImGui::TextDisabled("(current: Insert)");
 
     ImGui::Separator();
-    ImGui::Text("Keybind's");                                      // [0xe9b130 / 0xe9110]
+    ImGui::Text("Keybind's");                                      // [off 0xeb130 / off 0xeb130]
     if (s_binds.empty()) ImGui::TextDisabled("No binds");
     for (int i = 0; i < (int)s_binds.size(); ++i) {
-        ImGui::Text("Bind: %s -> key %d", s_binds[i].action.c_str(), s_binds[i].key); // fmt [0xe9194]
+        ImGui::Text("Bind: %s -> key %d", s_binds[i].action.c_str(), s_binds[i].key); // fmt [off 0xe9194]
         ImGui::SameLine();
         if (ImGui::SmallButton("X")) {
-            FeatureAction(("Bind cleared: " + s_binds[i].action).c_str());           // [0xe91a4]
+            FeatureAction(("Bind cleared: " + s_binds[i].action).c_str());           // [off 0xe91a4]
             s_binds.erase(s_binds.begin() + i);
             break;
         }
@@ -938,7 +945,7 @@ void NrthUI_Build()
 
     ImGui::SetNextWindowSize(ImVec2(860, 560), ImGuiCond_FirstUseEver);
     if (!s_menuOpen) return;
-    if (!ImGui::Begin("North Cheat", &s_menuOpen)) {               // title [0xe9d8]
+    if (!ImGui::Begin("North Cheat", &s_menuOpen)) {               // title [ off 0xe9d8]
         ImGui::End();
         return;
     }
@@ -951,7 +958,7 @@ void NrthUI_Build()
     float w = (ImGui::GetContentRegionAvail().x - 4 * 8.f) / 5.f;
     for (int i = 0; i < 5; ++i) {
         char hid[32];
-        snprintf(hid, sizeof(hid), "nvx_top_%d", i);              // "%s##nvx_top_%d" [0xe94b0]
+        snprintf(hid, sizeof(hid), "nvx_top_%d", i);              // "%s##nvx_top_%d" [ off 0xe94b0]
         if (TabButton(kTop[i], hid, s_topTab == i, ImVec2(w, 34))) s_topTab = i;
         if (i < 4) ImGui::SameLine();
     }
@@ -963,11 +970,11 @@ void NrthUI_Build()
         float sw = (ImGui::GetContentRegionAvail().x - 5 * 6.f) / 6.f;
         for (int i = 0; i < 6; ++i) {
             char hid[32];
-            snprintf(hid, sizeof(hid), "nvx_ssub_%d", i);         // "%s##nvx_ssub_%d" [0xe94f4]
+            snprintf(hid, sizeof(hid), "nvx_ssub_%d", i);         // "%s##nvx_ssub_%d" [ off 0xe94f4]
             if (TabButton(kSub[i], hid, s_scriptsSub == i, ImVec2(sw, 26))) s_scriptsSub = i;
             if (i < 5) ImGui::SameLine();
         }
-        ImGui::BeginChild("##nvx_content", ImVec2(0, 0), true);   // [0xe9514]
+        ImGui::BeginChild("##nvx_content", ImVec2(0, 0), true);   // [off 0xe9514]
         switch (s_scriptsSub) {
             case 0: DrawEditor();       break;
             case 1: DrawScriptsList();  break;
@@ -982,11 +989,11 @@ void NrthUI_Build()
         DrawDumper();
         ImGui::EndChild();
     } else if (s_topTab == 2) {
-        static const char *kCSub[] = {"Player", "Other", "Markers"};   // [0xe94ec/0xe9504/0xe950c]
+        static const char *kCSub[] = {"Player", "Other", "Markers"};   // [off 0xe94ec / off 0xe9504 / off 0xe950c]
         float sw = (ImGui::GetContentRegionAvail().x - 2 * 6.f) / 3.f;
         for (int i = 0; i < 3; ++i) {
             char hid[32];
-            snprintf(hid, sizeof(hid), "nvx_csub_%d", i);         // "%s##nvx_csub_%d" [0xe9524]
+            snprintf(hid, sizeof(hid), "nvx_csub_%d", i);         // "%s##nvx_csub_%d" [ off 0xe9524]
             if (TabButton(kCSub[i], hid, s_cheatSub == i, ImVec2(sw, 26))) s_cheatSub = i;
             if (i < 2) ImGui::SameLine();
         }

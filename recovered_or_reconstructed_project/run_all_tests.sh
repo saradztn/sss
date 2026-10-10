@@ -99,8 +99,24 @@ if [ -n "$SAMPLE" ] && [ -x "$OUT/cli" ]; then
   if [ -f "$SAMPLE" ]; then
     "$OUT/cli" diff "$SAMPLE" "$SAMPLE" > "$OUT/t5c.log" 2>&1
     rc=$?
-    [ $rc -eq 0 ] && grep -q "no differing located function" "$OUT/t5c.log" \
-      && ok "diff of an image against itself reports no delta" || bad "self-diff reported a delta (rc=$rc)"
+    if [ $rc -eq 0 ] && grep -q "no differing located function" "$OUT/t5c.log"; then
+      # cross-build control: our reconstruction is a *different* build of the same module, so the
+      # diff must stay silent (it may mention an unlocated footprint, never an alert).  This is the
+      # regression test for the alignment rule added in 1.2.0.
+      if [ -f bin/NRTH.dll ]; then
+        "$OUT/cli" diff "$SAMPLE" bin/NRTH.dll > "$OUT/t5d.log" 2>&1
+        rc2=$?
+        if [ $rc2 -eq 0 ] && grep -q "verdict: 0 located function(s)" "$OUT/t5d.log"; then
+          ok "self-diff and cross-build diff report no tamper alert (bin/NRTH.dll)"
+        else
+          bad "cross-build diff alerted (rc=$rc2) - alignment rule broken?"
+        fi
+      else
+        ok "diff of an image against itself reports no delta (no local build for the A/B case)"
+      fi
+    else
+      bad "self-diff reported a delta (rc=$rc)"
+    fi
   fi
 else
   skip "needs the sample and the audit CLI"

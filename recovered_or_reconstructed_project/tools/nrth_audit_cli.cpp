@@ -241,16 +241,16 @@ static int cmd_diff(int argc, char **argv, const char *clean, const char *sus)
     printf("[*] nrth_audit %s — A/B module comparison\n", NRTH_AUDIT_VERSION);
     printf("[*] baseline (known good) : %s\n", clean);
     printf("[*] compared image        : %s\n", sus);
-    printf("[*] both must be the SAME build of the same module; differing builds make every\n"
-           "    row look changed. RVAs are module-relative and are not comparable across bases,\n"
-           "    which is why the diff works on located functions, not on absolute addresses.\n\n");
+    printf("[*] rows are aligned by the located function's RVA, so the two files do not need the\n"
+           "    same image base - but they should be the same build: a footprint at an RVA the\n"
+           "    baseline never located is reported as 'unlocated' information, never as tampering.\n\n");
     printf("%-4s %-14s %-14s %-22s %s\n", "id", "clean f/p", "loaded f/p", "change",
            "footprint @rva / target");
-    int lost = 0;
+    int lost = 0, unloc = 0;
     for (uint32_t i = 0; i < NrthSigCount(); ++i) {
         const NrthAuditDiffRow *d = &rows[i];
         const NrthSignature *sg = NrthSigAt(i + 1);
-        if (!d->addedFootprint && !d->targetLost && !showAll) {
+        if (!d->addedFootprint && !d->targetLost && !d->susUnlocated && !showAll) {
             continue;
         }
         char change[64];
@@ -259,6 +259,9 @@ static int cmd_diff(int argc, char **argv, const char *clean, const char *sus)
         } else if (d->targetLost) {
             snprintf(change, sizeof(change), "%s", "TARGET NOT FOUND IN LOADED IMAGE");
             ++lost;
+        } else if (d->susUnlocated) {
+            snprintf(change, sizeof(change), "%s", "unlocated footprint (other build)");
+            ++unloc;
         } else {
             snprintf(change, sizeof(change), "%s", "unchanged");
         }
@@ -275,11 +278,16 @@ static int cmd_diff(int argc, char **argv, const char *clean, const char *sus)
                    strlen(sg->pattern) > 58 ? "..." : "");
         }
     }
-    if (n == 0 && lost == 0) {
+    if (n == 0 && lost == 0 && unloc == 0) {
         printf("     (no differing located function)\n");
     }
     printf("\n[*] verdict: %d located function(s) carry a footprint the baseline does not have\n",
            n);
+    if (unloc) {
+        printf("[*] note: %d pattern(s) matched a function the baseline does not locate at all — "
+               "different build or unrelated code, NOT tampering (alert on the verdict line only).\n",
+               unloc);
+    }
     if (lost) {
         printf("[*] note: %d pattern(s) found in the baseline are absent from the loaded image —"
                " that is normally a different MTA build, not a cheat; re-baseline before alerting.\n",
@@ -289,14 +297,14 @@ static int cmd_diff(int argc, char **argv, const char *clean, const char *sus)
         FILE *o = fopen(csv, "wb");
         if (o) {
             fprintf(o, "sig_id,target,clean_full,clean_patched,sus_full,sus_patched,"
-                       "added_footprint,target_lost,state,sus_rva,detail\n");
+                       "added_footprint,target_lost,sus_unlocated,state,sus_rva,detail\n");
             for (uint32_t i = 0; i < NrthSigCount(); ++i) {
                 const NrthAuditDiffRow *d = &rows[i];
                 const NrthSignature *sg = NrthSigAt(i + 1);
-                fprintf(o, "%u,%s,%u,%u,%u,%u,%u,%u,%u,0x%x,0x%x\n", sg ? sg->id : d->sigId,
+                fprintf(o, "%u,%s,%u,%u,%u,%u,%u,%u,%u,%u,0x%x,0x%x\n", sg ? sg->id : d->sigId,
                         sg ? sg->target : "", d->cleanFull, d->cleanPatched, d->susFull,
-                        d->susPatched, d->addedFootprint, d->targetLost, d->susState, d->susRva,
-                        d->susDetail);
+                        d->susPatched, d->addedFootprint, d->targetLost, d->susUnlocated,
+                        d->susState, d->susRva, d->susDetail);
             }
             fclose(o);
             printf("[+] csv -> %s\n", csv);

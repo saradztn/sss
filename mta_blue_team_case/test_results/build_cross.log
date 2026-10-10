@@ -1,39 +1,40 @@
-[*] Cross-build + verification log (2026-10-10)
-[*] Scope: authorized MTA:SA blue-team private-server validation only.
+# reconstruction build log — 2026-10-11 (Linux host, zig 0.17.0 x86-windows-gnu), after the src comment/address corrections
 
-TOOLCHAIN
-  ziglang 0.17.0 (PyPI) -> zig c++ / zig cc -target x86-windows-gnu
-  (bundled MinGW-w64 sysroot; no network toolchain download required)
+$ bash fetch_vendor.sh && bash build.sh   (exit 0)
+[*] Compiling MinHook (x86)...
+[*] Compiling Dear ImGui v1.92.9 (core + DX9/Win32 backends)...
+[*] Compiling Lua 5.4.6 (embedded sandbox script VM)...
+[*] Compiling NRTH.dll reconstruction (src/nrth_hook.cpp + src/nrth_ui.cpp)...
+[*] Linking build/NRTH.dll (export: NVXHookProc @1)...
+[*] Compiling NORTH_LOADER.exe reconstruction (src/north_loader.cpp)...
+[+] Build complete:
+-rwxr-xr-x 1 user user  280064 Oct 10 23:29 bin/NORTH_LOADER.exe
+-rwxr-xr-x 1 user user 1692160 Oct 10 23:29 bin/NRTH.dll
+7e46525c5245bd7152c011b331bc0cfae48d10e2030ec4d12d4c08eb37665ad3  bin/NORTH_LOADER.exe
+643b1446c29f757bea360f40458061149fd9856caab769f2d7b940c6a3976c59  bin/NRTH.dll
+build exit=0
 
-VENDORED LIBS (fetch_vendor.sh)
-  vendor/minhook : github.com/TsudaKageyu/minhook  (sample embeds MinHook v1.3.3)
-  vendor/imgui   : github.com/ocornut/imgui tag v1.92.9
-                   (sample embeds "Dear ImGui 1.92.9 WIP (19283)")
-
-BUILD COMMAND
-  bash recovered_or_reconstructed_project/build.sh
-
-ARTIFACTS (final)
-  bin/NORTH_LOADER.exe  280064 bytes  PE32 x86 console (subsystem 3)
-    sha256 75a3dc1798b0231b9a0178027f8d17b44c6bef4a5dfc854077ac7748fdd2b3dd
-  bin/NRTH.dll         1284096 bytes  PE32 x86 DLL
-    sha256 452c58488dabb85705e5e189d9873c208174a798ae18fe6cdc6e121c8d6e383f
-
-EXPORT CONTRACT CHECK (pefile)
-  [+] NRTH.dll exports exactly: ordinal 1 -> "NVXHookProc" (undecorated,
-      matches loader GetProcAddress("NVXHookProc"); sample contract ordinal 1).
-  [+] Machine 0x014c (x86) for both artifacts (matches sample architecture).
-
-LOADER IMPORT SMOKE CHECK (pefile)
-  [+] OpenProcess, VirtualAllocEx, WriteProcessMemory, CreateRemoteThread
-  [+] SetWindowsHookExA, PostThreadMessageA, UnhookWindowsHookEx
-  [+] AdjustTokenPrivileges, K32EnumProcessModules, CreateToolhelp32Snapshot
-
-UNIT TESTS (Linux g++ 12.2.0)
-  [+] test_cli_parser        4/4 cases passed
-  [+] test_pe_export_parser  differential vs ORIGINAL sample working/NRTH.dll:
-       located 'NVXHookProc' at RVA 0x0000B9E0 (expected) + negative test passed
-
-NOT DONE HERE (documented, not implied)
-  - Windows runtime execution of the built EXE/DLL (analysis host is Linux).
-  - Private-server differential testing (see private_server_tests/results.md).
+$ python3 tools/pe_summary.py bin/NRTH.dll
+bin/NRTH.dll
+  size            : 1692160 bytes
+  timestamp       : 0x6acaca6d
+  machine         : 0x014c  IMAGE_FILE_MACHINE_I386 (x86)
+  magic           : 0x10b (PE32)
+  image base      : 0x10000000
+  entry point RVA : 0x000d7180
+  size of image   : 0x1a9000
+  subsystem       : WINDOWS_GUI
+  DLL flags       : 0x0140  DYNAMICBASE NX_COMPAT
+  file chars      : 0x2102  [EXECUTABLE_IMAGE]
+  sections        :
+      .text    rva=0x0001000 vsize=0x137be8 raw=0x000400 rsize=0x137c00
+      .rdata   rva=0x0139000 vsize=0x02b2e3 raw=0x138000 rsize=0x02b400
+      .buildid rva=0x0165000 vsize=0x00003d raw=0x163400 rsize=0x000200
+      .data    rva=0x0166000 vsize=0x017f74 raw=0x163600 rsize=0x010800
+      .eh_fram rva=0x017e000 vsize=0x012e08 raw=0x173e00 rsize=0x013000
+      .gcc_exc rva=0x0191000 vsize=0x0015d4 raw=0x186e00 rsize=0x001600
+      .tls     rva=0x0193000 vsize=0x000010 raw=0x188400 rsize=0x000200
+      .reloc   rva=0x0194000 vsize=0x00a968 raw=0x188600 rsize=0x00aa00
+      /4       rva=0x019f000 vsize=0x009ec0 raw=0x193000 rsize=0x00a000
+  exports         : 1 name(s) / 1 function(s)  internal name NRTH.dll
+      @1   NVXHookProc                  rva=0x001000

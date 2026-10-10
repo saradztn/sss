@@ -52,12 +52,12 @@ Legend: [O] Observed · [SI] Strongly inferred · [T] Tentative · [U] Unknown
 ## Stage 4 — Payload initialization (NRTH.dll inside gta_sa.exe / MTA)
 
 9. [O] `NVXHookProc` (export ordinal 1, VA 0x1000b9e0 / RVA 0x0b9e0): 4-instruction stdcall thunk → `CallNextHookEx(NULL, nCode, wParam, lParam)`. Functional role: hook-procedure contract only (enables Stage 3); no game logic.
-10. [O] CRT entry (VA 0x1000a8bb0 / RVA 0x0a8bb0) → `DllMain` (VA 0x1000ba00 / RVA 0x0ba00) on `DLL_PROCESS_ATTACH`:
+10. [O] CRT entry (VA 0x100a8bb0 / RVA 0x0a8bb0) → `DllMain` (VA 0x1000ba00 / RVA 0x0ba00) on `DLL_PROCESS_ATTACH`:
     - `DisableThreadLibraryCalls(hMod)`
     - `GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_PIN=5, ...)` — **pins the module so it cannot be unloaded** (self-protection observable; no new behavior added in reconstruction).
     - `CreateThread` → `MainInitThread` (VA 0x1000a850 / RVA 0x0a850).
 11. [O] `MainInitThread` (VA 0x1000a850 / RVA 0x0a850):
-    - Decrypts embedded strings (per-length positional XOR, `plain[p] = cipher[p] ^ ((p-K)&0xFF)`, one K per decryptor — 82 decryptors / 63 plaintexts recovered in `working/recovered.json`; recovered names include `client.dll`, `netc.dll`, `@auto_inject`, the MTA registry keys, `C:\Overwack\loader_config.cfg` and `C:\ProgramData:NT2`. `C:\NVX` (VA 0x1000afd18) and `@custom` (.rdata 0x100e9890) are **plain** strings, not decodes — corrected after the decode pass.
+    - Decrypts embedded strings (per-length positional XOR, `plain[p] = cipher[p] ^ ((p-K)&0xFF)`, one K per decryptor — 82 decryptors / 63 plaintexts recovered in `working/recovered.json`; recovered names include `client.dll`, `netc.dll`, `@auto_inject`, the MTA registry keys, `C:\Overwack\loader_config.cfg` and `C:\ProgramData:NT2`. `C:\NVX` (VA 0x100b0d18) and `@custom` (.rdata 0x100ea890) are **plain** strings, not decodes — corrected after the decode pass.
     - `GetProcAddress(GetModuleHandleA("ntdll.dll"), "LdrLoadDll")`.
     - MinHook v1.3.3 (`MH_Initialize`, `MH_CreateHook` at VA 0x10036020, `MH_EnableHook`) installs an inline detour on `ntdll!LdrLoadDll` → handler at VA 0x1000a640.
 12. [O] `Hooked_LdrLoadDll` (VA 0x1000a640 / RVA 0x0a640): passes every load through to the original `LdrLoadDll`, then inspects the loaded module name. When `client.dll` or `netc.dll` appear (MTA:SA client modules), it triggers the follow-on initialization routines (decompiler labels `0x10005b80`, `0x10020640`).
@@ -69,14 +69,17 @@ Legend: [O] Observed · [SI] Strongly inferred · [T] Tentative · [U] Unknown
 14. [O] `InstallD3D9Hooks` (VA 0x10016500 / RVA 0x16500): MinHook detours on
     - vtable slot 17 (offset 0x44) `IDirect3DDevice9::Present` → `Hooked_Present` (VA 0x10014d50 / RVA 0x14d50)
     - vtable slot 16 (offset 0x40) `IDirect3DDevice9::Reset` → `Hooked_Reset` (VA 0x1001a3c0 / RVA 0x1a3c0)
-15. [O] `Hooked_Present`: runs a Dear ImGui 1.92.9 WIP (19283) frame each present (`ImGui::NewFrame` / `Render` / `ImGui_ImplDX9_RenderDrawData`). Overlay window identifiers in `.rdata`: `%s##nvx_top_%d`, `##nvx_content` (VA 0x1000e94b0 region). Toggle key: `Insert` (ImGui key name, VA 0x1000eb8b4) — matches the loader's operator hint.
+15. [O] `Hooked_Present`: runs a Dear ImGui 1.92.9 WIP (19283) frame each present (`ImGui::NewFrame` / `Render` / `ImGui_ImplDX9_RenderDrawData`). Overlay window identifiers in `.rdata`: `%s##nvx_top_%d`, `##nvx_content` (VA 0x100ea4b0 region). Toggle key: `Insert` (ImGui key name, VA 0x100ec8b4) — matches the loader's operator hint.
 16. [O] `Hooked_Reset`: `ImGui_ImplDX9_InvalidateDeviceObjects` before the original `Reset`, `CreateDeviceObjects` after — survives resolution changes/windowed toggles.
-17. [O] Overlay self-identification strings in NRTH.dll `.rdata`:
-    - `North Cheat` (VA 0x1000e90d8)
-    - `Cheat` (VA 0x1000e94a0)
-    - `Menu Toggle Key` (VA 0x1000eb114)
-    - `.?AUSWeaponAimSync@@` (MSVC RTTI for `SWeaponAimSync`, an MTA:SA weapon-aim sync struct; VA 0x1013ad54 in `.data`)
-    - `PACKET_ID_CHEAT_CHALLENGEMEMORY`, `PACKET_ID_CHEAT_RETURN`, `PACKET_ID_MTA_RESERVED_*` (VA 0x1000ea6a8 region) — MTA:SA network protocol identifiers present in the binary (embedded netcode constants from the MTA client codebase).
+17. [O] Overlay self-identification strings in NRTH.dll `.rdata`. Address convention used in this
+    file: `VA` = ImageBase + RVA as loaded; `off` = raw file offset in the packed file (for `.rdata`
+    of this module, RVA = off + 0x1000). 11 claims were re-verified and corrected on 2026-10-11 with
+    `recovered_or_reconstructed_project/tools/nrth_string_va.py` — do not re-derive them by eye.
+    - `North Cheat` (VA 0x100ea0d8)
+    - `Cheat` (VA 0x100ea4a0)
+    - `Menu Toggle Key` (VA 0x100ec114)
+    - `.?AUSWeaponAimSync@@` (MSVC RTTI for `SWeaponAimSync`, an MTA:SA weapon-aim sync struct; VA 0x1013c154 in `.data`)
+    - `PACKET_ID_CHEAT_CHALLENGEMEMORY`, `PACKET_ID_CHEAT_RETURN`, `PACKET_ID_MTA_RESERVED_*` (VA 0x100eb6a8 region) — MTA:SA network protocol identifiers present in the binary (embedded netcode constants from the MTA client codebase).
 
 ## Stage 6 — Runtime (menu usage)
 

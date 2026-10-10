@@ -30,6 +30,12 @@
  *
  * Inputs are UNTRUSTED data: malformed/truncated PE input must fail safely.
  *
+ * Version 1.2.0 (2026-10-11): NrthAuditDiff only alerts on a footprint that sits on the SAME located
+ * function as the baseline (RVA agreement is the alignment key). Measured reason: diffing the
+ * original NRTH.dll against our own reconstruction produced one DETOUR_JMP32 "added footprint",
+ * which was a jump thunk of a different build, not a patch - see detection/audit_tool.md.
+ * NrthAuditDiffRow gained susUnlocated, which counts exactly that case informationally.
+ *
  * Version 1.1.0 (2026-10-10): added NrthPrologueIsTamper, NrthPatPatchHead and the A/B
  * comparison entry points (NrthAuditDiff / NrthAuditDiffFiles, ordinals 22-23). The patched-hit
  * rule was also tightened: a widened hit now counts only when the entry carries a concrete
@@ -62,7 +68,7 @@
 #  define NRTH_AUDIT_C extern "C"
 #endif
 
-#define NRTH_AUDIT_VERSION "1.1.0"
+#define NRTH_AUDIT_VERSION "1.2.0"
 
 /* ---- status codes -------------------------------------------------------- */
 #define NVXA_OK             0
@@ -229,14 +235,22 @@ typedef struct _NrthAuditDiffRow {
     uint32_t susState;         /* footprint at the suspect's first patched RVA     */
     uint32_t susRva;
     uint32_t susDetail;        /* detour target RVA, when the state carries one    */
-    uint32_t addedFootprint;   /* 1 when baseline had no footprint here and suspect has one */
+    uint32_t addedFootprint;   /* 1 when the suspect patched the SAME function the baseline
+                                * located at this RVA and the baseline had no footprint there.
+                                * This is the only field to alert on. */
     uint32_t targetLost;       /* 1 when baseline found the pattern and suspect did not */
+    uint32_t susUnlocated;     /* 1 when the suspect has a footprint at an RVA the baseline never
+                                * located: a different build (or a pattern that matched unrelated
+                                * code), reported so it can be seen but deliberately NOT an alert. */
 } NrthAuditDiffRow;
 
 /* Returns the number of rows with an added footprint (>=0) or NVXA_E_*. Both inputs
  * may be file images or dumps; they are only compared through the located-pattern
- * offsets, so differing ImageBases are fine, but the two files must be the *same
- * build* of the module or every row will look changed. */
+ * offsets, so differing ImageBases are fine. The located RVA is also what aligns the two
+ * images: a footprint at an RVA the baseline never located is counted as `susUnlocated`,
+ * not as tampering, so diffing two different builds yields no alert instead of a flood.
+ * For a meaningful check the two files must still be the same build of the same module.
+ * Multi-hit signatures are aligned on their FIRST located function only. */
 NRTH_AUDIT_C NRTH_AUDIT_API int32_t NrthAuditDiff(const uint8_t *cleanImg, uint32_t cleanSize,
                                                  const uint8_t *susImg, uint32_t susSize,
                                                  NrthAuditDiffRow *rows, uint32_t maxRows);

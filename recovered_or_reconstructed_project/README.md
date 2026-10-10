@@ -58,6 +58,10 @@ investigation (`../mta_blue_team_case/`).
   drift from the evidence.
 - `tools/nrth_case_strings.py` — regenerates `../mta_blue_team_case/detection/recovered_strings.txt`.
 - `tools/pe_summary.py` — dependency-free PE header/section/export verifier (used by `build_audit.sh`).
+- `tools/nrth_string_va.py` — resolves and audits string/address claims: `find` (offset/RVA/VA of a
+  literal), `--check "0x100ea0d8=North Cheat"`, and `--audit-docs` which walks the case docs and fails
+  on any `"<string>" ... 0xADDR` claim whose bytes disagree (this is how the 23 stale `.rdata` VAs in
+  this repository were found and fixed).
 - `vendor/` — pinned third-party libs the original also embedded:
   MinHook (sample: v1.3.3) and Dear ImGui v1.92.9 (sample: 1.92.9 WIP 19283).
   Fetched by `fetch_vendor.sh` (not committed).
@@ -90,8 +94,8 @@ bash build_audit.sh --regen    # re-derive src/nrth_audit_sigs.h from working/si
 ```
 
 No `fetch_vendor.sh` needed — the audit module has no third-party dependency. Last run
-(2026-10-10): 27/27 unit tests, `result: all checks passed` for the 21 self-test vectors,
-`bin/NRTH_audit.dll` 293,888 B `sha256 46ce1da4…2f75e5e7`, `bin/nrth_audit.exe` 304,640 B
+(2026-10-10): 30/30 unit tests, `result: all checks passed` for the 21 self-test vectors,
+`bin/NRTH_audit.dll` 293,376 B `sha256 68cc2d57…1e9fb6c5`, `bin/nrth_audit.exe` 304,640 B
 `sha256 47217128…2f5f3da4`; machine `0x014c`, PE32, ImageBase `0x10000000`, DYNAMICBASE+NX,
 exports @1…@23 (see `../mta_blue_team_case/test_results/audit_build.log`). Differential
 evidence and the sample self-scan: `../mta_blue_team_case/test_results/audit_sample_differential.log`.

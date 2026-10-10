@@ -13,7 +13,7 @@
 
 Classification by component:
 - `NORTH LOADER.exe` — **loader/injector** (High confidence).
-- `NRTH.dll` — **in-game cheat overlay payload** for MTA:SA (High confidence): self-identified by its own `.rdata` strings `North Cheat` (VA 0x1000e90d8) and `Cheat` (VA 0x1000e94a0), armed specifically when MTA:SA modules `client.dll`/`netc.dll` load, drawing a Dear ImGui menu toggled by INSERT over the D3D9 frame.
+- `NRTH.dll` — **in-game cheat overlay payload** for MTA:SA (High confidence): self-identified by its own `.rdata` strings `North Cheat` (VA 0x100ea0d8) and `Cheat` (VA 0x100ea4a0), armed specifically when MTA:SA modules `client.dll`/`netc.dll` load, drawing a Dear ImGui menu toggled by INSERT over the D3D9 frame.
 
 | Finding | Evidence | Confidence | Alternative explanation | Next verification |
 |---|---|---|---|---|
@@ -45,10 +45,10 @@ Classification by component:
 - **Build status: BUILT** — cross-compiled to Windows PE32 x86 artifacts with Zig 0.17.0's MinGW sysroot (`build.sh`): `bin/NORTH_LOADER.exe` (SHA-256 `75a3dc17...fdd2b3dd`) and `bin/NRTH.dll` (SHA-256 `452c5848...d6e383f`), export contract verified (`NVXHookProc` @ ordinal 1). Full log: `test_results/build_cross.log`. Windows MSVC path (`build.ps1`) documented but not executed here.
 - **Delivered detector (built + tested): `NRTH_audit.dll` / `nrth_audit.exe`** — `build_audit.sh`, PE32 x86,
   ImageBase 0x10000000, 23 exports (ordinals 1–21), DYNAMICBASE+NX_COMPAT;
-  `bin/NRTH_audit.dll` SHA-256 `46ce1da4…2f75e5e7`, `bin/nrth_audit.exe` `47217128…2f5f3da4`.  Full suite (every claim in this case, one command): `run_all_tests.sh` → `8 passed, 0 failed, 0 skipped`
+  `bin/NRTH_audit.dll` SHA-256 `68cc2d57…1e9fb6c5`, `bin/nrth_audit.exe` `47217128…2f5f3da4`.  Full suite (every claim in this case, one command): `run_all_tests.sh` → `8 passed, 0 failed, 0 skipped`
   (log: `test_results/run_all_tests.log`).
   It implements the recovered codec, the 20-signature catalogue, the PE reader and the patch-footprint
-  classifier; 27/27 unit tests and 21/21 self-test vectors pass on the host, and `audit` returns
+  classifier; 30/30 unit tests and 21/21 self-test vectors pass on the host, and `audit` returns
   **0 with a match** on both samples (no self-flagging). Docs: `detection/audit_tool.md`.
 - **Scope decision (explicit):** the two mechanisms that would make this a working cheat — hijacking the
   game's live Lua `exec` trampoline (global `0x1013c94c`) and actually writing the `0xC3` kills into
@@ -137,9 +137,9 @@ $ g++ -std=c++17 -Wall -Wextra -o tests/test_pe_export_parser tests/test_pe_expo
 ```
 # Audit module (executed 2026-10-10, same host): host tests first, then the PE32 cross build
 $ cd recovered_or_reconstructed_project && ./build_audit.sh
-[*] 27/27 checks passed
+[*] 30/30 checks passed
 result: all checks passed            # NrthAuditSelfTest: 21 checks, vectors taken from the sample
-[+] Built:  bin/NRTH_audit.dll (293,888 B)  bin/nrth_audit.exe (304,640 B)
+[+] Built:  bin/NRTH_audit.dll (293,376 B)  bin/nrth_audit.exe (304,640 B)
   machine 0x014c (I386), magic 0x10b (PE32), image base 0x10000000, DYNAMICBASE NX_COMPAT
   exports: 21 names, undecorated, ordinals 1..21 as pinned in src/nrth_audit.def
 $ ./bin/host/nrth_audit audit working/NRTH.dll
@@ -148,8 +148,19 @@ $ ./bin/host/nrth_audit audit working/NRTH.dll
 $ ./bin/host/nrth_audit sweep working/NRTH.dll --min 24 --vas | head -1
 [*] working/NRTH.dll: 8 hidden pattern candidate(s) (>= 24 chars)     # == the Python tool's 8
 ```
+Two accuracy passes were made after the first draft of this report.  (1) Every `"<string>" … 0xADDR`
+claim in the case folder was re-checked mechanically with
+`recovered_or_reconstructed_project/tools/nrth_string_va.py --audit-docs` against the packed image: 23
+addresses had been written as `ImageBase + file offset` (0x1000 short of the real VA here, sometimes with
+one extra zero digit) and were corrected — e.g. `North Cheat` is at **VA 0x100ea0d8** (RVA 0xea0d8,
+offset 0xe90d8), not 0x1000e90d8.  The run that now reports 0 inconsistent claims is in
+`test_results/doc_address_audit.log`, and comments inside `src/nrth_ui.cpp` were relabelled `off 0x…` so
+file offsets can no longer be read as VAs.  (2) `nrth_audit` gained the alignment rule described in
+`detection/audit_tool.md` (v1.2.0) after its own diff against this repository's reconstruction produced a
+false "new detour" row.
+
 The reconstruction itself was rebuilt after these doc/code corrections (`fetch_vendor.sh` + `build.sh`,
-exit 0): `bin/NRTH.dll` 1,692,160 B `sha256 c5d000f6c1eb77bb49a1072fa0342c18a6ebcd2218faeba8bda162e3fc0f3f33`
+exit 0): `bin/NRTH.dll` 1,692,160 B `sha256 643b1446c29f757bea360f40458061149fd9856caab769f2d7b940c6a3976c59`
 (single export `NVXHookProc` @ ordinal 1, PE32 x86) and `bin/NORTH_LOADER.exe` 280,064 B
 `sha256 7e46525c5245bd7152c011b331bc0cfae48d10e2030ec4d12d4c08eb37665ad3`. The size differs from the
 2026-10-10 entry above because the current tree links 46 objects (Dear ImGui 1.92.9 + Lua 5.4.6 + MinHook)
@@ -211,4 +222,7 @@ Windows build script for the reconstruction (`recovered_or_reconstructed_project
 | `detection/telemetry.md` | Layered telemetry + FP caveats + regression tests + blind spots |
 | `private_server_tests/test_plan.md` | Real client/server test matrix (T0–T6) |
 | `private_server_tests/results.md` | Honest status: NOT EXECUTED + what was validated instead |
-| `test_results/*.log` | Actual unit-test output (CLI parser, PE export differential) |
+| `test_results/*.log` | Real command output: `run_all_tests.log` (whole suite), `audit_build.log`,
+| | `audit_sample_differential.log`, `build_cross.log`, `yara_check.log`, and `doc_address_audit.log` |
+| `mechanism_overview_ar.md` | Arabic mechanism brief: what the sample does, evidence per claim, §9 scope | 
+| `mechanism_vm_injection.md` | Lua-VM / exec-trampoline path, address by address, with the reconstruction's stub note |

@@ -1,0 +1,70 @@
+# case-document address-claim audit — 2026-10-11
+
+$ python3 recovered_or_reconstructed_project/tools/nrth_string_va.py working/NRTH.dll \
+      --audit-docs --also "working/NORTH LOADER.exe" <31 case files>
+
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:13  'Scripts' given as file offset 0xe9480
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:13  'Dumper' given as file offset 0xe8588
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:13  'Cheat' given as file offset 0xe94a0
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:13  'Dumper' given as file offset 0xe9480
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:13  'Cheat' given as file offset 0xe8588
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:14  'Vehicle' given as file offset 0xe9498
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:14  'Config' given as file offset 0xe91bc
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:14  'Config' given as file offset 0xe9498
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:18  '##lua_editor' given as file offset 0xe9884
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:18  '@custom' given as file offset 0xe9890
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:18  '@custom' given as file offset 0xe9884
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:19  'Execute' given as file offset 0xe9898
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:19  'Script executed' given as file offset 0xe98b8
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:19  'Script executed' given as file offset 0xe9898
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:20  '\\lua\\*.*' given as file offset 0xe985c
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:20  '%s\\lua\\%s' given as file offset 0xe9868
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:20  '%s\\lua\\%s' given as file offset 0xe985c
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:20  '##scripts_list' given as file offset 0xe9868
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:386  'Default VM' given as file offset 0xe9884
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:410  'No scripts found' given as file offset 0xe98c8
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:417  'Inject##%d' given as file offset 0xe98ec
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:420  'Auto-inj##%d' given as file offset 0xe98fc
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:569  'Refresh' given as file offset 0xeac5c
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:582  'No packets detected.' given as file offset 0xeaca4
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:650  'No players found' given as file offset 0xe99dc
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:653  ')) FeatureAction(' given as file offset 0xe9a30
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:674  '##settings_panel' given as file offset 0xe9554
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:703  'Press a key...' given as file offset 0xe9534
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:732  'No markers saved' given as file offset 0xe9aa0
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:769  'Teleport to Vehicle' given as file offset 0xeaf50
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:771  'Vehicle teleported to you' given as file offset 0xeaf88
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:774  'Vehicle repaired' given as file offset 0xe9070
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:776  'Engine started' given as file offset 0xe9060
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:780  'Unlocked nearest vehicle' given as file offset 0xe9044
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:852  'No configs found' given as file offset 0xeb090
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:865  'OVRCFG' given as file offset 0xeb018
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:869  'Config saved: %s' given as file offset 0xeb020
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:961  '%s##nvx_top_%d' given as file offset 0xe94b0
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:973  '%s##nvx_ssub_%d' given as file offset 0xe94f4
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:992  'Other' given as file offset 0xe94ec
+OK-OFF recovered_or_reconstructed_project/src/nrth_ui.cpp:996  '%s##nvx_csub_%d' given as file offset 0xe9524
+[*] 191 string/address claim(s) in 31 file(s): 13 ok, 41 labelled-offset, 65 code/data-site (info), 0 BAD
+
+exit=0
+
+=== the corrections this audit drove (23 addresses) ===
+  behavior_timeline.md 10, indicators.json 5, report.md 2, telemetry.md 1, recovered_strings.txt 1,
+  function_map.csv 1, src/nrth_hook.cpp 2, src/nrth_ui.cpp 1, tools/nrth_case_strings.py 1
+  class of error: 'VA' written as ImageBase + raw file offset (0x1000 short in .rdata), several
+  with an extra zero digit; e.g. 'North Cheat' 0x1000e90d8 -> 0x100ea0d8 (RVA 0xea0d8).
+  Also: mechanism_overview_ar.md section 7 table normalised from bare RVAs to full VAs (8 cells),
+  src/nrth_ui.cpp comment offsets relabelled 'off 0x...' and snapped to the literal they document.
+
+=== spot verification of the corrected values ===
+[ok]   0x100b0d18 -> ..rdata rva=0xb0d18 bytes='C:\\NVX' expect='C:\\NVX'
+[ok]   0x100ea0d8 -> ..rdata rva=0xea0d8 bytes='North Cheat' expect='North Cheat'
+[ok]   0x100ea4a0 -> ..rdata rva=0xea4a0 bytes='Cheat' expect='Cheat'
+[ok]   0x100ec114 -> ..rdata rva=0xec114 bytes='Menu Toggle Key' expect='Menu Toggle Key'
+[ok]   0x100ea4b0 -> ..rdata rva=0xea4b0 bytes='%s##nvx_top_%d' expect='%s##nvx_top_%d'
+[ok]   0x100ec8b4 -> ..rdata rva=0xec8b4 bytes='Insert' expect='Insert'
+[ok]   0x100eb6a8 -> ..rdata rva=0xeb6a8 bytes='PACKET_ID_CHEAT_CHALLENGEMEMORY' expect='PACKET_ID_CHEAT_CHALLENGEMEMORY'
+[ok]   0x100f6cb2 -> ..rdata rva=0xf6cb2 bytes='nvx.dll' expect='nvx.dll'
+[ok]   0x100ea890 -> ..rdata rva=0xea890 bytes='@custom' expect='@custom'
+[ok]   0x1013c154 -> ..data rva=0x13c154 bytes='.?AUSWeaponAimSync@@' expect='.?AUSWeaponAimSync@@'
+check-exit=0

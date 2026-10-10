@@ -201,7 +201,7 @@ C.2 Medium confidence — found by the prologue-anchored sweep of .data (runtime
 ==============================================================================
 SECTION E — two run-time identifiers worth knowing about, verified outside the JSON
 ==============================================================================
-  @custom       PLAIN string at .rdata file offset 0x000e9890 (VA 0x100e9890); it is
+  @custom       PLAIN string at .rdata file offset 0x000e9890 (VA 0x100ea890); it is
                 already visible in strings_catalog.txt line 6091. Role (Lua chunk name
                 for the menu's Execute path) is Strongly inferred from 0x10004550.
   @auto_inject  NOT present as a plain string. It is built from inline immediates on
@@ -218,8 +218,8 @@ SECTION E — two run-time identifiers worth knowing about, verified outside the
 SECTION D — how to reproduce / how to use this file
 ==============================================================================
     cd recovered_or_reconstructed_project
-    python3 tools/nrth_strings_recover.py ../../working/NRTH.dll -o ../../working/recovered.json
-    python3 tools/nrth_sig_export.py      ../../working/NRTH.dll -o ../../working/sigs.json
+    python3 tools/nrth_strings_recover.py ../working/NRTH.dll -o ../working/recovered.json
+    python3 tools/nrth_sig_export.py      ../working/NRTH.dll -o ../working/sigs.json
     python3 tools/nrth_case_strings.py            # regenerates this file
 
 Detection use:
@@ -230,3 +230,12 @@ Detection use:
   * Section C.2 must NOT be used as a cheat-presence indicator on its own: those prologue
     shapes are ordinary MSVC __SEH_prolog4 / __GS-setup code and appear in many modules.
     They are useful as *the location to memory-integrity check* once the cheat is known.
+
+Verification:
+  * Every address in this file is a VA (ImageBase + RVA) unless it is written `off 0x...`, which is a
+    raw file offset in the packed image.  Re-check any claim mechanically:
+        python3 tools/nrth_string_va.py ../working/NRTH.dll 'North Cheat'
+        python3 tools/nrth_string_va.py ../working/NRTH.dll --check "0x100ea0d8=North Cheat"
+        python3 tools/nrth_string_va.py ../working/NRTH.dll --audit-docs --also "../working/NORTH LOADER.exe" <docs...>
+  * The regenerate paths above were fixed on 2026-10-11 (`../../working/` did not exist from that
+    working directory; the sample lives in `working/` at the repository root).

@@ -44,7 +44,7 @@
       {
         "value": "nvx.dll",
         "confidence": "High",
-        "note": "string at NRTH.dll VA 0x1000f5cb2; alternate/internal name"
+        "note": "string at NRTH.dll VA 0x100f6cb2; alternate/internal name"
       },
       {
         "value": "NVX Loader.pdb",
@@ -61,7 +61,7 @@
       {
         "value": "C:\\NVX",
         "confidence": "Medium",
-        "note": "PLAIN .rdata string at file offset 0x000afd18 (VA 0x1000afd18) — it is NOT one of the encrypted records. Corrected 2026-10-10 after the decode pass: the payload's encrypted config path is C:\\Overwack\\loader_config.cfg; C:\\NVX stays a folder-name lead only (exact use still Tentative)."
+        "note": "PLAIN .rdata string at file offset 0x000afd18 (VA 0x100b0d18) — it is NOT one of the encrypted records. Corrected 2026-10-10 after the decode pass: the payload's encrypted config path is C:\\Overwack\\loader_config.cfg; C:\\NVX stays a folder-name lead only (exact use still Tentative)."
       },
       {
         "value": "C:\\Overwack\\loader_config.cfg",
@@ -203,19 +203,19 @@
     {
       "value": "North Cheat",
       "module": "NRTH.dll",
-      "va": "0x1000e90d8",
+      "va": "0x100ea0d8",
       "confidence": "High"
     },
     {
       "value": "Cheat",
       "module": "NRTH.dll",
-      "va": "0x1000e94a0",
+      "va": "0x100ea4a0",
       "confidence": "High"
     },
     {
       "value": "Menu Toggle Key",
       "module": "NRTH.dll",
-      "va": "0x1000eb114",
+      "va": "0x100ec114",
       "confidence": "High"
     },
     {
@@ -350,8 +350,8 @@
     "build": "build_audit.sh (Zig 0.17.0 x86-windows-gnu)",
     "artifacts_in_this_clone": "bin/ (git-ignored)",
     "sha256": {
-      "NRTH_audit.dll": "46ce1da44d749a1b454578b2fce1cf6c6b0816cf38f7e4022fd3abc12f75e5e7",
-      "nrth_audit.exe": "47217128b54ced52c6fb901cd9545ae2303739971765c53185d983b02f5f3da4"
+      "NRTH_audit.dll": "68cc2d574c46c5deed4d07a5e66653532d2773cfab4cff5b3d547a8a1e9fb6c5",
+      "nrth_audit.exe": "63b6aa83b5554acde9cd7359d6554fa6386d09ca619d6425585d7a0011bc730a"
     },
     "format": "PE32 x86, ImageBase 0x10000000, DYNAMICBASE+NX_COMPAT, 23 exports (ordinals 1-23)",
     "capabilities": [
@@ -371,8 +371,26 @@
     "validated": "27 unit tests + 21 self-test checks on the host; audit returns \"0 with a match\" on both samples (no self-flagging); sweep returns exactly the same 8 .data candidates as the independent Python tool; self-diff returns no delta. One command for all of it: run_all_tests.sh (8 passed, 0 failed)",
     "docs": "detection/audit_tool.md",
     "verification_script": "recovered_or_reconstructed_project/run_all_tests.sh",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "artifacts_note": "the PE TimeDateStamp is wall-clock (zig's lld ignores --no-insert-timestamp/--timestamp), so these hashes identify THIS build only; compare size and the 23 exports across machines",
-    "source_files": "src/nrth_audit.{h,cpp,def}, src/nrth_audit_sigs.h, tools/nrth_audit_cli.cpp, tests/test_nrth_audit.cpp, run_all_tests.sh"
+    "source_files": "src/nrth_audit.{h,cpp,def}, src/nrth_audit_sigs.h, tools/nrth_audit_cli.cpp, tests/test_nrth_audit.cpp, run_all_tests.sh",
+    "size_bytes": {
+      "NRTH_audit.dll": 293376,
+      "nrth_audit.exe": 304640
+    },
+    "exports": 23,
+    "tests": {
+      "unit": "30/30 (tests/test_nrth_audit.cpp)",
+      "selftest": "21 checks via nrth_audit.exe selftest",
+      "suite": "bash recovered_or_reconstructed_project/run_all_tests.sh -> 8 passed, 0 failed, 0 skipped"
+    },
+    "diff_semantics": "added_footprint (alert, = function return value) requires the footprint to sit on the function the baseline located at the same RVA; target_lost and sus_unlocated are other-build artefacts and never alert. Rule added in 1.2.0 after diffing the sample against this repository's own reconstruction produced a false DETOUR_JMP32 row on a jump thunk.",
+    "csv_columns": "sig_id,target,clean_full,clean_patched,sus_full,sus_patched,added_footprint,target_lost,sus_unlocated,state,sus_rva,detail",
+    "doc_address_verification": {
+      "tool": "recovered_or_reconstructed_project/tools/nrth_string_va.py",
+      "command": "python3 tools/nrth_string_va.py ../working/NRTH.dll --audit-docs --also \"../working/NORTH LOADER.exe\" <docs>",
+      "log": "mta_blue_team_case/test_results/doc_address_audit.log",
+      "note": "23 string VAs in the case docs had been written as ImageBase + raw file offset; all corrected and re-verified 2026-10-11"
+    }
   }
 }

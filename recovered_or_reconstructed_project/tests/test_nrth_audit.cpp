@@ -259,6 +259,37 @@ int main(void)
               "diff: missing target is reported separately from tampering");
     }
 
+    /* ---- 4d. alignment rule: same *located function* is what makes a delta ----
+     * Measured on 2026-10-11: diffing the original NRTH.dll against this repository's own
+     * reconstruction reported a new DETOUR_JMP32 "footprint", because a signature matched a jump
+     * thunk that only exists in the other build.  Alerting on that would make the tool unusable for
+     * build comparison, so a footprint only counts when the baseline located that same RVA. */
+    {
+        FakeImage base, shifted;
+        uint8_t body[256];
+        uint32_t len = materialise(sig->pattern, body, sizeof(body), 0x11);
+        memcpy(base.text() + 0x40, body, len);          /* baseline locates it at +0x40 */
+        body[0] = 0xC3;
+        memcpy(shifted.text() + 0xC0, body, len);        /* other build: patched code elsewhere */
+        NrthAuditDiffRow d[64];
+        memset(d, 0, sizeof(d));
+        CHECK(NrthAuditDiff(base.b, IMG_SIZE, shifted.b, IMG_SIZE, d, 64) == 0 &&
+                  d[0].addedFootprint == 0 && d[0].susUnlocated == 1,
+              "diff: footprint at an unlocated RVA is informational, not an alert");
+        CHECK(d[0].susState == NRTH_PRO_KILL_RET && d[0].susRva == TXT_RVA + 0xC0,
+              "diff: the unlocated footprint is described, not hidden");
+        FakeImage base2, sus2;
+        len = materialise(sig->pattern, body, sizeof(body), 0x11);
+        memcpy(base2.text() + 0xC0, body, len);
+        body[0] = 0xC3;
+        memcpy(sus2.text() + 0xC0, body, len);
+        memset(d, 0, sizeof(d));
+        CHECK(NrthAuditDiff(base2.b, IMG_SIZE, sus2.b, IMG_SIZE, d, 64) == 1 &&
+                  d[0].addedFootprint == 1 && d[0].susUnlocated == 0 &&
+                  d[0].susRva == TXT_RVA + 0xC0,
+              "diff: same located function still alerts");
+    }
+
     /* ---- 5. obfuscated record of a *key-rotated variant* --------------------*/
     {
         FakeImage img;

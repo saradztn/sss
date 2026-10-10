@@ -98,3 +98,33 @@ $ ./build_audit.sh                               # module v1.1.0 (adds NrthAudit
                                      `nrth_audit.exe selftest` on a Windows host first
   reproducibility                    zig's lld keeps a wall-clock TimeDateStamp, so hashes move on
                                      every rebuild; compare size + the 23 exports, not hashes
+
+--------------------------------------------------------------------------------
+nrth_audit 1.2.0 — diff alignment rule + doc address audit — 2026-10-11
+--------------------------------------------------------------------------------
+$ ./build_audit.sh
+  [x] host unit tests                30/30 checks passed (4d added: diff alignment)
+  [x] module self-test               21 checks, "result: all checks passed"
+  [x] bin/NRTH_audit.dll             293,376 B  sha256 68cc2d574c46c5deed4d07a5e66653532d2773cfab4cff5b3d547a8a1e9fb6c5
+  [x] bin/nrth_audit.exe             304,640 B  sha256 63b6aa83b5554acde9cd7359d6554fa6386d09ca619d6425585d7a0011bc730a
+  [x] headers/exports                PE32 i386, ImageBase 0x10000000, DYNAMICBASE+NX, 23 exports @1..@23
+  [x] diff regression                diff(working/NRTH.dll, bin/NRTH.dll)  -> verdict 0, one row shown as
+                                     "unlocated footprint (other build)" at 0x0d9f91  (1.1.0 reported this
+                                     as an added DETOUR_JMP32 footprint: a jump thunk of a different build)
+                                     diff(sample, sample)                  -> verdict 0, "no differing located function"
+  [x] audit / sweep                  audit(sample) -> 0 with a match; sweep --min 24 -> the same 8 .data candidates
+  why: added_footprint now requires the footprint to sit on the function the baseline located at the same
+       RVA. Alerting on any patched hit in the compared image makes build comparison unusable.
+$ python3 tools/nrth_string_va.py ../working/NRTH.dll --audit-docs --also "../working/NORTH LOADER.exe" <case docs>
+  [x] 188 claims scanned, 12 exact VA matches, 41 labelled file offsets, 65 code/data-site (info), 0 BAD
+  fixed beforehand: 23 addresses in behavior_timeline.md / report.md / indicators.json / telemetry.md /
+  recovered_strings.txt / src comments had been written as ImageBase + raw file offset (0x1000 short of the
+  true VA here, several with one extra zero digit, e.g. North Cheat 0x1000e90d8 -> 0x100ea0d8)
+  also: recovered_strings.txt regenerate commands pointed at ../../working/ (does not exist) -> ../working/
+  log: mta_blue_team_case/test_results/doc_address_audit.log
+$ bash fetch_vendor.sh && bash build.sh          # after the comment/address corrections in src/*.cpp
+  [x] exit 0, 46 objects; bin/NRTH.dll 1,692,160 B sha256 643b1446c29f757bea360f40458061149fd9856caab769f2d7b940c6a3976c59
+      bin/NORTH_LOADER.exe 280,064 B sha256 7e46525c5245bd7152c011b331bc0cfae48d10e2030ec4d12d4c08eb37665ad3
+      export contract unchanged: tools/pe_summary.py -> NVXHookProc @1 rva 0x001000, PE32 i386
+      size identical to the 2026-10-10 entry, hash differs only because the DLL carries a build id
+      (the loader exe came out byte-identical, so the instability is in the DLL link step, not in our objects)

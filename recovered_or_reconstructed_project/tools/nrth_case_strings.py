@@ -175,7 +175,7 @@ def main():
     w("=" * 78)
     w("SECTION E — two run-time identifiers worth knowing about, verified outside the JSON")
     w("=" * 78)
-    w("  @custom       PLAIN string at .rdata file offset 0x000e9890 (VA 0x100e9890); it is")
+    w("  @custom       PLAIN string at .rdata file offset 0x000e9890 (VA 0x100ea890); it is")
     w("                already visible in strings_catalog.txt line 6091. Role (Lua chunk name")
     w("                for the menu's Execute path) is Strongly inferred from 0x10004550.")
     w("  @auto_inject  NOT present as a plain string. It is built from inline immediates on")

@@ -24,7 +24,8 @@ actually needs.
 | `.../tools/pe_summary.py` | dependency-free PE header/export verifier used by the build |
 | `.../tools/gen_nrth_audit_sigs_h.py` | regenerates the table from `working/sigs.json` |
 | `.../tests/test_nrth_audit.cpp` | 27 host unit tests |
-| `.../run_all_tests.sh` | one command that re-runs every test claim in this case (8 groups incl. YARA + the sample differentials) |
+| `.../run_all_tests.sh` | one command that re-runs every test claim in this case (8 groups incl. YARA, the sample differentials and the cross-build diff control) |
+| `.../tools/nrth_string_va.py` | verifies any `"<string>" ... 0xADDR` claim in this folder's docs against the packed image (`--find`, `--check`, `--audit-docs`) |
 | `.../build_audit.sh` | host tests first, then the PE32 x86 cross build |
 
 Generated artefacts land in `recovered_or_reconstructed_project/bin/`
@@ -47,13 +48,13 @@ in one sitting.
 Last verified run (2026-10-10, Linux host, g++ 12.2 + ziglang 0.17.0):
 
 ```
-[*] 27/27 checks passed                       # unit tests
+[*] 30/30 checks passed                       # unit tests
 result: all checks passed                     # NrthAuditSelfTest: 21 checks, all sample-derived
 $ ./run_all_tests.sh
 === summary: 8 passed, 0 failed, 0 skipped        # incl. the YARA check and both sample differentials
 [+] Built:
-  bin/NRTH_audit.dll   293,888 B  sha256 46ce1da44d749a1b454578b2fce1cf6c6b0816cf38f7e4022fd3abc12f75e5e7
-  bin/nrth_audit.exe   304,640 B  sha256 47217128b54ced52c6fb901cd9545ae2303739971765c53185d983b02f5f3da4
+  bin/NRTH_audit.dll   293,376 B  sha256 68cc2d574c46c5deed4d07a5e66653532d2773cfab4cff5b3d547a8a1e9fb6c5
+  bin/nrth_audit.exe   304,640 B  sha256 63b6aa83b5554acde9cd7359d6554fa6386d09ca619d6425585d7a0011bc730a
      (reproducibility: zig's lld keeps a wall-clock PE TimeDateStamp, so rebuilding the same
       sources yields a different DLL hash — compare size/exports, and re-read these from a log)
   machine 0x014c IMAGE_FILE_MACHINE_I386, magic 0x10b (PE32), image base 0x10000000,
@@ -78,6 +79,35 @@ nrth_audit.exe selftest
 Exit codes: `0` clean · `1` bad argument / self-test failure · `2` input unreadable or not a
 PE image · `3` at least one tamper footprint found. `3` is what an EDR custom check keys on;
 `--csv` gives one row per signature for a collector.
+
+### The A/B diff: what counts as tampering (1.2.0)
+
+`diff <baseline> <compared>` audits both images with the same 20-row catalogue and then compares
+**per signature**, not per byte. The rule that makes it usable:
+
+> A footprint counts only when the compared image carries it **on the function the baseline located
+> at that same RVA**. Everything else is `sus_unlocated` — shown, never alerted on.
+
+That rule came from a measurement against our own repository: diffing the original `NRTH.dll`
+(baseline) against this project's reconstruction (a different build of a similar module) produced
+`[18] 0/0 -> 0/1 DETOUR_JMP32 @0x0d9f91` — a jump thunk in *our* binary that happens to match a
+`client.dll` pattern. Alerting on that would flood any build comparison, so 1.2.0's looser rule was
+replaced; the same run now reports `verdict: 0` plus one informational row, and `run_all_tests.sh`
+group 5 keeps it as a regression test.
+
+Row semantics (`--csv` columns with the same names):
+
+| field | meaning | act on it? |
+|---|---|---|
+| `clean_full/clean_patched` | hits in the known-good baseline (intact / carrying a footprint) | context |
+| `sus_full/sus_patched` | hits in the loaded or dumped copy | context |
+| `added_footprint` | baseline located the function intact, compared copy has a footprint there | **yes — this is the alert**, and it is the function's return value |
+| `target_lost` | baseline found the pattern, compared copy did not | no: usually another MTA build ⇒ re-baseline |
+| `sus_unlocated` | a footprint at an RVA the baseline never located | no: another build / unrelated code |
+
+Return value = number of `added_footprint` rows (CLI exit `3` when non-zero). Because alignment is
+by located RVA, the two files do not need the same image base — but a meaningful verdict still needs
+the same build; `target_lost` / `sus_unlocated` are what differing builds turn into, by design.
 
 Run it against a **dump you are allowed to read** when you want live evidence: a MinHook
 detour and a `0xC3` kill are written into memory, not into the file on disk, so an on-disk

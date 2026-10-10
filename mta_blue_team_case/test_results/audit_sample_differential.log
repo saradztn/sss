@@ -1,6 +1,7 @@
-# audit differential against the original samples — 2026-10-10 (module v1.1.0)
+# audit differential against the original samples + build controls — 2026-10-11 (module v1.2.0)
+
 $ ./bin/host/nrth_audit audit working/NRTH.dll
-[*] nrth_audit 1.1.0
+[*] nrth_audit 1.2.0
 [*] target file : ../working/NRTH.dll
 [*] signatures  : 20 checked, 0 with a match
     columns: full = complete pattern found (target present, prologue intact)
@@ -16,7 +17,7 @@ $ ./bin/host/nrth_audit audit "working/NORTH LOADER.exe"
 [*] signatures  : 20 checked, 0 with a match
 [*] verdict: 0 signature(s) found with a replaced prologue
 
-$ ./bin/host/nrth_audit sweep working/NRTH.dll --min 24 --vas   (C++ engine)
+$ ./bin/host/nrth_audit sweep working/NRTH.dll --min 24 --vas
 [*] ../working/NRTH.dll: 8 hidden pattern candidate(s) (>= 24 chars)
   candidate rva 0x0013b750
   candidate rva 0x0013b8b8
@@ -29,28 +30,42 @@ $ ./bin/host/nrth_audit sweep working/NRTH.dll --min 24 --vas   (C++ engine)
 [*] note: candidates from a raw sweep are unverified until they match a
         decryptor call site (tools/nrth_strings_recover.py does that).
 
-# independent Python reference (tools/nrth_sig_export.py) found exactly these 8 .data records:
-    8 entries: 0x1013b750 0x1013b8b8 0x1013b9d0 0x1013baa0 0x1013bb54 0x1013bb78 0x1013bc48 0x1013bd10
-
-$ ./bin/host/nrth_audit diff working/NRTH.dll working/NRTH.dll   (A/B negative control)
-[*] nrth_audit 1.1.0 — A/B module comparison
-[*] baseline (known good) : ../working/NRTH.dll
-[*] compared image        : ../working/NRTH.dll
+$ ./bin/host/nrth_audit diff working/NRTH.dll working/NRTH.dll        (self-diff negative control)
+     (no differing located function)
 [*] verdict: 0 located function(s) carry a footprint the baseline does not have
 exit=0
 
-$ ./bin/host/nrth_audit decode working/NRTH.dll --rva 0x13bd10 --len 156   (contiguous .data record)
+$ ./bin/host/nrth_audit diff working/NRTH.dll bin/NRTH.dll   (A/B across DIFFERENT builds - 1.2.0 regression case)
+[*] nrth_audit 1.2.0 — A/B module comparison
+[*] baseline (known good) : ../working/NRTH.dll
+[*] compared image        : bin/NRTH.dll
+[*] rows are aligned by the located function's RVA, so the two files do not need the
+    same image base - but they should be the same build: a footprint at an RVA the
+    baseline never located is reported as 'unlocated' information, never as tampering.
+
+id   clean f/p      loaded f/p     change                 footprint @rva / target
+[18]    0/0           0/1        unlocated footprint (other build) 0x0d9f91 (detail 0xc4909f9b)
+     module=client.dll pattern=55 8B EC 8B 45 ? 85 C0 75 ? 8B 55
+
+[*] verdict: 0 located function(s) carry a footprint the baseline does not have
+[*] note: 1 pattern(s) matched a function the baseline does not locate at all — different build or unrelated code, NOT tampering (alert on the verdict line only).
+exit=0  <- 0 although a footprint is visible: it is not on a function the baseline locates
+
+$ ./bin/host/nrth_audit decode working/NRTH.dll --rva 0x13bd10 --len 156
 [*] ../working/NRTH.dll  imagebase=0x10000000  rva=0x13bd10  len=156
 [*] raw            : cf c8 dc c5 bc df 44 42 22 3b 37 25 43 44 28 36 2a 33 3f 2d 4b 3b 30 2e 32 2b 27 35 55 23 38 26 
 [+] decoded (key 0x06): 53 8B DC 83 EC ? 83 E4 ? 83 C4 ? 55 8B 6B ? 89 6C 24 ? 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 53 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 
 
-$ ./bin/host/nrth_audit decode working/NRTH.dll --rva 0xf2060 --len 16   (first 16-byte block of a hook signature record)
-[*] ../working/NRTH.dll  imagebase=0x10000000  rva=0xf2060  len=16
-[*] raw            : e6 e1 f5 ee 95 f8 9c 99 fb e4 9f fe eb d5 c1 dd 
-[+] decoded (key 0x2D): 55 8B EC 8B 45 ?
+$ python3 tools/nrth_string_va.py ../working/NRTH.dll 'North Cheat' 'C:\NVX' '@custom'
+'North Cheat'                      off=0xe90d8   rva=0xea0d8 va=0x100ea0d8 ..rdata
+'C:\\NVX'                          off=0xafd18   rva=0xb0d18 va=0x100b0d18 ..rdata
+'@custom'                          off=0xe9890   rva=0xea890 va=0x100ea890 ..rdata
 
-[*] interpretation: same candidate set from two independent implementations (Python/capstone vs C++/PE reader).
-    audit reports 0 matches on the cheat itself because its patterns target client.dll/
-    netc.dll, not NRTH.dll — this run is the false-positive control, not a detection result.
-    The positive control for the tamper path is the unit-test group (synthetic images with a
-    C3 / E9 / FF 25 footprint at a located function); ASan+UBSan over both samples: clean.
+[*] interpretation:
+    - audit on the cheat module reports 0 footprints by construction (its patterns target
+      client.dll/netc.dll); the positive control for the tamper path is the unit-test group
+      (synthetic images with C3 / E9 / FF 25 footprints at located functions): 30/30.
+    - sweep reproduces exactly the 8 .data records found independently by tools/nrth_sig_export.py.
+    - the cross-build diff case is what 1.2.0 was written for: a footprint in the compared
+      image that the baseline never located is reported informationally and does not alert.
+    - ASan+UBSan over both samples: no findings.
