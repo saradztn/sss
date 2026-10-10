@@ -12,3 +12,6 @@ e01d4aef498327b8288faf8ad0084f44b59962fd0eef906dc16d104b40909fb5  recovered_or_r
 --- R2 reconstruction build artifacts (built 2026-10-10 via build.sh; timestamps in PE header vary per build) ---
 75a3dc1798b0231b9a0178027f8d17b44c6bef4a5dfc854077ac7748fdd2b3dd  recovered_or_reconstructed_project/bin/NORTH_LOADER.exe
 452c58488dabb85705e5e189d9873c208174a798ae18fe6cdc6e121c8d6e383f  recovered_or_reconstructed_project/bin/NRTH.dll
+--- R2 reconstruction build artifacts (rev2 with full UI, 2026-10-10) ---
+27da3e2f5196a988eb20e20edd0c133698ef142bfd3c673e18e9a2b832ecd11c  recovered_or_reconstructed_project/bin/NORTH_LOADER.exe
+72727b96026ef54804a90a1da493756ac42e0a607b37e9f07f0e18fb2e61a9ea  recovered_or_reconstructed_project/bin/NRTH.dll

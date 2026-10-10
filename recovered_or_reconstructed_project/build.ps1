@@ -24,7 +24,7 @@ cl.exe /nologo /O2 /W3 /MT /EHsc /c /Ivendor\imgui /Ivendor\imgui\backends vendo
 
 Write-Host "Building NRTH.dll (x86)..." -ForegroundColor Cyan
 cl.exe /nologo /O2 /W3 /MT /EHsc /LD /Isrc /Ivendor\minhook\include /Ivendor\imgui /Ivendor\imgui\backends `
-    src\nrth_hook.cpp bin\obj\mh_*.obj bin\obj\imgui*.obj `
+    src\nrth_hook.cpp src\nrth_ui.cpp bin\obj\mh_*.obj bin\obj\imgui*.obj `
     /link /DEF:src\nrth_dll.def /OUT:bin\NRTH.dll user32.lib gdi32.lib advapi32.lib dwmapi.lib imm32.lib
 
 Write-Host "Building NORTH_LOADER.exe (x86)..." -ForegroundColor Cyan

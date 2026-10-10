@@ -47,6 +47,7 @@
 #include "imgui_impl_dx9.h"
 #include "imgui_impl_win32.h"
 #include "nrth_hook.h"
+#include "nrth_ui.h"
 
 // ---------------------------------------------------------------------------
 // Minimal NT types (avoid winternl.h dependencies)
@@ -324,7 +325,7 @@ static void EnsureOverlayInitialized(IDirect3DDevice9 *pDevice)
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGui::StyleColorsDark();
+    NrthUI_ApplyTheme();      // purple theme matching the runtime screenshot
     ImGui_ImplWin32_Init(g_hGameWnd);
     ImGui_ImplDX9_Init(pDevice);
 
@@ -336,35 +337,11 @@ static void EnsureOverlayInitialized(IDirect3DDevice9 *pDevice)
 
 // Menu shell faithful to observed strings; feature slots are STUBS on purpose
 // (original feature logic at 0x10005b80 / 0x10020640 is class U — not invented).
+// The full UI reconstruction lives in nrth_ui.cpp (tabs/labels match the real
+// menu evidence: runtime screenshot + .rdata strings).
 static void BuildOverlayMenu(void)
 {
-    // Evidence: ImGui main menu bar IDs '##MainMenuBar', item names 'Menu','Cheat',
-    // content window '##nvx_content'.
-    if (ImGui::BeginMainMenuBar()) {
-        if (ImGui::BeginMenu("Menu")) {
-            ImGui::MenuItem("About", NULL, false);
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Cheat")) {
-            ImGui::MenuItem("(feature slots below)", NULL, false);
-            ImGui::EndMenu();
-        }
-        ImGui::EndMainMenuBar();
-    }
-
-    ImGui::SetNextWindowSize(ImVec2(360, 220), ImGuiCond_FirstUseEver);
-    if (ImGui::Begin("North Cheat")) { // self-title string [evidence VA 0x1000e90d8]
-        ImGui::Text("NRTH overlay menu  (R2 reconstruction)");
-        ImGui::Text("Menu Toggle Key: Insert");          // [evidence VA 0x1000eb114]
-        ImGui::Separator();
-        static bool s_slot1 = false, s_slot2 = false, s_slot3 = false;
-        ImGui::Checkbox("Feature slot 1  (U - unmapped in RE)", &s_slot1);
-        ImGui::Checkbox("Feature slot 2  (U - unmapped in RE)", &s_slot2);
-        ImGui::Checkbox("Feature slot 3  (U - unmapped in RE)", &s_slot3);
-        ImGui::TextDisabled("Original feature logic (0x10005b80 / 0x10020640) not");
-        ImGui::TextDisabled("fully mapped; stubs shown instead of invented features.");
-    }
-    ImGui::End();
+    NrthUI_Build();
 }
 
 // ===========================================================================

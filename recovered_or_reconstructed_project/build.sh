@@ -35,13 +35,15 @@ done
 $ZIG c++ $TARGET -O2 -Ivendor/imgui -Ivendor/imgui/backends -c vendor/imgui/backends/imgui_impl_dx9.cpp -o "$OBJ/imgui_impl_dx9.o"
 $ZIG c++ $TARGET -O2 -Ivendor/imgui -Ivendor/imgui/backends -c vendor/imgui/backends/imgui_impl_win32.cpp -o "$OBJ/imgui_impl_win32.o"
 
-echo "[*] Compiling NRTH.dll reconstruction (src/nrth_hook.cpp)..."
+echo "[*] Compiling NRTH.dll reconstruction (src/nrth_hook.cpp + src/nrth_ui.cpp)..."
 $ZIG c++ $TARGET -O2 -Isrc -Ivendor/minhook/include -Ivendor/imgui -Ivendor/imgui/backends \
   -c src/nrth_hook.cpp -o "$OBJ/nrth_hook.o"
+$ZIG c++ $TARGET -O2 -Isrc -Ivendor/minhook/include -Ivendor/imgui -Ivendor/imgui/backends \
+  -c src/nrth_ui.cpp -o "$OBJ/nrth_ui.o"
 
 echo "[*] Linking build/NRTH.dll (export: NVXHookProc @1)..."
 $ZIG c++ $TARGET -shared -o "$OUT/NRTH.dll" \
-  "$OBJ/nrth_hook.o" \
+  "$OBJ/nrth_hook.o" "$OBJ/nrth_ui.o" \
   "$OBJ/mh_buffer.o" "$OBJ/mh_hook.o" "$OBJ/mh_trampoline.o" "$OBJ/mh_hde32.o" "$OBJ/mh_hde64.o" \
   "$OBJ/imgui.o" "$OBJ/imgui_draw.o" "$OBJ/imgui_tables.o" "$OBJ/imgui_widgets.o" \
   "$OBJ/imgui_impl_dx9.o" "$OBJ/imgui_impl_win32.o" \
