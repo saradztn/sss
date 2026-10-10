@@ -21,6 +21,9 @@
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "psapi.lib")
 
+// Note: MSVC CRT and mingw-w64's sec_api both provide strcpy_s/strcat_s natively;
+// call sites below use them directly (portable across both toolchains).
+
 // Enables SeDebugPrivilege in the current process token
 bool EnableDebugPrivilege() {
     HANDLE hToken = NULL;

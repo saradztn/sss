@@ -1,0 +1,39 @@
+[*] Cross-build + verification log (2026-10-10)
+[*] Scope: authorized MTA:SA blue-team private-server validation only.
+
+TOOLCHAIN
+  ziglang 0.17.0 (PyPI) -> zig c++ / zig cc -target x86-windows-gnu
+  (bundled MinGW-w64 sysroot; no network toolchain download required)
+
+VENDORED LIBS (fetch_vendor.sh)
+  vendor/minhook : github.com/TsudaKageyu/minhook  (sample embeds MinHook v1.3.3)
+  vendor/imgui   : github.com/ocornut/imgui tag v1.92.9
+                   (sample embeds "Dear ImGui 1.92.9 WIP (19283)")
+
+BUILD COMMAND
+  bash recovered_or_reconstructed_project/build.sh
+
+ARTIFACTS (final)
+  bin/NORTH_LOADER.exe  280064 bytes  PE32 x86 console (subsystem 3)
+    sha256 75a3dc1798b0231b9a0178027f8d17b44c6bef4a5dfc854077ac7748fdd2b3dd
+  bin/NRTH.dll         1284096 bytes  PE32 x86 DLL
+    sha256 452c58488dabb85705e5e189d9873c208174a798ae18fe6cdc6e121c8d6e383f
+
+EXPORT CONTRACT CHECK (pefile)
+  [+] NRTH.dll exports exactly: ordinal 1 -> "NVXHookProc" (undecorated,
+      matches loader GetProcAddress("NVXHookProc"); sample contract ordinal 1).
+  [+] Machine 0x014c (x86) for both artifacts (matches sample architecture).
+
+LOADER IMPORT SMOKE CHECK (pefile)
+  [+] OpenProcess, VirtualAllocEx, WriteProcessMemory, CreateRemoteThread
+  [+] SetWindowsHookExA, PostThreadMessageA, UnhookWindowsHookEx
+  [+] AdjustTokenPrivileges, K32EnumProcessModules, CreateToolhelp32Snapshot
+
+UNIT TESTS (Linux g++ 12.2.0)
+  [+] test_cli_parser        4/4 cases passed
+  [+] test_pe_export_parser  differential vs ORIGINAL sample working/NRTH.dll:
+       located 'NVXHookProc' at RVA 0x0000B9E0 (expected) + negative test passed
+
+NOT DONE HERE (documented, not implied)
+  - Windows runtime execution of the built EXE/DLL (analysis host is Linux).
+  - Private-server differential testing (see private_server_tests/results.md).

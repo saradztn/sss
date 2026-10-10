@@ -37,9 +37,10 @@ Classification by component:
 - **Exact original source recovered: NO.** No source files, PDB-with-source, or source archives were present in `NORTH.zip`. (A PDB *path* string exists in the loader — `C:\Users\user\Desktop\src CHEATS\over\Loader\Debug\NVX Loader.pdb` — but the PDB file itself is absent; per policy a PDB path is not source recovery.)
 - **Result classes:**
   - `D2` — native decompilation/pseudocode: disassembly-based pseudocode of both samples (Capstone), documented in `analysis/` and referenced by `function_map.csv`.
-  - `R2` — behavioral reconstruction: newly authored C++ in `recovered_or_reconstructed_project/` reimplementing the observed loader contract (CLI parsing, PE export parsing, documented injection sequence) for defensive study.
+  - `R2` — behavioral reconstruction: newly authored C++ in `recovered_or_reconstructed_project/` reimplementing the observed loader contract (CLI parsing, PE export parsing, documented injection sequence) and the payload chain (NVXHookProc export contract, DllMain pin+thread, MinHook LdrLoadDll watch on `client.dll`/`netc.dll`, D3D9 Present/Reset hooks, Dear ImGui v1.92.9 overlay with INSERT toggle) for defensive/private-server validation. Menu **feature slots are labeled stubs** — the original's feature logic (0x10005b80 / 0x10020640) is class U and was deliberately not invented.
+- **Build status: BUILT** — cross-compiled to Windows PE32 x86 artifacts with Zig 0.17.0's MinGW sysroot (`build.sh`): `bin/NORTH_LOADER.exe` (SHA-256 `75a3dc17...fdd2b3dd`) and `bin/NRTH.dll` (SHA-256 `452c5848...d6e383f`), export contract verified (`NVXHookProc` @ ordinal 1). Full log: `test_results/build_cross.log`. Windows MSVC path (`build.ps1`) documented but not executed here.
 - **Original samples were not modified** (hashes re-verified before/after: `hashes.sha256`).
-- **No capability was added** beyond the observed sample (no new stealth, persistence, or evasion). Where the original performs evasion-relevant actions (module pinning, string encryption, ntdll hook), they are *documented in analysis*; the reconstruction keeps them inert/documented rather than enhanced.
+- **No capability was added** beyond the observed sample (no new stealth, persistence, or evasion, and no invented cheat features). Where the original performs evasion-relevant actions (module pinning is kept — it is evidenced; string encryption is documented but **not** re-implemented).
 
 ## 3. File identification (hashes & architecture)
 
@@ -76,6 +77,21 @@ No Ghidra/IDA/Binary Ninja was available in this environment (network-restricted
 ## 6. Build & test commands and real results
 
 ```
+# Cross-build (executed 2026-10-10, Linux host, Zig 0.17.0 MinGW sysroot -> PE32 x86):
+$ bash recovered_or_reconstructed_project/fetch_vendor.sh   # pinned MinHook + ImGui v1.92.9
+$ bash recovered_or_reconstructed_project/build.sh
+[+] Build complete:
+-rwxr-xr-x 1 user user  280064  bin/NORTH_LOADER.exe
+-rwxr-xr-x 1 user user 1284096  bin/NRTH.dll
+75a3dc1798b0231b9a0178027f8d17b44c6bef4a5dfc854077ac7748fdd2b3dd  bin/NORTH_LOADER.exe
+452c58488dabb85705e5e189d9873c208174a798ae18fe6cdc6e121c8d6e383f  bin/NRTH.dll
+
+# Export/PE verification (pefile):
+[+] NRTH.dll: PE32 x86 DLL, exports exactly ordinal 1 -> "NVXHookProc" (contract met)
+[+] NORTH_LOADER.exe: PE32 x86 console; imports OpenProcess/VirtualAllocEx/
+    WriteProcessMemory/CreateRemoteThread/SetWindowsHookExA/PostThreadMessageA/
+    UnhookWindowsHookEx/AdjustTokenPrivileges/K32EnumProcessModules verified
+
 $ g++ -std=c++17 -Wall -Wextra -o tests/test_cli_parser tests/test_cli_parser.cpp && ./tests/test_cli_parser
 [+] All CLI parsing tests passed successfully!          # 4/4 cases (log: test_results/test_cli_parser.log)
 

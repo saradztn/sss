@@ -6,3 +6,4 @@ evidence/
 *.dll
 !NORTH.zip
 bin/
+vendor/
