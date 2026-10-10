@@ -1,0 +1,20 @@
+f7130e5cb949a6049d5eab7042c1fa781d485abd392f2e325f493691ad369705  NORTH.zip
+837650b9f1ca52d2c91c966ba7f16721986e754f3efdfb42a08536610067c5fb  evidence/NORTH LOADER.exe
+947b81be2d0f84cc5f51742ef8e9dbf6183597ed98afaf1377bfc4352e007861  evidence/NRTH.dll
+837650b9f1ca52d2c91c966ba7f16721986e754f3efdfb42a08536610067c5fb  working/NORTH LOADER.exe
+947b81be2d0f84cc5f51742ef8e9dbf6183597ed98afaf1377bfc4352e007861  working/NRTH.dll
+--- derived / reconstruction artifacts ---
+d63d04c265877b059ea4c8004957ec773f1a5e59b48277079e7fa667cae12204  recovered_or_reconstructed_project/src/north_loader.cpp
+92417b2f70120cc6f8f0b019b513a38355771ddd35061d6a2ccef7313647966c  recovered_or_reconstructed_project/src/nrth_hook.h
+ec480c36de489f5b5512c19dbd7e733b1c135a3491cc09bd6a01c98c0c142b05  recovered_or_reconstructed_project/src/nrth_hook.cpp
+e01d4aef498327b8288faf8ad0084f44b59962fd0eef906dc16d104b40909fb5  recovered_or_reconstructed_project/tests/test_cli_parser.cpp
+5e7d614bdeb99d5bf14f98d62e61f4d82c573b216bd4d9d1f95749e2a8fdc646  recovered_or_reconstructed_project/tests/test_pe_export_parser.cpp
+--- R2 reconstruction build artifacts (built 2026-10-10 via build.sh; timestamps in PE header vary per build) ---
+75a3dc1798b0231b9a0178027f8d17b44c6bef4a5dfc854077ac7748fdd2b3dd  recovered_or_reconstructed_project/bin/NORTH_LOADER.exe
+452c58488dabb85705e5e189d9873c208174a798ae18fe6cdc6e121c8d6e383f  recovered_or_reconstructed_project/bin/NRTH.dll
+--- R2 reconstruction build artifacts (rev2 with full UI, 2026-10-10) ---
+27da3e2f5196a988eb20e20edd0c133698ef142bfd3c673e18e9a2b832ecd11c  recovered_or_reconstructed_project/bin/NORTH_LOADER.exe
+72727b96026ef54804a90a1da493756ac42e0a607b37e9f07f0e18fb2e61a9ea  recovered_or_reconstructed_project/bin/NRTH.dll
+--- R2 build rev3 (working Lua sandbox + input bridge, 2026-10-10) ---
+27da3e2f5196a988eb20e20edd0c133698ef142bfd3c673e18e9a2b832ecd11c  recovered_or_reconstructed_project/bin/NORTH_LOADER.exe
+2a9e38429a679b214c4fc56325638ba99d59e51cd83a65e7bc9d59f08d04f31f  recovered_or_reconstructed_project/bin/NRTH.dll

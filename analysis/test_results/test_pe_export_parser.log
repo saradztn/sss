@@ -1,0 +1,4 @@
+[*] Running test_pe_export_parser against working/NRTH.dll...
+  [+] Located export 'NVXHookProc' at RVA: 0x0000B9E0 (Expected: 0x0000B9E0)
+  [+] Negative test passed: Non-existent export safely returns false.
+[+] All PE export parser tests passed successfully!

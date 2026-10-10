@@ -1,0 +1,26 @@
+
+=== Verifying mechanism claims against: ../../working/NRTH.dll
+    ImageBase=0x10000000  sections=['.text', '.rdata', '.data', '.rsrc', '.reloc']
+
+  [PASS] A1 decrypt 'client.dll' (p-0x2D, mov-immediates at 0x5c56)
+         plaintext=client.dll  ct-dwords=0xb3bcb8b0 0xbef7acb9 0x0100b0b7
+  [PASS] A2 decrypt '@auto_inject' (p-0x2D, mov-immediates at 0x44df)
+         plaintext=@auto_inject
+  [PASS] A3 decrypt signature #1 == documented prologue
+         decrypted=55 8B EC 8B 45 ? A3 ? ? ? ? 8B 45 ? A3 ? ? ? ? 8B 45...
+  [PASS] A4 decrypt signature #2 == documented prologue
+         decrypted=55 8B EC 83 EC ? A1 ? ? ? ? 33 C5 89 45 ? 8B 45 ? 53 8B 5D ?...
+  [PASS] A5 decrypt 'netc.dll' (p-0x20, mov-immediates at 0x2069c)
+         plaintext=netc.dll  ct-dwords=0x8096848e 0x8b8a81ca
+  [PASS] B1 Execute call site: 'call ecx' at VA 0x10025c61 + push '@custom'
+         bytes at 0x25c61=ffd1  push imm=0x100ea890 (expected 0x100ea890)
+  [PASS] B2 netc.dll kill-switch writes 0xC3 (RET) at VA 0x100206e5
+         bytes=c645eac3
+  [PASS] B3 detour addresses 0x10002ff0 / 0x100047b0 present at documented sites
+         site1=0x10002ff0  site2=0x100047b0
+  [PASS] B4 both sites call MinHook (0x10036020)
+         call targets: ['0x10036020', '0x10036020']
+  [PASS] B5 feature flag system (Give HP label at 0x2a17a)
+         mov ecx imm=0x100e9fe8 (expected 0x100e9fe8)
+
+=== RESULT: 10/10 claims verified  — ALL DOCUMENTED CLAIMS MATCH THE REAL SAMPLE

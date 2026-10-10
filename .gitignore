@@ -1,0 +1,9 @@
+working/
+evidence/
+*.o
+*.obj
+*.exe
+*.dll
+!NORTH.zip
+bin/
+vendor/

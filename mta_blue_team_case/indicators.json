@@ -1,0 +1,118 @@
+{
+  "case": "mta_blue_team_case",
+  "sample_family": "NORTH / NRTH / NVX (MTA:SA loader + overlay menu)",
+  "analysis_date": "2026-10-10",
+  "confidence_scale": ["High", "Medium", "Low"],
+  "notes": "Indicators are evidence-backed from static analysis. No network indicators were observed in the samples. Strings inside NRTH.dll are XOR/SSE-encrypted at rest and only some plaintext copies exist in .rdata; file-level string matching on the DLL may miss variants that change the encryption key.",
+
+  "files": [
+    {
+      "path_in_archive": "NORTH LOADER.exe",
+      "sha256": "837650b9f1ca52d2c91c966ba7f16721986e754f3efdfb42a08536610067c5fb",
+      "size_bytes": 51200,
+      "type": "PE32 x86 console executable (loader/injector)",
+      "role": "process finder + DLL injector (CreateRemoteThread, SetWindowsHookEx fallback)",
+      "confidence": "High"
+    },
+    {
+      "path_in_archive": "NRTH.dll",
+      "sha256": "947b81be2d0f84cc5f51742ef8e9dbf6183597ed98afaf1377bfc4352e007861",
+      "size_bytes": 1318400,
+      "type": "PE32 x86 DLL (payload)",
+      "role": "in-game overlay (Dear ImGui on D3D9 Present/Reset) with MTA:SA module-load trigger",
+      "confidence": "High"
+    },
+    {
+      "path_in_archive": "NORTH.zip",
+      "sha256": "f7130e5cb949a6049d5eab7042c1fa781d485abd392f2e325f493691ad369705",
+      "size_bytes": 772837,
+      "type": "ZIP archive",
+      "role": "delivery container",
+      "confidence": "High"
+    }
+  ],
+
+  "host_artifacts": {
+    "module_names": [
+      {"value": "NRTH.dll", "confidence": "High", "note": "default payload name next to loader"},
+      {"value": "nvx.dll", "confidence": "High", "note": "string at NRTH.dll VA 0x1000f5cb2; alternate/internal name"},
+      {"value": "NVX Loader.pdb", "confidence": "High", "note": "PDB filename embedded in loader"}
+    ],
+    "filesystem_paths": [
+      {"value": "C:\\Users\\user\\Desktop\\src CHEATS\\over\\Loader\\Debug\\NVX Loader.pdb", "confidence": "High", "note": "build-machine PDB path embedded in NORTH LOADER.exe (.rdata VA 0x419aa4); leaks developer path containing 'src CHEATS'"},
+      {"value": "C:\\NVX", "confidence": "High", "note": "decrypted string in NRTH.dll (VA 0x1000afd18); directory name to watch on disk (exact use Tentative)"}
+    ],
+    "exported_symbols": [
+      {"value": "NVXHookProc", "module": "NRTH.dll", "ordinal": 1, "rva": "0x0000B9E0", "confidence": "High", "note": "required SetWindowsHookEx hook-procedure export; hook-style injection signature"}
+    ],
+    "process_names": [
+      {"value": "gta_sa.exe", "confidence": "High", "note": "default injection target (loader string VA 0x419964)"},
+      {"value": "client.dll / netc.dll", "confidence": "High", "note": "MTA:SA modules whose load event arms the payload (decrypted strings)"}
+    ]
+  },
+
+  "behavioral_signatures": [
+    {
+      "id": "BHVR-1",
+      "name": "SeDebugPrivilege acquisition",
+      "apis": ["OpenProcessToken", "LookupPrivilegeValueA", "AdjustTokenPrivileges"],
+      "string": "SeDebugPrivilege",
+      "confidence": "High",
+      "false_positive_notes": "Legitimate admin/debug tools also do this; only suspicious in combination with injection APIs."
+    },
+    {
+      "id": "BHVR-2",
+      "name": "Classic cross-process DLL injection chain",
+      "apis": ["OpenProcess", "VirtualAllocEx", "WriteProcessMemory", "CreateRemoteThread", "LoadLibraryA"],
+      "confidence": "High",
+      "false_positive_notes": "Standard software packers/updaters and accessibility tools can look similar; correlate with target process = game client and payload export name."
+    },
+    {
+      "id": "BHVR-3",
+      "name": "Hook-style DLL injection fallback (bypass of OpenProcess denial)",
+      "apis": ["SetWindowsHookExA", "PostThreadMessageA", "UnhookWindowsHookEx", "K32EnumProcessModules"],
+      "string": "NVXHookProc",
+      "confidence": "High",
+      "false_positive_notes": "Many legit IME/overlay tools use SetWindowsHookEx; the combination with a game target + export named NVXHookProc + verification via EnumProcessModules is the stronger signal."
+    },
+    {
+      "id": "BHVR-4",
+      "name": "Module pinning + LdrLoadDll inline hook (MinHook) with encrypted strings",
+      "apis": ["GetModuleHandleExA (GET_MODULE_HANDLE_EX_FLAG_PIN)", "MH_CreateHook", "VirtualProtect"],
+      "confidence": "High",
+      "false_positive_notes": "Pin + ntdll loader-hook + encrypted config strings together are uncommon in legitimate mods."
+    },
+    {
+      "id": "BHVR-5",
+      "name": "D3D9 Present/Reset detour with ImGui overlay",
+      "evidence": "vtable slot 17 (0x44) / slot 16 (0x40) hooks; 'Dear ImGui 1.92.9 WIP (19283)'; toggle key 'Insert'",
+      "confidence": "High",
+      "false_positive_notes": "Legit overlays (Steam, Discord, MSI Afterburner, ReShade) also hook Present; assess combined context and the self-name 'North Cheat'."
+    },
+    {
+      "id": "BHVR-6",
+      "name": "MTA:SA-specific interop",
+      "evidence": "RTTI '.?AUSWeaponAimSync@@'; 'PACKET_ID_CHEAT_CHALLENGEMEMORY'; 'PACKET_ID_CHEAT_RETURN'; 'PACKET_ID_MTA_RESERVED_*'; trigger on client.dll/netc.dll",
+      "confidence": "High",
+      "false_positive_notes": "These MTA netcode identifiers inside a third-party DLL not signed by MTA strongly indicate cheat-framework interop."
+    }
+  ],
+
+  "strings_high_value": [
+    {"value": "North Cheat", "module": "NRTH.dll", "va": "0x1000e90d8", "confidence": "High"},
+    {"value": "Cheat", "module": "NRTH.dll", "va": "0x1000e94a0", "confidence": "High"},
+    {"value": "Menu Toggle Key", "module": "NRTH.dll", "va": "0x1000eb114", "confidence": "High"},
+    {"value": "=== NORTH Loader ===", "module": "NORTH LOADER.exe", "confidence": "High"},
+    {"value": "[+] Inyectado OK clasico (modulo=0x%08lX)", "module": "NORTH LOADER.exe", "confidence": "High"},
+    {"value": "[+] Inyectado OK por hook (modulo verificado en el proceso).", "module": "NORTH LOADER.exe", "confidence": "High"},
+    {"value": "[*] Hook completado. Entra al juego y pulsa INSERT: si sale el menu, quedo.", "module": "NORTH LOADER.exe", "confidence": "High"}
+  ],
+
+  "network_indicators": {
+    "observed": [],
+    "note": "No C2 URLs, IPs, sockets, or download logic were observed in static triage of either sample. MTA:SA PACKET_ID_* constants relate to the game's own protocol structures; whether the payload manipulates live traffic is Unknown (U) and needs private-server net telemetry."
+  },
+
+  "yara_reference": "detection/yara_rules.yar",
+  "telemetry_reference": "detection/telemetry.md"
+}
