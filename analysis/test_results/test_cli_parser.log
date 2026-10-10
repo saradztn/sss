@@ -1,0 +1,6 @@
+[*] Running test_cli_parser...
+  [+] Case 1 passed: Default configuration verified.
+  [+] Case 2 passed: --proc and --autoclose flags parsed correctly.
+  [+] Case 3 passed: --dll flag parsed correctly.
+  [+] Case 4 passed: Positional .dll argument parsed correctly.
+[+] All CLI parsing tests passed successfully!
