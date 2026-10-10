@@ -37,3 +37,29 @@ UNIT TESTS (Linux g++ 12.2.0)
 NOT DONE HERE (documented, not implied)
   - Windows runtime execution of the built EXE/DLL (analysis host is Linux).
   - Private-server differential testing (see private_server_tests/results.md).
+
+--------------------------------------------------------------------------------
+Audit module (NRTH_audit.dll) — 2026-10-10, same host (Linux, g++ 12.2, ziglang 0.17.0)
+--------------------------------------------------------------------------------
+$ ./build_audit.sh
+  [host]  g++ -std=c++17 -O2 -Wall -Wextra -Werror src/nrth_audit.cpp
+          + tests/test_nrth_audit.cpp  -> 21/21 checks passed
+          + tools/nrth_audit_cli.cpp   -> selftest: "result: all checks passed" (21 checks)
+  [cross] zig c++ -target x86-windows-gnu -O2 -g0 -DNRTH_AUDIT_BUILD
+          -> bin/NRTH_audit.dll  292,352 B  sha256 95ac1144f6b16ab4803db2c5e11a47bc2764630fea57b94277db17e52a9929b7
+          zig c++ -target x86-windows-gnu -O2 -g0 -DNRTH_AUDIT_STATIC
+          -> bin/nrth_audit.exe  301,056 B  sha256 441977107d1d9920109e52bb3ffe49586c5220adca694b9ec96518b5d56a3014
+  [verify] tools/pe_summary.py: machine 0x014c, magic 0x10b (PE32), ImageBase 0x10000000,
+           subsystem 2 (DLL) / 3 (console), DYNAMICBASE+NX_COMPAT, 21 exports, ordinals 1..21
+           exactly as pinned in src/nrth_audit.def.
+  [differential] nrth_audit audit working/NRTH.dll       -> 20 checked, 0 with a match
+                  nrth_audit audit "working/NORTH LOADER.exe" -> 20 checked, 0 with a match
+                  nrth_audit sweep working/NRTH.dll --min 24  -> the same 8 .data candidates as
+                  tools/nrth_sig_export.py (0x1013b750/b8b8/b9d0/baa0/bb54/bb78/bc48/bd10)
+                  nrth_audit decode --rva 0x13bd10 --len 156 -> K=0x06 -> "53 8B DC 83 EC ? ..."
+  [fuzz/safety] ASan+UBSan build of the CLI over both samples: no findings.
+  [not done] The Windows binaries were not executed (no Windows in this sandbox); run
+             `nrth_audit.exe selftest` on a Windows host before relying on a verdict.
+  [scope]  nrth_audit implements detection/verification only. The live Lua-VM exec hijack and the
+           netc.dll 0xC3 check-kill are documented (mechanism_overview_ar.md §§3-4) but not
+           implemented: they are the cheat, not the detector.

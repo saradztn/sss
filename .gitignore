@@ -7,3 +7,5 @@ evidence/
 !NORTH.zip
 bin/
 vendor/
+__pycache__/
+*.pyc

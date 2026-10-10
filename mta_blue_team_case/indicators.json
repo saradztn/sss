@@ -2,9 +2,12 @@
   "case": "mta_blue_team_case",
   "sample_family": "NORTH / NRTH / NVX (MTA:SA loader + overlay menu)",
   "analysis_date": "2026-10-10",
-  "confidence_scale": ["High", "Medium", "Low"],
-  "notes": "Indicators are evidence-backed from static analysis. No network indicators were observed in the samples. Strings inside NRTH.dll are XOR/SSE-encrypted at rest and only some plaintext copies exist in .rdata; file-level string matching on the DLL may miss variants that change the encryption key.",
-
+  "confidence_scale": [
+    "High",
+    "Medium",
+    "Low"
+  ],
+  "notes": "Indicators are evidence-backed from static analysis. No network indicators were observed in the samples. Strings inside NRTH.dll are XOR/SSE-encrypted at rest and only some plaintext copies exist in .rdata; file-level string matching on the DLL may miss variants that change the encryption key. Update 2026-10-10: string decryption is now fully reproduced (codec + per-record keys), which surfaced new host artifacts (config file, ADS, registry reads, dev-cheat error labels) and the real hook/patch inventory; see decoded_string_codec and hook_and_patch_inventory. `C:\\NVX` is a plain string, not a decrypted record.",
   "files": [
     {
       "path_in_archive": "NORTH LOADER.exe",
@@ -31,31 +34,115 @@
       "confidence": "High"
     }
   ],
-
   "host_artifacts": {
     "module_names": [
-      {"value": "NRTH.dll", "confidence": "High", "note": "default payload name next to loader"},
-      {"value": "nvx.dll", "confidence": "High", "note": "string at NRTH.dll VA 0x1000f5cb2; alternate/internal name"},
-      {"value": "NVX Loader.pdb", "confidence": "High", "note": "PDB filename embedded in loader"}
+      {
+        "value": "NRTH.dll",
+        "confidence": "High",
+        "note": "default payload name next to loader"
+      },
+      {
+        "value": "nvx.dll",
+        "confidence": "High",
+        "note": "string at NRTH.dll VA 0x1000f5cb2; alternate/internal name"
+      },
+      {
+        "value": "NVX Loader.pdb",
+        "confidence": "High",
+        "note": "PDB filename embedded in loader"
+      }
     ],
     "filesystem_paths": [
-      {"value": "C:\\Users\\user\\Desktop\\src CHEATS\\over\\Loader\\Debug\\NVX Loader.pdb", "confidence": "High", "note": "build-machine PDB path embedded in NORTH LOADER.exe (.rdata VA 0x419aa4); leaks developer path containing 'src CHEATS'"},
-      {"value": "C:\\NVX", "confidence": "High", "note": "decrypted string in NRTH.dll (VA 0x1000afd18); directory name to watch on disk (exact use Tentative)"}
+      {
+        "value": "C:\\Users\\user\\Desktop\\src CHEATS\\over\\Loader\\Debug\\NVX Loader.pdb",
+        "confidence": "High",
+        "note": "build-machine PDB path embedded in NORTH LOADER.exe (.rdata VA 0x419aa4); leaks developer path containing 'src CHEATS'"
+      },
+      {
+        "value": "C:\\NVX",
+        "confidence": "Medium",
+        "note": "PLAIN .rdata string at file offset 0x000afd18 (VA 0x1000afd18) — it is NOT one of the encrypted records. Corrected 2026-10-10 after the decode pass: the payload's encrypted config path is C:\\Overwack\\loader_config.cfg; C:\\NVX stays a folder-name lead only (exact use still Tentative)."
+      },
+      {
+        "value": "C:\\Overwack\\loader_config.cfg",
+        "confidence": "High",
+        "note": "decoded from an encrypted record: key K=0x20, decryptor 0x1000bc80, call site 0x1001fcff (inside the netc.dll cluster region). Loader config file (no_spoofer/menu_key are stored in it)."
+      },
+      {
+        "value": "C:\\ProgramData:NT2",
+        "confidence": "Medium",
+        "note": "NTFS alternate data stream on C:\\ProgramData — K=0x06, site 0x1001e530. Check with `dir /r C:\\ProgramData`; hidden-stream config storage is the notable part."
+      },
+      {
+        "value": "C:\\ProgramData\\MTA San Andreas All",
+        "confidence": "High",
+        "note": "K=0x06, site 0x1001e59f — the game's own data dir (low standalone value; useful as a context anchor)"
+      },
+      {
+        "value": "C:\\ProgramData\\MTA San Andreas All\\Common\\data\\cache",
+        "confidence": "High",
+        "note": "K=0x2D, site 0x1001e601"
+      },
+      {
+        "value": "C:\\Users\\%s\\AppData",
+        "confidence": "High",
+        "note": "K=0x06, site 0x1001e713 — templated profile path"
+      }
     ],
     "exported_symbols": [
-      {"value": "NVXHookProc", "module": "NRTH.dll", "ordinal": 1, "rva": "0x0000B9E0", "confidence": "High", "note": "required SetWindowsHookEx hook-procedure export; hook-style injection signature"}
+      {
+        "value": "NVXHookProc",
+        "module": "NRTH.dll",
+        "ordinal": 1,
+        "rva": "0x0000B9E0",
+        "confidence": "High",
+        "note": "required SetWindowsHookEx hook-procedure export; hook-style injection signature"
+      }
     ],
     "process_names": [
-      {"value": "gta_sa.exe", "confidence": "High", "note": "default injection target (loader string VA 0x419964)"},
-      {"value": "client.dll / netc.dll", "confidence": "High", "note": "MTA:SA modules whose load event arms the payload (decrypted strings)"}
+      {
+        "value": "gta_sa.exe",
+        "confidence": "High",
+        "note": "default injection target (loader string VA 0x419964)"
+      },
+      {
+        "value": "client.dll / netc.dll",
+        "confidence": "High",
+        "note": "MTA:SA modules whose load event arms the payload (decrypted strings)"
+      }
+    ],
+    "registry_keys": [
+      {
+        "value": "SOFTWARE\\WOW6432Node\\Multi Theft Auto: San Andreas All\\1.5\\Settings\\general",
+        "confidence": "High",
+        "note": "K=0x06, site 0x1001ea1b (MTA 1.5 install info)"
+      },
+      {
+        "value": "SOFTWARE\\WOW6432Node\\Multi Theft Auto: San Andreas All\\1.6\\Settings\\general",
+        "confidence": "High",
+        "note": "K=0x06, site 0x1001efbc (MTA 1.6 install info)"
+      },
+      {
+        "value": "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\Connections",
+        "confidence": "Medium",
+        "note": "K=0x06, site 0x1001e484 — proxy/DUN state read; not proof of traffic manipulation"
+      },
+      {
+        "value": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\CLSID",
+        "confidence": "Medium",
+        "note": "K=0x06, site 0x1001e3ad — shell/CLSID lookup; no Run-key persistence found"
+      }
     ]
   },
-
   "behavioral_signatures": [
     {
       "id": "BHVR-1",
       "name": "SeDebugPrivilege acquisition",
-      "apis": ["OpenProcessToken", "LookupPrivilegeValueA", "AdjustTokenPrivileges"],
+      "apis": [
+        "OpenProcessToken",
+        "LookupPrivilegeValueA",
+        "AdjustTokenPrivileges"
+      ],
       "string": "SeDebugPrivilege",
       "confidence": "High",
       "false_positive_notes": "Legitimate admin/debug tools also do this; only suspicious in combination with injection APIs."
@@ -63,14 +150,25 @@
     {
       "id": "BHVR-2",
       "name": "Classic cross-process DLL injection chain",
-      "apis": ["OpenProcess", "VirtualAllocEx", "WriteProcessMemory", "CreateRemoteThread", "LoadLibraryA"],
+      "apis": [
+        "OpenProcess",
+        "VirtualAllocEx",
+        "WriteProcessMemory",
+        "CreateRemoteThread",
+        "LoadLibraryA"
+      ],
       "confidence": "High",
       "false_positive_notes": "Standard software packers/updaters and accessibility tools can look similar; correlate with target process = game client and payload export name."
     },
     {
       "id": "BHVR-3",
       "name": "Hook-style DLL injection fallback (bypass of OpenProcess denial)",
-      "apis": ["SetWindowsHookExA", "PostThreadMessageA", "UnhookWindowsHookEx", "K32EnumProcessModules"],
+      "apis": [
+        "SetWindowsHookExA",
+        "PostThreadMessageA",
+        "UnhookWindowsHookEx",
+        "K32EnumProcessModules"
+      ],
       "string": "NVXHookProc",
       "confidence": "High",
       "false_positive_notes": "Many legit IME/overlay tools use SetWindowsHookEx; the combination with a game target + export named NVXHookProc + verification via EnumProcessModules is the stronger signal."
@@ -78,7 +176,11 @@
     {
       "id": "BHVR-4",
       "name": "Module pinning + LdrLoadDll inline hook (MinHook) with encrypted strings",
-      "apis": ["GetModuleHandleExA (GET_MODULE_HANDLE_EX_FLAG_PIN)", "MH_CreateHook", "VirtualProtect"],
+      "apis": [
+        "GetModuleHandleExA (GET_MODULE_HANDLE_EX_FLAG_PIN)",
+        "MH_CreateHook",
+        "VirtualProtect"
+      ],
       "confidence": "High",
       "false_positive_notes": "Pin + ntdll loader-hook + encrypted config strings together are uncommon in legitimate mods."
     },
@@ -97,22 +199,175 @@
       "false_positive_notes": "These MTA netcode identifiers inside a third-party DLL not signed by MTA strongly indicate cheat-framework interop."
     }
   ],
-
   "strings_high_value": [
-    {"value": "North Cheat", "module": "NRTH.dll", "va": "0x1000e90d8", "confidence": "High"},
-    {"value": "Cheat", "module": "NRTH.dll", "va": "0x1000e94a0", "confidence": "High"},
-    {"value": "Menu Toggle Key", "module": "NRTH.dll", "va": "0x1000eb114", "confidence": "High"},
-    {"value": "=== NORTH Loader ===", "module": "NORTH LOADER.exe", "confidence": "High"},
-    {"value": "[+] Inyectado OK clasico (modulo=0x%08lX)", "module": "NORTH LOADER.exe", "confidence": "High"},
-    {"value": "[+] Inyectado OK por hook (modulo verificado en el proceso).", "module": "NORTH LOADER.exe", "confidence": "High"},
-    {"value": "[*] Hook completado. Entra al juego y pulsa INSERT: si sale el menu, quedo.", "module": "NORTH LOADER.exe", "confidence": "High"}
+    {
+      "value": "North Cheat",
+      "module": "NRTH.dll",
+      "va": "0x1000e90d8",
+      "confidence": "High"
+    },
+    {
+      "value": "Cheat",
+      "module": "NRTH.dll",
+      "va": "0x1000e94a0",
+      "confidence": "High"
+    },
+    {
+      "value": "Menu Toggle Key",
+      "module": "NRTH.dll",
+      "va": "0x1000eb114",
+      "confidence": "High"
+    },
+    {
+      "value": "=== NORTH Loader ===",
+      "module": "NORTH LOADER.exe",
+      "confidence": "High"
+    },
+    {
+      "value": "[+] Inyectado OK clasico (modulo=0x%08lX)",
+      "module": "NORTH LOADER.exe",
+      "confidence": "High"
+    },
+    {
+      "value": "[+] Inyectado OK por hook (modulo verificado en el proceso).",
+      "module": "NORTH LOADER.exe",
+      "confidence": "High"
+    },
+    {
+      "value": "[*] Hook completado. Entra al juego y pulsa INSERT: si sale el menu, quedo.",
+      "module": "NORTH LOADER.exe",
+      "confidence": "High"
+    },
+    {
+      "value": "Error #%d Send screen error dev-cheat (observed ids 1019, 1029, 1031, 1036, 1038, 10395, 1099)",
+      "confidence": "High",
+      "note": "decoded records, K=0x20 / 0x06, sites 0x1000aa4f, 0x10020825, 0x100209c7, 0x10020eb2, 0x100211d8, 0x10021429, 0x1002155d — proves an error-reporting/'screen' path in the payload; the transport was not traced"
+    },
+    {
+      "value": " no_spoofer=%d",
+      "confidence": "Medium",
+      "note": "K=0x06, site 0x1001fdc5 — config format string: a spoofer toggle exists (its implementation is not in these two files)"
+    },
+    {
+      "value": " menu_key=%d",
+      "confidence": "High",
+      "note": "K=0x2D, site 0x1001fd7b — configurable menu hotkey (matches the UI's 'Menu Toggle Key' label)"
+    },
+    {
+      "value": "position / velocity / serial / crash-data",
+      "confidence": "Medium",
+      "note": "decoded single words (K=0x20 / 0x2D), sites 0x100111d0, 0x10011207, 0x1001eab7, 0x1001eca6 — read by the netc/init cluster; role Tentative"
+    }
   ],
-
   "network_indicators": {
     "observed": [],
     "note": "No C2 URLs, IPs, sockets, or download logic were observed in static triage of either sample. MTA:SA PACKET_ID_* constants relate to the game's own protocol structures; whether the payload manipulates live traffic is Unknown (U) and needs private-server net telemetry."
   },
-
   "yara_reference": "detection/yara_rules.yar",
-  "telemetry_reference": "detection/telemetry.md"
+  "telemetry_reference": "detection/telemetry.md",
+  "decoded_string_codec": {
+    "algorithm": "plain[p] = cipher[p] XOR ((p - K) & 0xFF)  (symmetric; per-record)",
+    "key_derivation": "K is a per-decryptor constant loaded from an .rdata lane table — NOT one family key. 82 decryptor functions, one per record length; keys observed in {0x06,0x20,0x2D,0x3C,0x3F,0x40}.",
+    "one_shot_gate": "each decryptor ends with `mov byte [this+F],0` and starts with `cmp byte [this+F],0`; L = F-1 is the record length",
+    "build_note": "records are assembled on the stack from 16-byte `movaps/movups` blocks + `mov dword [ebp+d],imm32` tails, so most plaintexts (and most ciphertexts) are NOT contiguous in the file image — only 4 of 63 short records are byte-findable, which is why plain string matching cannot see them",
+    "tools": [
+      "recovered_or_reconstructed_project/tools/nrth_strings_recover.py (82 decryptors / 63 records -> working/recovered.json)",
+      "recovered_or_reconstructed_project/tools/nrth_sig_export.py (28 signatures -> working/sigs.json)",
+      "recovered_or_reconstructed_project/tools/nrth_case_strings.py (-> detection/recovered_strings.txt)"
+    ],
+    "verification": "byte-exact decodes; frozen as evidence vectors inside NrthAuditSelfTest() (21 checks)"
+  },
+  "hook_and_patch_inventory": {
+    "note": "replaces the earlier '2 hooks + 1 kill' summary; counts are from working/hook_targets.txt (resolver 0x10002960 calls and MH_CreateHook 0x10036020 calls per enclosing function)",
+    "functions": [
+      {
+        "va": "0x10005b80",
+        "role": "client.dll hook installer",
+        "pattern_scans": 11,
+        "mh_createhook": 11,
+        "detours": [
+          "0x10002ff0",
+          "0x100047b0",
+          "0x100050a0",
+          "0x10005290",
+          "0x100052b0",
+          "0x10005620",
+          "0x100056c0",
+          "0x100056f0",
+          "0x10005ab0",
+          "0x10005b30",
+          "0x10005b50"
+        ]
+      },
+      {
+        "va": "0x1000c390",
+        "role": "offset/field resolver (no hooks installed here)",
+        "pattern_scans": 20,
+        "mh_createhook": 0,
+        "confidence": "Tentative (role)"
+      },
+      {
+        "va": "0x10020640",
+        "role": "netc.dll cluster: integrity-check disable + 4 hooks",
+        "pattern_scans": ">=6",
+        "mh_createhook": 4,
+        "detours": [
+          "0x1001dd30",
+          "0x1001dd90",
+          "0x1001df90",
+          "0x1001fa80"
+        ],
+        "prologue": "53 8B DC ... (MSVC __SEH_prolog4)",
+        "note": "func_bounds-style heuristics mis-attribute this cluster to 0x1001fc10; 0x10020640 is the real start"
+      }
+    ],
+    "one_byte_kill": {
+      "writer": "0x10011870",
+      "semantics": "VirtualProtect(ptr,1,0x40,&old) then *dst = *src",
+      "state_ptr": "0x101493e4",
+      "sites": [
+        "0x100206f0",
+        "0x100208aa",
+        "0x10020927",
+        "0x10020f46",
+        "0x100214bd",
+        "0x100215f1"
+      ],
+      "byte_written": "0xC3",
+      "module": "netc.dll (all 6)",
+      "target_identity": "Unknown without a runtime dump (patterns fetched from .data globals 0x1013b750/b8b8/b9d0/baa0/bb78/bc48 via 0x10023670)"
+    },
+    "signature_catalogue": {
+      "high": 20,
+      "medium": 8,
+      "compiled_into": "recovered_or_reconstructed_project/src/nrth_audit_sigs.h",
+      "json": "working/sigs.json (gitignored working copy)"
+    }
+  },
+  "audit_tool": {
+    "name": "NRTH_audit.dll / nrth_audit.exe",
+    "source": "recovered_or_reconstructed_project/{src/nrth_audit.*, tools/nrth_audit_cli.cpp, tests/test_nrth_audit.cpp}",
+    "build": "build_audit.sh (Zig 0.17.0 x86-windows-gnu)",
+    "artifacts_in_this_clone": "bin/ (git-ignored)",
+    "sha256": {
+      "NRTH_audit.dll": "95ac1144f6b16ab4803db2c5e11a47bc2764630fea57b94277db17e52a9929b7",
+      "nrth_audit.exe": "441977107d1d9920109e52bb3ffe49586c5220adca694b9ec96518b5d56a3014"
+    },
+    "format": "PE32 x86, ImageBase 0x10000000, DYNAMICBASE+NX_COMPAT, 21 exports (ordinals 1-21)",
+    "capabilities": [
+      "positional-XOR codec (encode/crack/decode-at-VA)",
+      "wildcard pattern compile/scan (same semantics as the sample resolver 0x10002960)",
+      "read-only PE section/RVA mapping for file images and dumps",
+      "prologue tamper classification (E9/FF 25/68..C3/C3/C2/C7 05)",
+      "hidden-record sweep anchored on 55 8B EC / 53 8B DC",
+      "20-signature audit with CSV output"
+    ],
+    "explicit_non_goals": [
+      "no process access, no injection, no hooking, no memory writes",
+      "no Lua payload and no netc.dll check disable — those are the cheat, not the detector",
+      "no obfuscation/stealth/persistence code of any kind"
+    ],
+    "validated": "21 unit tests + 21 self-test checks on the host; audit returns \"0 with a match\" on both samples (no self-flagging); sweep returns exactly the same 8 .data candidates as the independent Python tool (test_results/audit_sample_differential.log)",
+    "docs": "detection/audit_tool.md"
+  }
 }

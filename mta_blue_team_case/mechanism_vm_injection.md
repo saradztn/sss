@@ -5,6 +5,14 @@ All addresses are VAs (ImageBase 0x10000000). Result class: **D2** (decompiler/d
 
 > **Scope note:** This writeup exists so defenders can understand and detect the real mechanism. A working re-implementation of game-VM injection is deliberately NOT provided (it is the active cheat weapon). Everything below is observable in the shipped binary.
 
+> **Two precision notes (added after the full decode pass, 2026-10-10):** (1) this document details 2 of the
+> detours — the installer at `0x10005b80` performs **11** pattern scans and **11** `MH_CreateHook` calls
+> (see `../mta_blue_team_case/mechanism_overview_ar.md` §3.2 and `working/hook_targets.txt`); the two described
+> here are the ones on the Lua-VM path. (2) Provenance of the chunk names differs: `@custom` is a **plain**
+> `.rdata` string (file offset 0x000e9890), while `@auto_inject` exists **only** as an encrypted record built
+> from inline immediates near `0x100044df` — its ciphertext (`93 b5 a0 a2 b8 87 b0 b4 b1 b9 be aa`) is frozen
+> as self-test check 3 in `src/nrth_audit.cpp`, so `nrth_audit.exe selftest` re-verifies it on every run.
+
 ---
 
 ## 0. String obfuscation (recovered algorithm)
@@ -12,13 +20,21 @@ All addresses are VAs (ImageBase 0x10000000). Result class: **D2** (decompiler/d
 All sensitive strings/signatures are encrypted with **positional XOR**:
 
 ```
-plaintext[p] = ciphertext[p] XOR ((p - 0x2D) & 0xFF)
+plaintext[p] = ciphertext[p] XOR ((p - K) & 0xFF)
 ```
 
+- **`K` is per-decryptor, not per-family.** The VM path itself uses `K = 0x2D`
+  (0x10007640 / 0x10007780 / 0x100078d0 / 0x10007900 — the SSE key lanes xmm7 =
+  {-45,-44,-43,-42}, xmm6 = {0,1,2,3} collapse into that same formula), but the sample
+  contains **82 decryptors with different constants** (keys observed: 0x06, 0x20, 0x2D,
+  0x3C, 0x3F, 0x40 — e.g. `netc.dll` uses 0x20, the registry/config records use 0x06).
+  An analysis that hardcodes 0x2D silently misses most of the sample: that mistake was made
+  in an earlier draft of this document and is the reason the string-recovery tool brute-forces
+  `K` per record (`tools/nrth_strings_recover.py`, `NrthXorCrack`).
 - Short variant: byte loop at VA 0x100078d0 (10 bytes) / 0x10007900 (12 bytes, SSE).
-- Long variant: SSE dword loop at 0x10007640 / 0x10007780 + byte tail — the SSE key lanes
-  (xmm7 = {-45,-44,-43,-42}, xmm6 = {0,1,2,3}) collapse to the same `(p - 0x2D)` formula.
-- After decryption a one-byte flag beside the buffer is cleared (in-place, one-shot decrypt).
+- Long variant: SSE dword loop at 0x10007640 / 0x10007780 + byte tail.
+- After decryption a one-byte flag beside the buffer is cleared (in-place, one-shot decrypt),
+  which is what makes the record length derivable: `L = flagOffset - 1`.
 
 Recovered plaintexts (verified against the algorithm):
 

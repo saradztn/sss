@@ -130,8 +130,11 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 
 // ===========================================================================
 // MainInitThread — evidence VA 0x1000a850
-// Original behavior (strings XOR/SSE-encrypted; reconstructed plaintext):
-//   1. references config dir "C:\NVX"           (string VA 0x1000afd18)
+// Original behavior (strings XOR/SSE-encrypted; see nrth_audit for the codec):
+//   1. references the folder "C:\NVX"  — provenance corrected after the decode pass: this is a
+//      PLAIN .rdata string (VA 0x1000afd18), not a decrypted record. The config path the payload
+//      actually decrypts is "C:\Overwack\loader_config.cfg" (K=0x20, call site 0x1001fcff), and it
+//      also touches an alternate data stream "C:\ProgramData:NT2" (site 0x1001e530).
 //   2. resolves ntdll.dll!LdrLoadDll            (strings 'ntdll.dll','LdrLoadDll')
 //   3. MinHook inline hook -> Hooked_LdrLoadDll
 // ===========================================================================

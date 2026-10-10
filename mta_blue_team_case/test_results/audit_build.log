@@ -1,0 +1,93 @@
+# NRTH_audit build + verification log — executed 2026-10-10 (Linux host, g++ 12.2, ziglang 0.17.0)
+$ ./build_audit.sh
+
+[unit tests, host]
+[*] nrth_audit unit tests
+  [ ok ] module self-test (evidence vectors)
+  [ ok ] audit: clean image -> pattern found, no prologue change
+  [ ok ] audit: reported RVA is section-relative
+  [ ok ] audit: 0xC3 patch -> no full match, one patched match
+  [ ok ] audit: state classified as KILL_RET
+  [ ok ] audit: patched RVA reported
+  [ ok ] audit: E9 detour -> one patched match only
+  [ ok ] audit: state classified as DETOUR_JMP32
+  [ ok ] audit: detour target RVA captured for triage
+  [ ok ] audit: FF 25 detour -> one patched match
+  [ ok ] audit: far-jump target converted to an RVA
+  [ ok ] audit: coincidental tail match with a normal prologue is not reported
+  [ ok ] predicate: tamper states only
+  [ ok ] codec: key-rotated record still decodes (variant triage)
+  [ ok ] sweep: hidden pattern located in .data by prologue anchoring
+  [ ok ] PE: tiny buffer rejected
+  [ ok ] PE: bogus section pointer handled without crash
+  [ ok ] PE: bad DOS magic rejected
+  [ ok ] pattern: NULL hit buffer tolerated
+  [ ok ] codec: short input safe
+  [ ok ] catalogue: 20 rows, each with sample evidence VA
+[*] 21/21 checks passed
+
+[module self-test via CLI]
+  [ ok ] codec: empty input rejected
+result: all checks passed
+[+] selftest: 0 check(s) failed
+
+[cross-built artifacts]
+-rwxr-xr-x 1 user user 292352 Oct 10 23:06 bin/NRTH_audit.dll
+-rwxr-xr-x 1 user user 301056 Oct 10 23:06 bin/nrth_audit.exe
+95ac1144f6b16ab4803db2c5e11a47bc2764630fea57b94277db17e52a9929b7  bin/NRTH_audit.dll
+441977107d1d9920109e52bb3ffe49586c5220adca694b9ec96518b5d56a3014  bin/nrth_audit.exe
+
+$ python3 tools/pe_summary.py bin/NRTH_audit.dll bin/nrth_audit.exe
+bin/NRTH_audit.dll
+  size            : 292352 bytes
+  timestamp       : 0x6acac502
+  machine         : 0x014c  IMAGE_FILE_MACHINE_I386 (x86)
+  magic           : 0x10b (PE32)
+  image base      : 0x10000000
+  entry point RVA : 0x00004d40
+  size of image   : 0x4c000
+  subsystem       : WINDOWS_GUI
+  DLL flags       : 0x0140  DYNAMICBASE NX_COMPAT
+  file chars      : 0x2102  [EXECUTABLE_IMAGE]
+  sections        :
+      .text    rva=0x0001000 vsize=0x037e97 raw=0x000400 rsize=0x038000
+      .rdata   rva=0x0039000 vsize=0x009fc9 raw=0x038400 rsize=0x00a000
+      .buildid rva=0x0043000 vsize=0x000043 raw=0x042400 rsize=0x000200
+      .data    rva=0x0044000 vsize=0x001090 raw=0x042600 rsize=0x000200
+      .tls     rva=0x0046000 vsize=0x000008 raw=0x042800 rsize=0x000200
+      .reloc   rva=0x0047000 vsize=0x000ffc raw=0x042a00 rsize=0x001000
+      @8   NrthXorDecodeRecordAt        rva=0x001920
+      @9   NrthPatCompile               rva=0x002130
+      @10  NrthPatScan                  rva=0x0022c0
+      @11  NrthPatWidenHead             rva=0x002640
+      @12  NrthPatPatchHead             rva=0x002420
+      @13  NrthClassifyPrologue         rva=0x002660
+      @14  NrthPeMap                    rva=0x002800
+      @15  NrthPeSectionData            rva=0x0029d0
+      @16  NrthPeRvaToPtr               rva=0x0020b0
+      @17  NrthPeTextRva                rva=0x002a50
+      @18  NrthAuditImage               rva=0x002ac0
+      @19  NrthAuditImageFile           rva=0x0033c0
+      @20  NrthFindHiddenSignatures     rva=0x003480
+      @21  NrthAuditSelfTest            rva=0x003940
+bin/nrth_audit.exe
+  size            : 301056 bytes
+  timestamp       : 0xa3913d00
+  machine         : 0x014c  IMAGE_FILE_MACHINE_I386 (x86)
+  magic           : 0x10b (PE32)
+  image base      : 0x00400000
+  entry point RVA : 0x00005ac0
+  size of image   : 0x50000
+  subsystem       : WINDOWS_CUI (console)
+  DLL flags       : 0x8140  DYNAMICBASE NX_COMPAT
+  file chars      : 0x0102  [EXECUTABLE_IMAGE]
+
+[catalogue]
+[*] verified signature catalogue (20 entries, from NRTH.dll 947b81be..)
+
+[ 1] target=client.dll  conf=High  decryptor=0x1000e0a0  key=0x40  site=0x1000ca47
+     role    : offset/pointer resolver at 0x1000c390: locates functions, installs no hook of its own
+     pattern : 55 8B EC 83 EC ? FF 75 ? FF 75 ? E8 ? ? ? ? 83 C4 ? 83 78 ? ? 74 ? 8D 4D ? 51 50 E8 ? ? ? ? 83 C4 ? 85 C0 75 ? ? ? 8B E5
+
+[ 2] target=client.dll  conf=High  decryptor=0x1000db00  key=0x40  site=0x1000cfbe
+     role    : offset/pointer resolver at 0x1000c390: locates functions, installs no hook of its own

@@ -57,7 +57,7 @@ Legend: [O] Observed · [SI] Strongly inferred · [T] Tentative · [U] Unknown
     - `GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_PIN=5, ...)` — **pins the module so it cannot be unloaded** (self-protection observable; no new behavior added in reconstruction).
     - `CreateThread` → `MainInitThread` (VA 0x1000a850 / RVA 0x0a850).
 11. [O] `MainInitThread` (VA 0x1000a850 / RVA 0x0a850):
-    - Decrypts embedded strings (XOR/SSE routines; recovered plaintexts include `ntdll.dll`, `LdrLoadDll`, `CoreFX`, `C:\NVX`, `client.dll`, `netc.dll`, `nvx.dll`).
+    - Decrypts embedded strings (per-length positional XOR, `plain[p] = cipher[p] ^ ((p-K)&0xFF)`, one K per decryptor — 82 decryptors / 63 plaintexts recovered in `working/recovered.json`; recovered names include `client.dll`, `netc.dll`, `@auto_inject`, the MTA registry keys, `C:\Overwack\loader_config.cfg` and `C:\ProgramData:NT2`. `C:\NVX` (VA 0x1000afd18) and `@custom` (.rdata 0x100e9890) are **plain** strings, not decodes — corrected after the decode pass.
     - `GetProcAddress(GetModuleHandleA("ntdll.dll"), "LdrLoadDll")`.
     - MinHook v1.3.3 (`MH_Initialize`, `MH_CreateHook` at VA 0x10036020, `MH_EnableHook`) installs an inline detour on `ntdll!LdrLoadDll` → handler at VA 0x1000a640.
 12. [O] `Hooked_LdrLoadDll` (VA 0x1000a640 / RVA 0x0a640): passes every load through to the original `LdrLoadDll`, then inspects the loaded module name. When `client.dll` or `netc.dll` appear (MTA:SA client modules), it triggers the follow-on initialization routines (decompiler labels `0x10005b80`, `0x10020640`).
@@ -81,8 +81,11 @@ Legend: [O] Observed · [SI] Strongly inferred · [T] Tentative · [U] Unknown
 ## Stage 6 — Runtime (menu usage)
 
 18. [O] Operator presses INSERT in-game → ImGui menu named "North Cheat" is drawn over the D3D9 frame.
-19. [U] **What the menu actually performs is not fully mapped in this engagement.** The initialization routines (0x10005b80, 0x10020640) were located and their triggers documented, but the full feature set of the menu (e.g., which gameplay values it reads/modifies) requires dedicated per-feature call-graph analysis and, per policy, private-server runtime validation which was **not executed** in this environment (see `private_server_tests/results.md`).
-20. [U] No network egress, persistence (Run keys/services), file drops beyond `C:\NVX` directory-string usage, or credential access were observed in the static triage. `C:\NVX` (VA 0x1000afd18) is referenced by the decrypted-string set; its exact use (log/cache directory?) is Tentative.
+19. [O→] The two initialization routines are now mapped at instruction level (2026-10-10 decode pass):
+    - `0x10005b80` decrypts 11 hidden x86 patterns and installs 11 MinHook detours in `client.dll` (detours 0x10002ff0/47b0/50a0/5290/52b0/5620/56c0/56f0/5ab0/5b30/5b50); `0x1000c390` runs 20 pattern scans with **no** hooking (offset/field resolver; role [I]).
+    - `0x10020640` (prologue `53 8B DC`) decrypts `netc.dll` + a target pattern, resolves it via `0x10002960`, and writes a single `0xC3` over **six** functions through writer `0x10011870` (`VirtualProtect(…,0x40,…)` + 1-byte copy) at sites 0x100206f0/0x100208aa/0x10020927/0x10020f46/0x100214bd/0x100215f1; their target patterns live only in `.data` globals at run time, so the *identity* of the six functions stays [U].
+    The menu's per-feature effect mapping is still [U]: it needs dedicated per-flag call-graph work plus, per policy, private-server runtime validation which was **not executed** here (see `private_server_tests/results.md`).
+20. [U] No network egress, Run-key/service persistence, or credential access was observed in the static triage. Filesystem-related strings: `C:\Overwack\loader_config.cfg` (decoded; config read/write [I]), `C:\ProgramData:NT2` (decoded; an NTFS alternate data stream [O for the string, U for the use]), MTA's own `Common\data\cache` (decoded), and `C:\NVX` (plain string, use [U]). `Software\...\Internet Settings\Connections` and `Explorer\CLSID` reads were recovered, which is a *read* of proxy/shell state, not persistence evidence.
 
 ---
 

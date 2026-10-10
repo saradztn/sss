@@ -83,7 +83,8 @@ All inputs were cataloged upon receipt. Hashes were calculated before analysis a
    - Spawns background worker thread `MainInitThread` at `0x1000a850`.
 3. **Core Initialization & Hooking (`0x1000a850`):**
    - Uses compile-time XOR/SSE string encryption. Deobfuscated strings include:
-     - `ntdll.dll`, `LdrLoadDll`, `C:\NVX`, `client.dll`, `netc.dll`.
+     - `ntdll.dll`, `LdrLoadDll`, `client.dll`, `netc.dll` (decoded). `C:\NVX` is a PLAIN .rdata string
+       at 0x000afd18 — see the corrected sections in `../mta_blue_team_case/`.
    - Installs an inline detour (MinHook v1.3.3) on `ntdll!LdrLoadDll` (`Hooked_LdrLoadDll` at `0x1000a640`).
    - Intercepts dynamic DLL loading inside `gta_sa.exe`:
      - When `client.dll` (MTA Client) loads: installs Direct3D 9 hooks.

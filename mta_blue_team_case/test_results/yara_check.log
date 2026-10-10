@@ -1,0 +1,10 @@
+# yara validation — executed 2026-10-10 (yara-python 4.5.4)
+$ python3 -c "import yara; m=yara.compile('mta_blue_team_case/detection/yara_rules.yar'); ..."
+[+] rules compile clean: 4 rules
+   working/NRTH.dll                                           -> NORTH_NRTH_Payload_DLL, NORTH_Export_Contract_NVXHookProc, NORTH_NRTH_HiddenPatternRecords
+   working/NORTH LOADER.exe                                   -> NORTH_Loader_Injector_EXE
+   recovered_or_reconstructed_project/bin/NRTH_audit.dll      -> no match
+   recovered_or_reconstructed_project/bin/nrth_audit.exe      -> no match
+
+[*] note: the two delivered audit binaries must NOT match any rule (they are not the cheat);
+    the check above is the false-positive control for our own artifacts.

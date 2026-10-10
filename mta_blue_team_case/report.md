@@ -30,7 +30,11 @@ Classification by component:
 - Modify weapon-aim state via `SWeaponAimSync` structures (RTTI presence only; call paths not traced).
 - Manipulate MTA netcode via `PACKET_ID_CHEAT_*` handlers (constants present; no live traffic evidence).
 - Read/write game memory beyond the overlay (init routines 0x10005b80/0x10020640 only partially characterized).
-- Use `C:\NVX` as a data/log directory (string decrypted; exact I/O unknown).
+- Use `C:\NVX` as a data/log directory — **corrected 2026-10-10**: this is a *plain* `.rdata` string
+  (file offset 0x000afd18), not a decrypted record, and it is not referenced by any of the 63 recovered
+  records. The config path the payload actually decrypts is `C:\Overwack\loader_config.cfg` (K=0x20,
+  call site 0x1001fcff), plus an NTFS alternate data stream `C:\ProgramData:NT2` (0x1001e530). Whether
+  `C:\NVX` is created at all remains unverified (no runtime).
 
 ## 2. Reconstruction status
 
@@ -39,6 +43,18 @@ Classification by component:
   - `D2` — native decompilation/pseudocode: disassembly-based pseudocode of both samples (Capstone), documented in `analysis/` and referenced by `function_map.csv`.
   - `R2` — behavioral reconstruction: newly authored C++ in `recovered_or_reconstructed_project/` reimplementing the observed loader contract (CLI parsing, PE export parsing, documented injection sequence) and the payload chain (NVXHookProc export contract, DllMain pin+thread, MinHook LdrLoadDll watch on `client.dll`/`netc.dll`, D3D9 Present/Reset hooks, Dear ImGui v1.92.9 overlay with INSERT toggle) for defensive/private-server validation. Menu **feature slots are labeled stubs** — the original's feature logic (0x10005b80 / 0x10020640) is class U and was deliberately not invented.
 - **Build status: BUILT** — cross-compiled to Windows PE32 x86 artifacts with Zig 0.17.0's MinGW sysroot (`build.sh`): `bin/NORTH_LOADER.exe` (SHA-256 `75a3dc17...fdd2b3dd`) and `bin/NRTH.dll` (SHA-256 `452c5848...d6e383f`), export contract verified (`NVXHookProc` @ ordinal 1). Full log: `test_results/build_cross.log`. Windows MSVC path (`build.ps1`) documented but not executed here.
+- **Delivered detector (built + tested): `NRTH_audit.dll` / `nrth_audit.exe`** — `build_audit.sh`, PE32 x86,
+  ImageBase 0x10000000, 21 exports (ordinals 1–21), DYNAMICBASE+NX_COMPAT;
+  `bin/NRTH_audit.dll` SHA-256 `95ac1144...a9929b7`, `bin/nrth_audit.exe` `44197710...d56a3014`.
+  It implements the recovered codec, the 20-signature catalogue, the PE reader and the patch-footprint
+  classifier; 21/21 unit tests and 21/21 self-test vectors pass on the host, and `audit` returns
+  **0 with a match** on both samples (no self-flagging). Docs: `detection/audit_tool.md`.
+- **Scope decision (explicit):** the two mechanisms that would make this a working cheat — hijacking the
+  game's live Lua `exec` trampoline (global `0x1013c94c`) and actually writing the `0xC3` kills into
+  `netc.dll` in another process — are documented from evidence but **not implemented**. They require
+  cross-process memory writes and their only product is a functioning cheat; everything a defender needs
+  (VAs, keys, patterns, hook inventory, patch primitive, six write sites, plus a scanner that checks for
+  them) is delivered instead. Recorded in `mechanism_overview_ar.md` §9 and in the header of `src/nrth_audit.h`.
 - **Original samples were not modified** (hashes re-verified before/after: `hashes.sha256`).
 - **No capability was added** beyond the observed sample (no new stealth, persistence, or evasion, and no invented cheat features). Where the original performs evasion-relevant actions (module pinning is kept — it is evidenced; string encryption is documented but **not** re-implemented).
 
@@ -60,6 +76,9 @@ Neither binary is .NET (CLR data directory empty) — both are native x86. Full 
 | GNU `objdump` (binutils) | cross-check of disassembly |
 | GCC 12.2.0 (MinGW-w64 cross checks on Linux) | compiled + ran reconstruction unit tests |
 | Custom Python scripts (read-only) | strings catalog, function map, hashes |
+| `capstone` (x86) + hand-written record/decryptor analysis | string-codec recovery: 82 decryptors, 63 plaintexts, 28 signatures (`tools/nrth_strings_recover.py`, `nrth_sig_export.py`, `nrth_hook_targets.py`, `nrth_patch_map.py`) |
+| g++ 12.2 (host) + `ziglang` 0.17.0 (`python3 -m pip install --break-system-packages ziglang`) | build + unit-test the audit module, then cross-build PE32 x86 (`build_audit.sh`) |
+| `yara-python` 4.5.4 | compile-and-scan validation of `detection/yara_rules.yar` against both samples and against our own shipped binaries |
 
 No Ghidra/IDA/Binary Ninja was available in this environment (network-restricted sandbox); a radare2 download attempt failed on the outbound allowlist. Disclosed as a coverage limitation.
 
@@ -69,7 +88,20 @@ No Ghidra/IDA/Binary Ninja was available in this environment (network-restricted
 - **Phase 3B (native):** disassembled entry points, exports, and core functions of both modules; every significant finding in `function_map.csv` carries VA/RVA and confidence. Highlights:
   - Loader: `main` 0x413170, `EnableDebugPrivilege` 0x411b20, `FindProcessByName` 0x411ea0, `InjectClassic` 0x412880, `InjectHook` 0x412470, `FindExportRvaInFile` 0x411ff0, `rva2off` 0x411960, `IsModuleLoadedInProcess` 0x412dc0.
   - DLL: `NVXHookProc` 0x1000b9e0 (export ordinal 1), `DllMain` 0x1000ba00, `MainInitThread` 0x1000a850, `Hooked_LdrLoadDll` 0x1000a640, `GetD3D9DeviceVTable` 0x10012980, `InstallD3D9Hooks` 0x10016500, `Hooked_Present` 0x10014d50, `Hooked_Reset` 0x1001a3c0, MinHook `MH_CreateHook` 0x10036020.
-- **Phase 4:** strings catalog (9,452 lines) with section/offset mapping; high-value indicators extracted to `indicators.json`.
+- **Phase 3C (string layer, added later — this is where the new facts came from):** recovered the payload's
+  string codec end-to-end: `plain[p] = cipher[p] ^ ((p - K) & 0xFF)` with a **per-decryptor** K read from an
+  `.rdata` lane table; **82 decryptor functions** and **63 byte-exact plaintexts** (`tools/nrth_strings_recover.py`
+  → `working/recovered.json`). Two gates make this non-trivial: the one-shot `mov byte [this+F],0` gate (record
+  length L = F-1) and the fact that records are assembled on the stack from scattered 16-byte blocks, so 4 of 63
+  plaintexts are findable by raw search and the rest only through the decoder.
+- **Phase 3D:** derived the *real* hook/patch surface from those decodes (`tools/nrth_hook_targets.py`,
+  `tools/nrth_patch_map.py`, `tools/nrth_sig_export.py`): 20 hidden x86 search patterns (High) + 8 `.data`
+  candidates, 11 pattern scans + 11 `MH_CreateHook` in `0x10005b80`, 20 scans + 0 hooks in `0x1000c390`, and in the
+  `netc.dll` cluster from `0x10020640` 6 one-byte `0xC3` writes through writer `0x10011870`
+  (`VirtualProtect(...,0x40,...)` + 1-byte copy). Independently reproduced by the C++ tool (same 8 `.data` RVAs).
+- **Phase 4:** strings catalog (9,452 lines) with section/offset mapping; high-value indicators extracted to `indicators.json`;
+  decoded-string layer documented in `detection/recovered_strings.txt` (46 usable records, 20 signatures, and the 20
+  records that are *not* usable — labelled as such, with reasons).
 - **Phase 5 (dynamic):** **not executed** — no Windows/MTA environment (see §7). Plan recorded in `private_server_tests/test_plan.md`.
 - **Phase 6:** behavioral reconstruction in `recovered_or_reconstructed_project/` (R2) with unit tests; validation checklist partially satisfied (build/test on Linux only; Windows ABI/runtime equivalence untested).
 - **Phase 7:** this case folder (`report.md`, `hashes.sha256`, `file_inventory.csv`, `imports_exports.txt`, `strings_catalog.txt`, `function_map.csv`, `behavior_timeline.md`, `indicators.json`, `detection/`, `private_server_tests/`, `test_results/`).
@@ -101,19 +133,50 @@ $ g++ -std=c++17 -Wall -Wextra -o tests/test_pe_export_parser tests/test_pe_expo
 [+] All PE export parser tests passed successfully!     # differential vs real sample (log: test_results/test_pe_export_parser.log)
 ```
 
+```
+# Audit module (executed 2026-10-10, same host): host tests first, then the PE32 cross build
+$ cd recovered_or_reconstructed_project && ./build_audit.sh
+[*] 21/21 checks passed
+result: all checks passed            # NrthAuditSelfTest: 21 checks, vectors taken from the sample
+[+] Built:  bin/NRTH_audit.dll (292,352 B)  bin/nrth_audit.exe (301,056 B)
+  machine 0x014c (I386), magic 0x10b (PE32), image base 0x10000000, DYNAMICBASE NX_COMPAT
+  exports: 21 names, undecorated, ordinals 1..21 as pinned in src/nrth_audit.def
+$ ./bin/host/nrth_audit audit working/NRTH.dll
+[*] signatures  : 20 checked, 0 with a match
+[*] verdict: 0 signature(s) found with a replaced prologue
+$ ./bin/host/nrth_audit sweep working/NRTH.dll --min 24 --vas | head -1
+[*] working/NRTH.dll: 8 hidden pattern candidate(s) (>= 24 chars)     # == the Python tool's 8
+```
+Logs: `test_results/audit_build.log`, `test_results/audit_sample_differential.log`,
+`test_results/yara_check.log` (4 rules compile; `NRTH.dll` → 3 rules, loader → 1 rule; the two
+audit binaries we ship match none).
+
 Windows build script for the reconstruction (`recovered_or_reconstructed_project/build.ps1`, MSVC x86) is documented but **was not executed** here (no Windows/MSVC on the analysis host). Passing tests = compatibility for the covered contracts only; **not** proof of full behavioral equivalence.
 
 ## 7. Coverage, confidence, limitations
 
 - **Covered (High confidence):** file identification, export/import maps, injection call chains, arming trigger, overlay infrastructure, operator UX strings, hash integrity.
-- **Partially covered (Medium):** init routines 0x10005b80 / 0x10020640 (entry and trigger known; internal feature logic not fully mapped).
-- **Unresolved (U):** exact menu feature set and any game-state/netcode effects; `C:\NVX` file I/O; whether `SWeaponAimSync` RTTI is used at runtime or merely linked; behavior under real anti-cheat products; private-server runtime results.
+- **Covered (High) after the decode pass:** the string codec and all 63 record plaintexts; the 20-signature
+  target catalogue with owner function and module; the hook inventory (11 + 20 + 6 scans, 11 + 4 `MH_CreateHook`);
+  the kill primitive and its 6 write sites; config/ADS/registry artifacts; the audit module + its test evidence.
+- **Partially covered (Medium):** `0x1000c390` (20 pattern scans, no hooks — role inferred, not proven); the
+  `Error #10xx Send screen error dev-cheat` path (strings + call sites seen, transport not traced); per-feature
+  mapping of menu flags to effects.
+- **Unresolved (U):** the *identity* of the six disabled `netc.dll` functions (their patterns come from `.data`
+  globals at run time — needs a dump); exact menu feature set and any game-state/netcode effects; whether
+  `C:\NVX` is ever created; whether `SWeaponAimSync` RTTI is used at runtime or merely linked; behavior under
+  real anti-cheat products; private-server runtime results.
 - **Environment limits:** Linux sandbox; no Ghidra/IDA (radare2 download blocked); no Windows runtime; no MTA:SA private server. Dynamic claims are therefore absent, not implied.
 - **Sample-set limit:** 2 binaries; detection rules unvalidated against variant sets.
 
 ## 8. How to detect / How to defend
 
-- **Detect:** see `detection/telemetry.md` (layered file + host + server signals with FP caveats) and `detection/yara_rules.yar` (3 candidate rules; exact-sample strength). Never rely on a single import/string.
+- **Detect:** see `detection/telemetry.md` (layered file + host + server + **module-integrity** signals with FP
+  caveats), `detection/yara_rules.yar` (4 candidate rules; exact-sample strength), and
+  `detection/recovered_strings.txt` (the decoded strings that Layer-1 file rules were missing).
+- **Automate:** `nrth_audit.exe audit <client.dll|netc.dll>` on a read-only dump — exit code `3` means at least one
+  located function has a detour/kill footprint, `--csv` per-signature rows. It cannot inject or write; it only reads.
+  Never rely on a single import/string.
 - **Defend (server-side first):** treat client state as untrusted — server-side validation of aim/movement/weapon sync; module-inventory attestation for `gta_sa.exe`; alert on unsigned DLLs mapped post-start; verbose logging around reserved/cheat packet IDs during investigations; regression-test detections with T0/T2/T5 of the test plan on the team-owned server only.
 
 ## 9. Statement on source recovery
@@ -134,7 +197,9 @@ Windows build script for the reconstruction (`recovered_or_reconstructed_project
 | `function_map.csv` | Address/RVA, role, callers/callees, evidence, confidence |
 | `behavior_timeline.md` | Observed sequence and trigger conditions |
 | `indicators.json` | Hashes, names, paths, behavioral signatures (no network IOCs observed) |
-| `detection/yara_rules.yar` | 3 candidate rules with confidence meta |
+| `detection/yara_rules.yar` | 4 candidate rules with confidence meta (incl. the XOR-hidden .data pattern records) |
+| `detection/recovered_strings.txt` | generated evidence table: 46 usable decoded strings + 28 signatures + labelled non-usable decodes |
+| `detection/audit_tool.md` | the built detector: API, build, exit codes, what it checks, measured FP behaviour, limits |
 | `detection/telemetry.md` | Layered telemetry + FP caveats + regression tests + blind spots |
 | `private_server_tests/test_plan.md` | Real client/server test matrix (T0–T6) |
 | `private_server_tests/results.md` | Honest status: NOT EXECUTED + what was validated instead |

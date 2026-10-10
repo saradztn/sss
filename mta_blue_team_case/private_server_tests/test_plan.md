@@ -62,7 +62,10 @@ Observe with: Process Monitor (filter: `gta_sa.exe`, loader), Process Explorer, 
 4. Resize window / toggle fullscreen → overlay must survive (`Hooked_Reset` path).
 
 ### T6 — Negative controls & cleanup
-1. Exit game; confirm loader exits; check `C:\NVX` for created files (existence Tentative in static analysis).
+1. Exit game; confirm loader exits. Then check the three locations the decoded strings actually name:
+   `C:\Overwack\loader_config.cfg` (does it get created/modified? does it contain `no_spoofer=`/`menu_key=`
+   lines?), the ADS `C:\ProgramData:NT2` (`dir /r C:\ProgramData`), and `C:\NVX` (plain string in the
+   image, use unproven). Record all three as created/untouched — the negative results matter too.
 2. Revert VM snapshot; restore server snapshot if any resource changed.
 3. Confirm no persistence (Run keys, services, scheduled tasks) and no residual accounts.
 
