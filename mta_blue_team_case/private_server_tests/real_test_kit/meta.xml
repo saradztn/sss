@@ -1,0 +1,9 @@
+<meta>
+    <!-- nrth_acwatch: server-side only. No client scripts are synced, deliberately: this case's
+         validation must not require any code to run inside the game client. -->
+    <info author="blue-team" type="script" version="1.0"
+          desc="Counts AC report events per player per minute and alerts on silence (NRTH case)." />
+    <script src="report_counter.lua" type="server" />
+    <!-- min_mta_version stays unset on purpose: pin it to your server build after you confirm the
+         three event names in report_counter.lua exist there. -->
+</meta>

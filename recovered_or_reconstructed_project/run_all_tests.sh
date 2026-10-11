@@ -8,8 +8,10 @@
 #   1. audit module unit tests                tests/test_nrth_audit.cpp        (always)
 #   2. audit module self-test (21 sample-derived vectors) via the CLI
 #   3. loader reconstruction tests            tests/test_cli_parser.cpp
+#   3b. config record (menu_key / no_spoofer)  tests/test_nrth_config.cpp
 #   4. export-contract differential           tests/test_pe_export_parser.cpp  (needs working/NRTH.dll)
 #   5. false-positive control + negative      nrth_audit audit / diff on the sample,
+#      + report-path health check             tools/nrth_report_path_check.py (fixture + payload),
 #      + deliverable hygiene    bin/NRTH_audit.dll free of per-link entropy
 #   6. YARA rule compile + scan               (needs python3 -c "import yara")
 #
@@ -68,6 +70,17 @@ if $CXX $STD $WARN -o "$OUT/t_cli" tests/test_cli_parser.cpp 2>"$OUT/c3.log"; th
   "$OUT/t_cli" > "$OUT/t3.log" 2>&1 && ok "4/4 CLI parsing cases" || { bad "cli parser tests"; tail -8 "$OUT/t3.log"; }
 else
   bad "cli parser tests did not compile"; tail -8 "$OUT/c3.log"
+fi
+
+say "3b/6  config record (loader_config.cfg tokens) unit tests"
+if $CXX $STD -O2 $WARN -Isrc tests/test_nrth_config.cpp src/nrth_config.cpp -o "$OUT/t_cfg" 2>"$OUT/c3b.log"; then
+  if "$OUT/t_cfg" > "$OUT/t3b.log" 2>&1; then
+    ok "$(tail -1 "$OUT/t3b.log") ($(grep -c '\[ ok \]' "$OUT/t3b.log") checks: format strings, tolerance, failure codes, VK names)"
+  else
+    bad "config tests failed (see $OUT/t3b.log)"; tail -20 "$OUT/t3b.log"
+  fi
+else
+  bad "config tests did not compile (see $OUT/c3b.log)"; tail -20 "$OUT/c3b.log"
 fi
 
 say "4/6  export-contract differential against the ORIGINAL sample"
@@ -149,6 +162,20 @@ if [ -n "$SAMPLE" ] && [ -x "$OUT/cli" ]; then
       ok "fixture csv: 20 located rows, 10 alerts = 6 KILL_RET + 4 DETOUR_JMP32, netc.dll row included"
     else
       bad "fixture control mismatch (pristine=${vpr:-?}/exit$vrc killed=${vkil:-?} diff=${vdf:-?}/exit$drc rows=${nrow:-?} alerts=${nalert:-?} kill=${nkill:-?} det=${ndet:-?})"
+    fi
+    # (5b) defender-side report-path health check on the SAME fixture: it must flag exactly the 10
+    #      overwritten entries on the killed image, say nothing on the pristine one, and confirm that
+    #      the original payload still carries the 6 staging+call pairs the check assumes.
+    python3 tools/nrth_report_path_check.py entries "$OUT/fixture_netc_killed.dll" \
+        --funcs "$OUT/fixture_netc.json" --csv "$OUT/t5f_entries.csv" >"$OUT/t5f.entries" 2>&1; e_rc=$?
+    python3 tools/nrth_report_path_check.py entries "$OUT/fixture_netc_pristine.dll" \
+        --funcs "$OUT/fixture_netc.json" >"$OUT/t5f.entries0" 2>&1; p_rc=$?
+    python3 tools/nrth_report_path_check.py payload "$SAMPLE" >"$OUT/t5f.payload" 2>&1; y_rc=$?
+    nflag=$(awk -F, 'NR>1 && $5=="yes"' "$OUT/t5f_entries.csv" 2>/dev/null | grep -c . || echo 0)
+    if [ "${e_rc:-x}" = 3 ] && [ "${p_rc:-x}" = 0 ] && [ "${y_rc:-x}" = 0 ] && [ "${nflag:-0}" = 10 ]; then
+      ok "report-path health check: killed fixture 10 flagged (exit 3), pristine exit 0, sample 6/6 staging pairs"
+    else
+      bad "report-path health check mismatch (killed=${e_rc:-?} pristine=${p_rc:-?} payload=${y_rc:-?} flagged=${nflag:-?})"
     fi
   else
     bad "tools/nrth_netc_fixture.py could not build the control images (see $OUT/t5f.log)"

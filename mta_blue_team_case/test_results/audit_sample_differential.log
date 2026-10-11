@@ -101,3 +101,9 @@ $ sha256sum of two consecutive ./build.sh runs (form-parity layout, post-normali
     - the cross-build diff case is what 1.2.0 was written for; the form-parity relink removed the
       single informational row it used to print, which is the expected direction of travel.
     - ASan+UBSan over both samples: no findings.
+
+[2026-10-11] reproducibility re-check after the config-record + export-module-name change:
+  build.sh (link bin/nvx.dll -> publish bin/NRTH.dll) run 1: 4f6640c29d57faac0e6f41ae9705d392e5be7922dbf3ae752e20e5170b90c0af  bin/NRTH.dll
+  build.sh run 2 (fresh link, separate invocation):            4f6640c29d57faac0e6f41ae9705d392e5be7922dbf3ae752e20e5170b90c0af  bin/NRTH.dll   <- identical
+  bin/NORTH_LOADER.exe unchanged:                               5e2eddaccdb9444ceb10c911771160f204158eaf0ca519205f5f720df1960668
+  export-directory module name: nvx.dll (matches the sample) | imports 201 fns / 17 DLLs (sample 247/17)

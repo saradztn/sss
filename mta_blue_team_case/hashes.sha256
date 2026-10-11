@@ -53,3 +53,34 @@ df80aae28feb2bca09fa4799c85fccb933ec8590fb0be13178f6f25b69fc88a4  recovered_or_r
 98dbd4cd86a9f4881401d6638469c799476ff92834f3bacfa665225d9286caf7  recovered_or_reconstructed_project/run_all_tests.sh
 e6432feae2bcfa5d59fa06a7f85ccbbd833f61caa0c73f015a256efa141949a2  mta_blue_team_case/anticheat_playbook.md
 450edc0de8757d4fcf72fb8b5484a8005f04e32c7136c426312ea1f658864a91  mta_blue_team_case/test_results/fixture_control.log
+
+--- rebuild + additions 2026-10-11 (config record src/nrth_config.*, export module-name parity,
+    tools/nrth_pe_catalog.py + nrth_report_path_check.py, private_server_tests/real_test_kit/) ---
+    supersedes the bin/NRTH.dll line above (1,425,408 B / 955b3d34...): the DLL now carries the
+    config record and is published from bin/nvx.dll, so its hash moved. Sample hashes unchanged.
+4f6640c29d57faac0e6f41ae9705d392e5be7922dbf3ae752e20e5170b90c0af  recovered_or_reconstructed_project/bin/NRTH.dll  (1427968 bytes)
+5e2eddaccdb9444ceb10c911771160f204158eaf0ca519205f5f720df1960668  recovered_or_reconstructed_project/bin/NORTH_LOADER.exe  (280064 bytes)
+c13167666a0a3e16ed870e7b74871410eb848063d71a7682c6773b40e408fe9f  recovered_or_reconstructed_project/bin/NRTH_audit.dll  (293376 bytes)
+1c24702ac10df6fc1f07cd74f193d36f1aa3ffc7ae9c343881d9ebe6b3fcdf0a  recovered_or_reconstructed_project/bin/nrth_audit.exe  (304640 bytes)
+0f62555028f61fc56e6937daeac4c402c346681a1ab470b20cdfba5cf3fd6ea2  recovered_or_reconstructed_project/src/nrth_config.h  (3643 bytes)
+7ca549ff4b5bc3008cf4fb321cc71f2ffae5cd8dfbce446534c2ef245ca650e7  recovered_or_reconstructed_project/src/nrth_config.cpp  (6240 bytes)
+d6c33341ef65441059cb27ab67d427da97b431fb0d4df26bc9129da453df6cba  recovered_or_reconstructed_project/tests/test_nrth_config.cpp  (4795 bytes)
+ac2f394c2db4a76d8eb74636fc54b73f1849a25d09b34ef62b66cb9c42f80fe5  recovered_or_reconstructed_project/tools/nrth_pe_catalog.py  (12046 bytes)
+f2cfadbd10488acfbb2f22c4419364b05203e1ef8bc5bbbdfaa0f549ef75ecb7  recovered_or_reconstructed_project/tools/nrth_report_path_check.py  (9377 bytes)
+a95a0f189333b104d6360afdb9815e0578318c94e7c2848101b17fa53e14a2f1  recovered_or_reconstructed_project/src/nrth_hook.cpp  (20199 bytes)
+fe30e1d9e57bc93279e5e9c6118b41686aafa333b3ed47ba05fd0062d49f3677  recovered_or_reconstructed_project/src/nrth_ui.cpp  (47626 bytes)
+61d66397635e57ec9ddddd428b294b0916f216e2d8d026fcc097906fd534a16a  recovered_or_reconstructed_project/src/nrth_dll.def  (713 bytes)
+5aeb9008763e1147b53c2e6f87fa41032e368c2a7c193d7bc078cd6edfd43327  recovered_or_reconstructed_project/build.sh  (5030 bytes)
+333537262474820f2f39ae62a0261e79c956e1d09c4ce90f3c63036514a3a465  recovered_or_reconstructed_project/run_all_tests.sh  (11934 bytes)
+678e25f366aa36d75d584a61743c2eb0a25d404f80f7e1e6222fbba7371e90fc  mta_blue_team_case/imports_exports.txt  (17205 bytes)
+c0b8d8948a6b335df905e2cebd0b01c6eaefb0de07f149c27878f3fd7ff04ea1  mta_blue_team_case/strings_catalog.txt  (584084 bytes)
+d793bde6648795c3b254b5ca7865622aa8af0c8773b4a1dbac7697cce73c3f43  mta_blue_team_case/private_server_tests/real_test_kit/report_counter.lua  (6449 bytes)
+fad8e3f5edb6e541ec9da123a27e4f019b190dfbd62a525d07cddaefe66ffab4  mta_blue_team_case/private_server_tests/real_test_kit/collect_client.ps1  (7968 bytes)
+acecdfe6c81f15d6226b436d3173df9bfc10765d52320ef904d3d972962a3489  mta_blue_team_case/private_server_tests/real_test_kit/expected_findings.md  (6301 bytes)
+b115b5655eee9ececa81c726d6048d54654fad7123793b78eb788ffec22b3c2d  mta_blue_team_case/private_server_tests/real_test_kit/README.txt  (4220 bytes)
+62fffc01d40899cb43ff3f274a4cdd4092102edf8300f1ae9ce75fff8030249a  mta_blue_team_case/private_server_tests/real_test_kit/meta.xml  (570 bytes)
+0ff201bfa9d519a1cd320026bdd42e5482fc844f3436ac52f4fb52e3e5b4cc65  mta_blue_team_case/private_server_tests/real_test_kit/reportpath_entries.example.json  (900 bytes)
+--- correction, same day: the two generated catalog files were regenerated after the lines above
+    (length-4 string floor + five-artifact coverage), so their hashes are restated here as final.
+27dfa7c2234616305c856816fffec88f64e6785409fd2a198a4e8adf2843e7fb  mta_blue_team_case/imports_exports.txt  (17391 bytes)
+27adcb88200f597d61162c3e422e2ae5ee3edb3d5741b30ecf5d2f3d2f5192f9  mta_blue_team_case/strings_catalog.txt  (1364269 bytes)

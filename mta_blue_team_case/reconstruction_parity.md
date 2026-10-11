@@ -36,7 +36,7 @@ Measured effect on `bin/NRTH.dll` (original = `working/NRTH.dll`, sha256 `947b81
 
 | measured item | original | before | after | |
 |---|---|---|---|---|
-| file size | 1,318,400 B | 1,692,160 B | **1,425,408 B** | closer, not equal |
+| file size | 1,318,400 B | 1,692,160 B | **1,427,968 B** | closer, not equal |
 | sections | 5 | 9 | **7** | `.buildid` and `/4` gone |
 | Subsystem | 3 (CUI) | 2 (GUI) | **3 (CUI)** | ✅ exact |
 | `.text` / `.rdata` / `.data` name+flags | — | index 2 misaligned | ✅ all three match by index | exact |
@@ -58,7 +58,7 @@ the tool as `toolchain-bound`:
 | `debug` data directory | present | absent | deliberate: a CodeView record is a per-link GUID + PDB path, i.e. the exact thing that made the artifact non-pinnable. Determinism was chosen over that cosmetic match. |
 | `.eh_fram`, `.gcc_exc` | absent | present | emitted by the mingw-w64 CRT objects this target links; `-fno-unwind-tables -fno-asynchronous-unwind-tables` was tested on the C++ TUs and changed nothing (verified on `imgui.o`), so they would need a rebuilt CRT. |
 | entry RVA / size of image | 0xa8bb0 / 0x152000 | 0xd7180 / 0x166000 | content-determined, not a flag. Matching them would mean padding the image to the original's size, which is size-collision for the sake of it. |
-| imports | 247 functions over 17 DLLs incl. `MSVCP140`, `VCRUNTIME140`, `gdiplus`, `IMM32` | 228 over 17 DLLs incl. `GDI32`, `dwmapi` | MSVC C++ runtime imports (`MSVCP140`/`VCRUNTIME140` + the api-ms CRT split) are what the CRT you link against *is*, not a switch. |
+| imports | 247 functions over 17 DLLs incl. `MSVCP140`, `VCRUNTIME140`, `gdiplus`, `IMM32` | 201 over 17 DLLs incl. `GDI32`, `dwmapi` | MSVC C++ runtime imports (`MSVCP140`/`VCRUNTIME140` + the api-ms CRT split) are what the CRT you link against *is*, not a switch. |
 | RTTI / SEH prologue fingerprint | 64 `.?AV/.?AU` RTTI records, 143 `53 8B DC` `__SEH_prolog4` | 0, 0 | MSVC-only artefacts (name decoration + SEH4 wrappers). They are, in fact, how the case's own rules distinguish "sample" from "rebuild"; removing them from the rebuild is correct for detection engineering. |
 | distinct ASCII strings | 3,858 | 3,787 | only 1,101 shared (28.5 %). The original's set is dominated by the XOR-encrypted `.data` layer and MSVC metadata that the reconstruction deliberately does not contain. |
 | YARA | `NORTH_NRTH_Payload_DLL`, `NORTH_Export_Contract_NVXHookProc`, `NORTH_NRTH_HiddenPatternRecords` fire | none fire | by design (see `detection/yara_rules.yar`): the rules key on ciphertext records and the byte-level export-table shape of the *sample*. A reconstruction that matched those rules would be indistinguishable from the malware in a scan, which is the opposite of what a blue-team artifact should be. |
@@ -85,17 +85,22 @@ Documented from evidence but deliberately **not** implemented (the case's scope 
 |---|---|---|
 | `HookInstaller_ClientLua` | 0x10005b80 | 11 resolver scans + 11 `MH_CreateHook` against the **live** `client.dll`, including the Lua-VM `exec` path. Coding it = working in-game script execution. |
 | `OffsetResolver_Client` | 0x1000c390 | 20 `.data`-driven scans, 0 hooks — the feature-slot offset table (aim/weapon/god-mode style writes). |
-| `NetcCheckKiller` | 0x10020640 | 6 scans + 4 hooks + 6 one-byte `0xC3` patches that disable `netc.dll` integrity checks (sites 0x100206f0, 0x100208aa, 0x10020927, 0x10020f46, 0x100214bd, 0x100215f1). Coding it = anti-cheat tampering. |
+| `NetcCheckKiller` | 0x10020640 | 6 scans + 4 hooks + 6 one-byte `0xC3` patches over `netc.dll`'s **report** functions (screenshot / transgression / diagnostic
+  channels, per the co-located `Error #10XX Send screen error dev-cheat` strings — not generic self-integrity checks).
+  Each write is staged by `mov byte ptr [ebp-disp8],0xC3` exactly 11 bytes before the writer `call` at
+  0x100206f0, 0x100208aa, 0x10020927, 0x10020f46, 0x100214bd, 0x100215f1 (measured by tools/nrth_report_path_check.py).
+  Coding it = anti-cheat tampering; the *defender* half of it is implemented (nrth_report_path_check + fixture). |
 | `BytePatcher_1byte` | 0x10011870 | `VirtualProtect(ptr,1,0x40,&old)` + 1-byte copy — the write primitive above. |
 | `PatternRecordLoader` / `HiddenPatternRecords_Data` | 0x10023670 / `.data` | the 20-record scan table; exposed *read-only* through `nrth_audit` instead. |
 | `StrDecryptor_Family` | 82 decryptors, 63 ciphertexts | the XOR/SSE string layer (`plain[p] = cipher[p] ^ ((p−K)&0xFF)`, one-shot gate ⇒ `L = F−1`). Decrypting it is detection work and is done (`tools/nrth_strings_recover.py`, `working/recovered.json`); **re-implementing the encryptor in our binary adds evasion value and zero analyzable behaviour**, so the reconstruction keeps plaintext imports and its strings remain greppable. |
-| `ConfigRead_Overwack`, `AutoInjectDriver`, `LuaVM_Globals`, `Resolver_ScanModulePattern`, `Hooked_LdrLoadDll_client_arm` | see `function_map.csv` | config/ADS artifacts (`C:\Overwack\loader_config.cfg`, `C:\ProgramData:NT2`) and the injection driver: creating stealth storage in a *reconstruction* would be new behaviour, not recovered behaviour, so it is described in `mechanism_overview_ar.md` / `report.md` instead of implemented. |
+| `ConfigRead_Overwack` | 0x1001e4f0 / cluster 0x1001fc10..0x10020640 | **partly implemented 2026-10-11**: the config *record* (` no_spoofer=%d`, ` menu_key=%d`) is parsed, formatted, loaded by `MainInitThread`, honoured by the overlay toggle key and written back by Config->Save (`src/nrth_config.{h,cpp}`, 21 checks in suite stage 3b). Not implemented: the ADS `C:\ProgramData:NT2` and the registry side - that half is persistence/stealth storage, which a reconstruction must not invent. Which API writes the sample file, and when, is Unknown, so no I/O ordering is claimed. |
+| `AutoInjectDriver`, `LuaVM_Globals`, `Resolver_ScanModulePattern`, `Hooked_LdrLoadDll_client_arm` | see `function_map.csv` | the driver, the foreign `lua_State` registry walk and the module resolver used against a live process: running them requires cross-process writes and their product is a working cheat, so they are described in `mechanism_overview_ar.md` / `report.md` and detected by `nrth_audit` instead of implemented. |
 
 Not covered: 0 — every mapped row is either implemented or explicitly accounted for above.
 
 ## Honest bottom line
 
 - **Contract:** identical (x86 PE32, ImageBase 0x10000000, one export `NVXHookProc` @1, DllCharacteristics `0x0140`).
-- **Form:** 18/26 header fields equal, all three core sections equal by index, size within 108 KB — and the residual gaps are toolchain identity or deliberate determinism, not oversight.
+- **Form:** 18/26 header fields equal, all three core sections equal by index, size within 109 KB — and the residual gaps are toolchain identity or deliberate determinism, not oversight. Two more fields matched on 2026-10-11, outside the 26-field table: the **export-directory module name** now literally reads `nvx.dll` as in the sample (`build.sh` links `bin/nvx.dll` and publishes it as `bin/NRTH.dll`, because lld derives that field from the output name), and the import count moved 228 -> **201 of 247** functions over the same 17 DLLs once the config TU joined the link (`tools/nrth_pe_catalog.py` measures both sides; the residue is the CRT each toolchain links, not a switch).
 - **Function:** the load→arm→overlay chain behaves like the original; the two cheat mechanisms that make the original *the original* remain documented, not implemented, and no cheat-capable DLL is produced by this project.
 - Anything in this file that is a claim about the **sample** is Observed; anything about intent inside the packed feature slots is Strongly inferred at best (see `report.md` §7).

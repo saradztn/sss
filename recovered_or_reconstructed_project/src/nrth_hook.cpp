@@ -72,7 +72,12 @@ static PFN_Present      g_pOrigPresent      = NULL; // vtable slot 17 (0x44)
 static PFN_Reset        g_pOrigReset        = NULL; // vtable slot 16 (0x40)
 static bool             g_bMtaArmed         = false; // client.dll/netc.dll seen
 static bool             g_bOverlayInit      = false;
-static bool             g_bMenuOpen         = false; // toggled by VK_INSERT
+static bool             g_bMenuOpen         = false; // toggled by the configured menu key
+static NrthConfig       g_cfg               = { NRTH_CFG_DEFAULT_MENU_KEY, 0 };
+static char             g_cfgPath[MAX_PATH] = {0};
+
+extern "C" NrthConfig *NrthConfigGet(void) { return &g_cfg; }
+extern "C" const char *NrthConfigPath(void) { return g_cfgPath[0] ? g_cfgPath : NULL; }
 static IDirect3DDevice9 *g_pDevice          = NULL;
 static HWND             g_hGameWnd          = NULL;
 static WNDPROC          g_pOrigWndProc      = NULL;
@@ -142,7 +147,27 @@ static DWORD WINAPI MainInitThread(LPVOID lpParam)
 {
     (void)lpParam;
 
-    // Step 1: config directory referenced by the sample (use Tentative — exact
+    // Step 1a: the sample's own config handling — C:\Overwack\loader_config.cfg with the tokens
+    // " no_spoofer=%d" / " menu_key=%d" (call sites 0x1001fcff / 0x1001fdc5 / 0x1001fd7b, all three
+    // inside the single function 0x1001fc10..0x10020640). Which API writes that file is Unknown, so
+    // only the *format and parsing* are reconstructed here, not an I/O ordering claim. The file is
+    // read from beside the module, then from the evidenced absolute path (read-only attempt).
+    {
+        char mod[MAX_PATH] = {0};
+        HMODULE hMod = (HMODULE)lpParam;
+        if (hMod && GetModuleFileNameA(hMod, mod, sizeof(mod)) > 0) {
+            char *slash = strrchr(mod, '\\');
+            if (slash) {
+                strcpy(slash + 1, "loader_config.cfg");
+                snprintf(g_cfgPath, sizeof(g_cfgPath), "%s", mod);
+            }
+        }
+        if (g_cfgPath[0]) {
+            NrthConfigLoadFile(g_cfgPath, &g_cfg);
+        }
+    }
+
+    // Step 1b: config directory referenced by the sample (use Tentative — exact
     // I/O unknown). We only record its presence marker like the original did
     // before hooking (no file writes performed here).
     // "C:\NVX"  [evidence VA 0x100b0d18]
@@ -390,7 +415,7 @@ static HRESULT WINAPI Hooked_Present(IDirect3DDevice9 *pDevice, const RECT *pSrc
     if (g_bOverlayInit) {
         // Observed toggle: INSERT (loader console hint + ImGui key name 'Insert').
         bool wasOpen = g_bMenuOpen;
-        if (GetAsyncKeyState(VK_INSERT) & 1) {
+        if (GetAsyncKeyState(g_cfg.menuKey ? g_cfg.menuKey : VK_INSERT) & 1) {
             g_bMenuOpen = !g_bMenuOpen;
         }
         if (g_bMenuOpen != wasOpen) {

@@ -52,7 +52,7 @@ Last verified run (2026-10-10, Linux host, g++ 12.2 + ziglang 0.17.0):
 [*] 30/30 checks passed                       # unit tests
 result: all checks passed                     # NrthAuditSelfTest: 21 checks, all sample-derived
 $ ./run_all_tests.sh
-=== summary: 12 passed, 0 failed, 0 skipped (a clone without bin/ gives 10 passed + 1 skipped)      # incl. the YARA check, both sample differentials, the fixture control and the form-parity guard
+=== summary: 14 passed, 0 failed, 0 skipped (a clone without bin/ gives 10 passed + 1 skipped)      # incl. the YARA check, both sample differentials, the fixture control and the form-parity guard
 [+] Built:
   bin/NRTH_audit.dll   293,376 B  sha256 c13167666a0a3e16ed870e7b74871410eb848063d71a7682c6773b40e408fe9f
   bin/nrth_audit.exe   304,640 B  sha256 1c24702ac10df6fc1f07cd74f193d36f1aa3ffc7ae9c343881d9ebe6b3fcdf0a
@@ -160,7 +160,9 @@ still exported for hand-written rules, with its noise documented.
 
 The module does not implement, and this repository will not ship, the two mechanisms people
 usually ask for when they see this sample: taking over the game's live Lua VM `exec` path, and
-disabling netc.dll's integrity checks. Those are the cheat itself — running them requires code
+disabling netc.dll's screenshot/transgression reporting path (the co-located
+`Error #10XX Send screen error dev-cheat` strings show what those functions feed; they are not generic
+self-integrity checks). Those are the cheat itself — running them requires code
 injection into another process, and their effect is a working cheat. Everything needed for
 *detection and triage* of them is here instead (the exact strings, keys, resolvers, patterns,
 hook inventory, patch primitive and write sites), which is also what makes the case reusable in

@@ -61,10 +61,15 @@ $ZIG c++ $TARGET -O2 -Isrc -Ivendor/minhook/include -Ivendor/imgui -Ivendor/imgu
   -c src/nrth_hook.cpp -o "$OBJ/nrth_hook.o"
 $ZIG c++ $TARGET -O2 -Isrc -Ivendor/minhook/include -Ivendor/imgui -Ivendor/imgui/backends \
   -Ivendor/lua -c src/nrth_ui.cpp -o "$OBJ/nrth_ui.o"
+$ZIG c++ $TARGET -O2 -Isrc -c src/nrth_config.cpp -o "$OBJ/nrth_config.o"
 
-echo "[*] Linking build/NRTH.dll (export: NVXHookProc @1)..."
-$ZIG c++ $TARGET -shared -o "$OUT/NRTH.dll" \
-  "$OBJ/nrth_hook.o" "$OBJ/nrth_ui.o" "$OBJ"/lua_*.o \
+echo "[*] Linking bin/nvx.dll (export: NVXHookProc @1)..."
+# Linked as nvx.dll on purpose: the sample's IMAGE_EXPORT_DIRECTORY.Name field literally reads
+# "nvx.dll" (measured with tools/nrth_pe_catalog.py), because lld derives that field from the output
+# file name. We publish under the shipped name so the field matches instead of becoming "another
+# toolchain difference".
+$ZIG c++ $TARGET -shared -o "$OUT/nvx.dll" \
+  "$OBJ/nrth_hook.o" "$OBJ/nrth_ui.o" "$OBJ/nrth_config.o" "$OBJ"/lua_*.o \
   "$OBJ/mh_buffer.o" "$OBJ/mh_hook.o" "$OBJ/mh_trampoline.o" "$OBJ/mh_hde32.o" "$OBJ/mh_hde64.o" \
   "$OBJ/imgui.o" "$OBJ/imgui_draw.o" "$OBJ/imgui_tables.o" "$OBJ/imgui_widgets.o" \
   "$OBJ/imgui_impl_dx9.o" "$OBJ/imgui_impl_win32.o" \
@@ -78,6 +83,9 @@ $ZIG c++ $TARGET -O2 -o "$OUT/NORTH_LOADER.exe" src/north_loader.cpp \
 
 # Same normalisation as build_audit.sh: the reconstruction is evidence, so its hashes should be
 # quotable; only timestamp/CodeView/build-id entropy is removed (no code bytes are touched).
+cp -f "$OUT/nvx.dll" "$OUT/NRTH.dll"
+echo "[+] published $OUT/NRTH.dll from build output nvx.dll"
+
 python3 tools/pe_deterministic.py "$OUT/NRTH.dll" "$OUT/NORTH_LOADER.exe" || \
   echo "[!] pe_deterministic.py failed - hashes will move on every rebuild" >&2
 

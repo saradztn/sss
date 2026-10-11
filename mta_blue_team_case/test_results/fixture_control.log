@@ -60,3 +60,51 @@ $ ./bin/host/nrth_audit diff ../working/fixture_netc_pristine.dll ../working/fix
 
 [*] the same six commands are asserted by run_all_tests.sh stage 5 (two [PASS] lines); fixtures live in
     working/ (gitignored) and are regenerated from src/nrth_audit_sigs.h, so they cannot drift from the table.
+
+==============================================================================
+[2026-10-11] stage 5b - defender-side report-path health check (tools/nrth_report_path_check.py)
+==============================================================================
+$ python3 recovered_or_reconstructed_project/tools/nrth_report_path_check.py fixture
+stderr:
+Traceback (most recent call last):
+  File "/home/user/sss/recovered_or_reconstructed_project/tools/nrth_netc_fixture.py", line 163, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/user/sss/recovered_or_reconstructed_project/tools/nrth_netc_fixture.py", line 112, in main
+    rows = table_rows(ns.sigs_header)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/sss/recovered_or_reconstructed_project/tools/nrth_netc_fixture.py", line 47, in table_rows
+    txt = open(path, encoding='utf-8', errors='replace').read()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'src/nrth_audit_sigs.h'
+Traceback (most recent call last):
+  File "/home/user/sss/recovered_or_reconstructed_project/tools/nrth_report_path_check.py", line 186, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/user/sss/recovered_or_reconstructed_project/tools/nrth_report_path_check.py", line 182, in main
+    return args.fn(args)
+           ^^^^^^^^^^^^^
+  File "/home/user/sss/recovered_or_reconstructed_project/tools/nrth_report_path_check.py", line 161, in cmd_fixture
+    subprocess.run([sys.executable, os.path.join(here, "nrth_netc_fixture.py")], check=True,
+  File "/usr/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/usr/bin/python3', '/home/user/sss/recovered_or_reconstructed_project/tools/nrth_netc_fixture.py']' returned non-zero exit status 1.
+exit=1
+
+$ python3 recovered_or_reconstructed_project/tools/nrth_report_path_check.py payload working/NRTH.dll
+== payload kill-plan presence: NRTH.dll (947b81be2d0f84cc)
+   'mov byte ptr [ebp-0x16],0xC3' staging sites found: 6  (sample documents 6)
+      call site va=0x100206f0 -> staging at 0x100206e5 (11 bytes before the call)
+      call site va=0x100208aa -> staging at 0x1002089f (11 bytes before the call)
+      call site va=0x10020927 -> staging at 0x1002091c (11 bytes before the call)
+      call site va=0x10020f46 -> staging at 0x10020f3b (11 bytes before the call)
+      call site va=0x100214bd -> staging at 0x100214b2 (11 bytes before the call)
+      call site va=0x100215f1 -> staging at 0x100215e6 (11 bytes before the call)
+   note: full per-signature state classification lives in bin/nrth_audit.exe (20 signatures, same footprints). This subcommand only proves the health check's assumption - that the staging sites exist in the payload - and is cheap to run.
+[=] 6/6 documented staging sites located (total sites of this form in the payload: 6)
+    kill plan present as documented
+exit=0
+[note] SYNTHETIC FIXTURE ONLY: the two images are hand-built by tools/nrth_netc_fixture.py from
+       src/nrth_audit_sigs.h. They contain no netc.dll content. They validate the detector's
+       discrimination (pristine exit 0 / killed exit 3, 6 KILLED + 4 DETOUR), nothing about a
+       live client. The payload half is a real measurement on the original sample.

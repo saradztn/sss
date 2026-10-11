@@ -229,7 +229,8 @@ Detection use:
     a subset of the same patterns for scan-time use (YARA cannot do the widen/patch logic).
   * Section C.2 must NOT be used as a cheat-presence indicator on its own: those prologue
     shapes are ordinary MSVC __SEH_prolog4 / __GS-setup code and appear in many modules.
-    They are useful as *the location to memory-integrity check* once the cheat is known.
+    They are useful as *the location to check* once the cheat is known — the functions they name are the
+    report channels (screenshot/transgression), so check their entry bytes in the LOADED image.
 
 Verification:
   * Every address in this file is a VA (ImageBase + RVA) unless it is written `off 0x...`, which is a

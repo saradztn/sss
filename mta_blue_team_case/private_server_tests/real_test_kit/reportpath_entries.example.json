@@ -1,0 +1,30 @@
+{
+  "_comment": "SHAPE TEMPLATE ONLY. The RVAs below come from the SYNTHETIC fixture (recovered_or_reconstructed_project/tools/nrth_netc_fixture.py), NOT from a real netc.dll. Replace them with the entries you resolved for your own netc.dll build before running tools/nrth_report_path_check.py entries against a real image.",
+  "_shape": "{\"funcs\":[{\"rva\":<int>}, ...]}  (also accepted: plain list of ints or hex strings)",
+  "funcs": [
+    {
+      "rva": 4096,
+      "label": "client.dll state=KILL_RET"
+    },
+    {
+      "rva": 4160,
+      "label": "client.dll state=KILL_RET"
+    },
+    {
+      "rva": 4224,
+      "label": "client.dll state=KILL_RET"
+    },
+    {
+      "rva": 4288,
+      "label": "client.dll state=KILL_RET"
+    },
+    {
+      "rva": 4352,
+      "label": "client.dll state=KILL_RET"
+    },
+    {
+      "rva": 4416,
+      "label": "client.dll state=DETOUR_JMP32"
+    }
+  ]
+}

@@ -62,6 +62,18 @@ investigation (`../mta_blue_team_case/`).
   header/section fields ("form") and every function mapped in `../mta_blue_team_case/function_map.csv`
   ("function"). `--out FILE` writes a markdown table; the conclusions live in
   `../mta_blue_team_case/reconstruction_parity.md`. Measured today: 18/26 fields, 9/20 functions.
+- `tools/nrth_pe_catalog.py` - stdlib-only PE parser that regenerates the case's
+  `imports_exports.txt` and `strings_catalog.txt` for all five artifacts (sections, all 16 data directories,
+  export ordinals/RVA/VA/forwarder, per-DLL import lists, ASCII+UTF-16 strings with off/section/VA). It needs no
+  `pefile`, so a defender can re-derive both evidence files anywhere.
+- `tools/nrth_report_path_check.py` - defender-side report-path health check: `payload` locates the six
+  `mov byte ptr [ebp-disp8],0xC3` staging sites (each exactly 11 bytes before its writer call); `entries
+  <pe> --funcs <json>` classifies the first bytes of listed function entries (INTACT / KILLED / DETOUR /
+  PUSHRET, exit 3 if any is abnormal); `fixture` runs the labelled synthetic A/B control used by stage 5b.
+- `src/nrth_config.{h,cpp}` + `tests/test_nrth_config.cpp` - the `loader_config.cfg` record the sample
+  decrypts at 0x1001fdc5 (` no_spoofer=%d`) and 0x1001fd7b (` menu_key=%d`): tolerant parser, formatter, VK
+  display names. Loaded in `MainInitThread`, honoured by the overlay toggle key, written by Config->Save.
+  Suite stage **3b** runs its 21 checks.
 - `tools/nrth_netc_fixture.py` — positive control for the ALERT path: builds two fixture images whose functions are
   generated from `src/nrth_audit_sigs.h` itself, one pristine and one carrying exactly the footprint bytes the sample
   writes (6 x `C3` kill, 4 x `E9` detour). Measured: pristine 0 patched / killed 10 patched / `diff` verdict 10 and
@@ -86,7 +98,7 @@ investigation (`../mta_blue_team_case/`).
   pass `--no-formal` for the plain layout). `build.ps1` — MSVC x86 alternative.
   `BUILD_LOG.txt` — last build and verification results.
 - Artifacts (2026-10-11 form-parity build, reproduced across two consecutive runs and a fresh clone):
-  `bin/NRTH.dll` 1,425,408 B `sha256 955b3d348ee543cf1f3384720e9b65dbce2832bc2ebf630acbb470340c69e1f6`
+  `bin/NRTH.dll` 1,427,968 B `sha256 4f6640c29d57faac0e6f41ae9705d392e5be7922dbf3ae752e20e5170b90c0af`
   (export `NVXHookProc` @1 rva 0x001000), `bin/NORTH_LOADER.exe` 280,064 B
   `sha256 5e2eddaccdb9444ceb10c911771160f204158eaf0ca519205f5f720df1960668`.
 

@@ -75,6 +75,7 @@
 
 #include "imgui.h"
 #include "nrth_ui.h"
+#include "nrth_hook.h"   // NrthConfigGet()/NrthConfigPath() — Menu Toggle Key + loader_config.cfg
 #include "nrth_vehicle_names.inc"
 
 // Embedded Lua 5.4.6 — a LOCAL sandbox VM living inside the DLL.
@@ -223,7 +224,11 @@ static bool s_configsScanned = false;
 static char s_cfgName[64] = "default";
 static int  s_cfgSel = -1;
 static bool s_watermark = true, s_notifications = true;
-static int  s_toggleKey = VK_INSERT;   // "Menu Toggle Key" (evidence: "Insert")
+// The "Menu Toggle Key" bind is not UI-local state any more: it lives in the config record that
+// MainInitThread loads and that Config->Save writes back, because the sample carries " menu_key=%d"
+// (VA 0x1001fd7b) as a *file* key next to the path "C:\Overwack\loader_config.cfg". Read/write macro
+// so the existing capture widget and display rows keep working unchanged.
+#define s_toggleKey (NrthConfigGet()->menuKey)
 static bool s_waitingForKey = false;
 
 // Keybinds ("Keybind's" / "##keybinds")
@@ -867,6 +872,11 @@ static void DrawConfigTab()
         }
         char msg[128];
         snprintf(msg, sizeof(msg), "Config saved: %s", f.c_str()); // [off 0xeb020]
+        // Also persist the evidenced record (no_spoofer/menu_key) next to the module.
+        const char *cfgPath = NrthConfigPath();
+        if (cfgPath) {
+            NrthConfigSaveFile(cfgPath, NrthConfigGet());
+        }
         FeatureAction(msg);
         s_configsScanned = false;
     }
@@ -909,7 +919,9 @@ static void DrawConfigTab()
         s_waitingForKey = true;
     }
     ImGui::SameLine();
-    ImGui::TextDisabled("(current: Insert)");
+    char keyName[32] = {0};
+    NrthConfigKeyName(s_toggleKey, keyName, sizeof(keyName));
+    ImGui::TextDisabled("(current: %s)", keyName[0] ? keyName : "?");
 
     ImGui::Separator();
     ImGui::Text("Keybind's");                                      // [off 0xeb130 / off 0xeb130]

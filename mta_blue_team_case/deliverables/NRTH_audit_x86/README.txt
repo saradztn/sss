@@ -4,8 +4,8 @@ NRTH_audit — defensive audit module built from this case (the only *runnable* 
 ABOUT THE SIBLING ZIP ../NRTH_rebuilt_x86.zip
   That archive is the 2026-10-10 rev3 snapshot of the *reconstruction* (bin/NRTH.dll 1,692,160 B,
   sha256 2a9e38429a679b214c4fc56325638ba99d59e51cd83a65e7bc9d59f08d04f31f). The tree has since been
-  relinked with form-parity linker flags and normalised: today's build is bin/NRTH.dll 1,425,408 B
-  sha256 955b3d348ee543cf1f3384720e9b65dbce2832bc2ebf630acbb470340c69e1f6 (export NVXHookProc @1,
+  relinked with form-parity linker flags and normalised: today's build is bin/NRTH.dll 1,427,968 B
+  sha256 4f6640c29d57faac0e6f41ae9705d392e5be7922dbf3ae752e20e5170b90c0af (export NVXHookProc @1,
   rva 0x001000 unchanged). Neither archive is a drop-in replacement for the other, neither is this
   audit module, and neither implements the sample's live mechanisms (Lua-VM exec hijack, netc.dll
   integrity kills). Per-field / per-function closeness of the current build to the original sample

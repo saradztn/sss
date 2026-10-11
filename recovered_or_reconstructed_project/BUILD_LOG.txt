@@ -252,3 +252,91 @@ $ (reproducibility work) python3 tools/pe_deterministic.py  — new, and wired i
   [x] No new capability produced: analysis + documentation of the sample only. The strings above
       are ciphertexts in NRTH.dll (they do not appear as plaintext), so they remain non-YARA-able
       against this sample and are useful as netc.dll-side anchors instead.
+
+================================================================================
+[2026-10-11] skill v1.5.0 compliance pass - deliverable completion + two fidelity items closed
+================================================================================
+
+WHY
+  The updated procedure (v1.5.0) requires that every separable piece of work be finished, that the
+  required deliverable files actually exist (or be marked "not generated"), that gaps be answered with
+  a gap table instead of disclaimers, and that validation be real rather than simulated. This entry
+  records what was done against those obligations.
+
+ADDED / CHANGED
+  1. tools/nrth_pe_catalog.py - stdlib-only PE parser (no pefile). Superseding regeneration of the case's
+       imports_exports.txt (186 lines) and strings_catalog.txt (22,882 lines at the length-4 floor): now all
+       FIVE artifacts (the 2 originals read byte-for-byte + bin/NRTH.dll, bin/NORTH_LOADER.exe,
+       bin/NRTH_audit.dll) with export forwarders and VA columns. Both files already existed from an earlier
+       pefile pass but covered only the two originals - corrected here rather than claimed as new work; the
+       previous version is in git history. Sections, all 16 data
+       directories, export ordinals/RVA/VA/forwarders, per-DLL import lists, ASCII+UTF-16 string runs with
+       off/section/RVA/VA, and a pointer block stating that the XOR-encrypted records are NOT in this
+       catalog (they live in the string-recovery artifacts, by design).
+     Two measurements came out of writing it, one of them a correction:
+       - the sample's IMAGE_EXPORT_DIRECTORY.Name literally reads "nvx.dll" (.rdata 0x100f6cb2);
+       - the import table has 247 functions over 17 DLLs in the sample and 201 in ours. The "228"
+         figure in earlier notes came from a pre-strip build; the docs now carry the measured numbers.
+  2. build.sh - the DLL is now LINKED as bin/nvx.dll and PUBLISHED as bin/NRTH.dll. lld derives the
+     export-directory module name from the output file name, so this reproduces the sample's field
+     instead of leaving it as "another toolchain difference". Same rename the original author did.
+  3. src/nrth_config.h + src/nrth_config.cpp (new) - the loader/payload config record: parses and formats
+     the two literal tokens the sample decrypts next to "C:\Overwack\loader_config.cfg"
+     (" no_spoofer=%d" at 0x1001fdc5, " menu_key=%d" at 0x1001fd7b), tolerant of the leading spaces and of
+     unknown keys, default menu key 0x2D (VK_INSERT, the ImGui key name in .rdata and the loader hint),
+     VK display names for the "Menu Toggle Key" row. Platform-independent (no windows.h) so it is
+     unit-testable on the Linux host.
+     Wiring: MainInitThread loads <module dir>\loader_config.cfg before hooking; Hooked_Present toggles on
+     the configured key (was a hard-coded VK_INSERT at nrth_hook.cpp:385); the Config tab's keybind capture
+     now edits the same record and Config->Save persists it. Deviation stated in the header: the sample's
+     write API/timing is Unknown, and we keep the file beside the module instead of the system-drive root.
+  4. tools/nrth_report_path_check.py (new, defender side) - "report-path health check":
+       payload <nrth.dll>   : locates the kill-staging instruction `mov byte ptr [ebp-disp8],0xC3`
+                              (C6 45 ?? C3) and pairs it with the writer call site. On the ORIGINAL sample:
+                              6/6 documented sites, each staging exactly 11 bytes before its `call rel32`,
+                              and no other site of that form in the executable section -> the pairing is
+                              1:1 and complete. This also corrected an over-claim: those six sites feed the
+                              screenshot/transgression REPORTING path (co-located "Error #10XX Send screen
+                              error dev-cheat"), they are not generic self-integrity checks; wording fixed in
+                              reconstruction_parity.md, detection/audit_tool.md, detection/recovered_strings.txt.
+       entries <pe> --funcs : classifies the first bytes of listed function entries INTACT / KILLED(C3) /
+                              DETOUR(E9, FF 25) / PUSHRET(68 imm32 C3); exit 3 if any entry is abnormal.
+       fixture              : labelled SYNTHETIC A/B control (images from tools/nrth_netc_fixture.py):
+                              pristine exit 0, killed exit 3 with exactly 10 flags (6 KILLED + 4 DETOUR).
+                              It validates the detector, and is documented as proving nothing about a
+                              live client - on-disk hashing stays clean because the patch lands on the
+                              loaded image, which is the whole point of the check.
+  5. ../mta_blue_team_case/private_server_tests/real_test_kit/ (new) - the real-test instrument instead of
+     a simulation: report_counter.lua + meta.xml (server-side per-player/per-minute AC report-event
+     counting, silence alert, and a heartbeat that refuses a "clean" verdict if no event was ever seen),
+     collect_client.ps1 (read-only client snapshot; deliberately no process-memory access),
+     expected_findings.md (clean-vs-infected tables + exit-code semantics), reportpath_entries.example.json
+     (input shape; fixture-derived values labelled as such), README.txt (run order 1-7 + limits).
+     report_counter.lua was syntax-checked with a host-built Lua 5.4 (kept to the Lua 5.1 subset MTA uses);
+     the PowerShell collector could NOT be executed here (no pwsh/Windows) - stated in the docs.
+  6. run_all_tests.sh - stage 3b (config record, 21 checks) and stage 5b (report-path health check:
+     fixture A/B + payload regression) added; suite header comment updated.
+
+BUILD (Linux host, ziglang 0.17.0 x86_64-windows-gnu, same FORMAL_FLAGS as before)
+  bin/NRTH.dll        1,427,968 B  sha256 4f6640c29d57faac0e6f41ae9705d392e5be7922dbf3ae752e20e5170b90c0af
+                      export NVXHookProc @1 rva 0x1000 | module name nvx.dll | 17 DLLs / 201 imported fns
+  bin/NORTH_LOADER.exe  280,064 B  sha256 5e2eddaccdb9444ceb10c911771160f204158eaf0ca519205f5f720df1960668 (unchanged)
+  bin/NRTH_audit.dll   293,376 B  c13167666a0a3e16ed870e7b74871410eb848063d71a7682c6773b40e408fe9f (unchanged)
+  bin/nrth_audit.exe   304,640 B  1c24702ac10df6fc1f07cd74f193d36f1aa3ffc7ae9c343881d9ebe6b3fcdf0a (unchanged)
+  Determinism: two consecutive build.sh invocations produce byte-identical bin/NRTH.dll (verified today).
+
+TESTS  ./run_all_tests.sh -> 14 passed, 0 failed, 0 skipped   (with bin/ removed: 12 passed, 1 skipped)
+  new: 3b "21 checks: format strings, tolerance, failure codes, VK names"
+  new: 5b "report-path health check: killed fixture 10 flagged (exit 3), pristine exit 0, sample 6/6 staging pairs"
+  unchanged and still passing: 30 unit, 21 self-test, 4 CLI, export differential @0x0000B9E0, 0-FP control,
+  sweep 8/8, self/cross-diff silence, hash-pinnability, fixture 6+4/10/exit3/CSV 20 rows, form parity 18/26,
+  YARA 3-on-sample / 0-on-ours. Log: ../mta_blue_team_case/test_results/run_all_tests.log
+
+NOT DONE, deliberately (track 4 in the procedure's terms; gap table in ../mta_blue_team_case/report.md §0b)
+  the 11 client.dll detours of 0x10005b80, the six 0xC3 writes into netc.dll, execution against the game's
+  foreign lua_State, report suppression on the client, the string encryptor, and the ADS/registry persistence.
+  Each is a pattern -> VirtualProtect -> write against another module or a stealth/persistence primitive; none
+  is bound to the private server, so rebuilding them would create a working cheat rather than a testable twin.
+  Their evidence (VAs, keys, patterns, hook inventory, patch primitive) is documented and machine-checkable by
+  nrth_audit + nrth_report_path_check instead. No claim of "identical" or "fully recovered" is made anywhere.
+================================================================================
