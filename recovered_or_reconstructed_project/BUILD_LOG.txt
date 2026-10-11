@@ -226,3 +226,29 @@ $ (reproducibility work) python3 tools/pe_deterministic.py  — new, and wired i
       policy; FreeLibrary-failure pinning), the fixture test procedure with the numbers above, and
       the state/error code appendix.  Count/pointer updates propagated to report.md,
       detection/audit_tool.md, private_server_tests/results.md and the project README.
+
+
+================================================================================
+2026-10-11 (later still) — refinement: what the six 0xC3 writes actually disable
+================================================================================
+  [x] Full disassembly of the netc cluster shows it is ONE function, 0x10020640..0x100216d0
+      (4240 B), not a set of six: six repetitions of
+      PatternRecordLoader(0x10023670, .data global 0x1013baa0/0x1013b9d0/...) -> inline
+      "netc.dll" (K=0x20, 8 B) -> resolver 0x10002960 -> test -> BytePatcher_1byte 0x10011870
+      with the 0xC3 staged on the stack.
+  [x] New, previously undocumented observations (Observed):
+      - between the writes the same function builds short strings and issues a 4-argument
+        `call esi(0, &msg, <caption>, 0)` (e.g. 0x10020839), where the caption is one of the
+        decrypted "Error #10XX Send screen error dev-cheat" texts: #1019 (0x1000aa4f), #1029,
+        #1031, #1036, #1038, #10395, #1099 -> the six targets are MTA netcode *report* paths,
+        not internal integrity checks.  Interpretation tagged Strongly inferred.
+      - the "target not found" branch (0x100215fb..0x10021635) dynamically resolves
+        user32.dll!MessageBoxA (plain .rdata strings at 0x100b0e10 / 0x100b0e1c) and caches it at
+        0x10148ef0 -> operator-visible popup on failure.
+  [x] Consequences for detection, written up: mechanism_overview_ar.md section 11 (with the exact
+      instruction sequence) and anticheat_playbook.md section 1.1 - a per-client report counter
+      (TRANSGRESSION / SCREENSHOT / CHEAT_RETURN) is now the first-class signal, since the patch
+      suppresses egress rather than corrupting a check.
+  [x] No new capability produced: analysis + documentation of the sample only. The strings above
+      are ciphertexts in NRTH.dll (they do not appear as plaintext), so they remain non-YARA-able
+      against this sample and are useful as netc.dll-side anchors instead.
