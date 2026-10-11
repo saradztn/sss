@@ -1,0 +1,62 @@
+# fixture positive-control log — 2026-10-11 (tools/nrth_netc_fixture.py; module v1.2.0)
+
+$ python3 tools/nrth_netc_fixture.py --print-sizes
+[+] 20 fixture functions, one per compiled signature (2048 bytes per image, .text rva 0x1000, 0x40 apart)
+[*] footprint applied: 6 x C3 (the writer at 0x10011870) + 4 x E9 jmp -> expected detector alert count 10
+    sig[ 1] client.dll  KILL_RET      rva 0x00001000
+    sig[ 2] client.dll  KILL_RET      rva 0x00001040
+    sig[ 3] client.dll  KILL_RET      rva 0x00001080
+    sig[ 4] client.dll  KILL_RET      rva 0x000010c0
+    sig[ 5] client.dll  KILL_RET      rva 0x00001100
+    sig[ 6] client.dll  DETOUR_JMP32  rva 0x00001140
+    sig[ 7] client.dll  DETOUR_JMP32  rva 0x00001180
+    sig[ 8] client.dll  DETOUR_JMP32  rva 0x000011c0
+    sig[ 9] client.dll  DETOUR_JMP32  rva 0x00001200
+    sig[16] netc.dll    KILL_RET      rva 0x000013c0
+[+] wrote ../working/fixture_netc_pristine.dll (2048) and ../working/fixture_netc_killed.dll (2048)
+
+$ ./bin/host/nrth_audit audit ../working/fixture_netc_pristine.dll
+[*] signatures  : 20 checked, 20 with a match
+[*] verdict: 0 signature(s) found with a replaced prologue
+exit=0
+
+$ ./bin/host/nrth_audit audit ../working/fixture_netc_killed.dll
+[*] signatures  : 20 checked, 20 with a match
+[*] verdict: 10 signature(s) found with a replaced prologue
+
+$ ./bin/host/nrth_audit diff ../working/fixture_netc_pristine.dll ../working/fixture_netc_killed.dll --csv working/fixture_control.csv
+[ 1]    1/0           0/1        KILL_RET (C3 - function returns immediately) 0x001000 (detail 0x00000000)
+     module=client.dll pattern=55 8B EC 83 EC ? FF 75 ? FF 75 ? E8 ? ? ? ? 83 C4 ? 83 78 ...
+[ 2]    1/0           0/1        KILL_RET (C3 - function returns immediately) 0x001040 (detail 0x00000000)
+     module=client.dll pattern=55 8B EC 56 FF 75 ? 8B 75 ? 56 E8 ? ? ? ? 83 C4 ? 83 78 ? ...
+[ 3]    1/0           0/1        KILL_RET (C3 - function returns immediately) 0x001080 (detail 0x00000000)
+     module=client.dll pattern=55 8B EC 56 8B 75 ? 85 F6 75 ? 89 35 ? ? ? ? 8B 0D ? ? ? ?...
+[ 4]    1/0           0/1        KILL_RET (C3 - function returns immediately) 0x0010c0 (detail 0x00000000)
+     module=client.dll pattern=55 8B EC 56 8B 75 ? 8B 4E ? 8B 41 ? 3B 41 ? 72 ? 56 E8 ? ?...
+[ 5]    1/0           0/1        KILL_RET (C3 - function returns immediately) 0x001100 (detail 0x00000000)
+     module=client.dll pattern=55 8B EC 83 EC ? A1 ? ? ? ? 33 C5 89 45 ? 8B 45 ? 53 8B 5D...
+[ 6]    1/0           0/1        DETOUR_JMP32 (E9 rel32 - near detour) 0x001140 (detail 0x22223367)
+     module=client.dll pattern=55 8B EC 83 EC ? 56 8B 75 ? 57 8B F9 85 F6 0F 84 ? ? ? ? 8...
+[ 7]    1/0           0/1        DETOUR_JMP32 (E9 rel32 - near detour) 0x001180 (detail 0x222233a7)
+     module=client.dll pattern=55 8B EC 56 FF 75 ? FF 75 ? E8 ? ? ? ? 8B F0 83 C4 ? 8B 4E
+[ 8]    1/0           0/1        DETOUR_JMP32 (E9 rel32 - near detour) 0x0011c0 (detail 0x222233e7)
+     module=client.dll pattern=55 8B EC FF 75 ? FF 75 ? E8 ? ? ? ? 83 C4 ? 3D ? ? ? ? 75
+[ 9]    1/0           0/1        DETOUR_JMP32 (E9 rel32 - near detour) 0x001200 (detail 0x22223427)
+     module=client.dll pattern=55 8B EC FF 75 ? FF 75 ? E8 ? ? ? ? 83 C4 ? 8B 48 ? 83 E9
+[16]    1/0           0/1        KILL_RET (C3 - function returns immediately) 0x0013c0 (detail 0x00000000)
+     module=netc.dll pattern=55 8B EC 53 56 57 8B 7D ? 33 F6 32 DB
+[*] verdict: 10 located function(s) carry a footprint the baseline does not have
+exit=3   <- 3 = alert (added_footprint > 0)
+
+$ awk -F, "NR>1 && \$7==1" ../working/fixture_control.csv | wc -l  (alerting CSV rows)
+10
+$ state histogram of alerting rows (5=KILL_RET, 2=DETOUR_JMP32)
+         4 2
+         6 5
+
+$ ./bin/host/nrth_audit diff ../working/fixture_netc_pristine.dll ../working/fixture_netc_pristine.dll   (negative control on the fixture itself)
+     (no differing located function)
+[*] verdict: 0 located function(s) carry a footprint the baseline does not have
+
+[*] the same six commands are asserted by run_all_tests.sh stage 5 (two [PASS] lines); fixtures live in
+    working/ (gitignored) and are regenerated from src/nrth_audit_sigs.h, so they cannot drift from the table.

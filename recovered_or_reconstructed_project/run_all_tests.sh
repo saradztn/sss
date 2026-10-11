@@ -127,6 +127,32 @@ if [ -n "$SAMPLE" ] && [ -x "$OUT/cli" ]; then
   else
     skip "no bin/NRTH_audit.dll to check for per-link entropy (run ./build_audit.sh)"
   fi
+  # positive control for the ALERT path: a fixture image carrying exactly the bytes the sample's
+  # writer leaves behind (6 x one-byte C3 kill + 4 x E9 near detour, from the observed netc.dll
+  # cluster) must produce that alert count and nothing else.  Generated, never committed:
+  # tools/nrth_netc_fixture.py reads src/nrth_audit_sigs.h, so the control cannot drift from the table.
+  if python3 tools/nrth_netc_fixture.py --out-dir "$OUT" > "$OUT/t5f.log" 2>&1; then
+    vpr=$("$OUT/cli" audit "$OUT/fixture_netc_pristine.dll" | sed -n 's/.*verdict: \([0-9]*\) signature.*/\1/p')
+    "$OUT/cli" audit "$OUT/fixture_netc_pristine.dll" > /dev/null 2>&1; vrc=$?
+    vkil=$("$OUT/cli" audit "$OUT/fixture_netc_killed.dll" | sed -n 's/.*verdict: \([0-9]*\) signature.*/\1/p')
+    "$OUT/cli" diff "$OUT/fixture_netc_pristine.dll" "$OUT/fixture_netc_killed.dll" \
+        --csv "$OUT/t5f.csv" > "$OUT/t5f.diff" 2>&1; drc=$?
+    vdf=$(sed -n 's/.*verdict: \([0-9]*\) located.*/\1/p' "$OUT/t5f.diff")
+    nrow=$(( $(grep -c . "$OUT/t5f.csv" 2>/dev/null || echo 1) - 1 ))
+    nalert=$(awk -F, 'NR>1 && $7==1' "$OUT/t5f.csv" | grep -c . || echo 0)
+    nkill=$(awk -F, 'NR>1 && $7==1 && $10==5' "$OUT/t5f.csv" | grep -c . || echo 0)
+    ndet=$(awk -F, 'NR>1 && $7==1 && $10==2' "$OUT/t5f.csv" | grep -c . || echo 0)
+    if [ "${vpr:-x}" = 0 ] && [ "$vrc" = 0 ] && [ "${vkil:-x}" = 10 ] && [ "$drc" = 3 ] \
+       && [ "${vdf:-x}" = 10 ] && [ "${nrow:-0}" = 20 ] && [ "${nalert:-0}" = 10 ] \
+       && [ "${nkill:-0}" = 6 ] && [ "${ndet:-0}" = 4 ] && grep -q "netc.dll" "$OUT/t5f.csv"; then
+      ok "fixture positive control: pristine 0 patched (exit 0) / killed 10 patched / diff verdict 10 (exit 3)"
+      ok "fixture csv: 20 located rows, 10 alerts = 6 KILL_RET + 4 DETOUR_JMP32, netc.dll row included"
+    else
+      bad "fixture control mismatch (pristine=${vpr:-?}/exit$vrc killed=${vkil:-?} diff=${vdf:-?}/exit$drc rows=${nrow:-?} alerts=${nalert:-?} kill=${nkill:-?} det=${ndet:-?})"
+    fi
+  else
+    bad "tools/nrth_netc_fixture.py could not build the control images (see $OUT/t5f.log)"
+  fi
   # form parity: the reconstruction keeps the optional-header fields that a linker flag can align
   # (Subsystem=3 in particular).  Regression guard for build.sh's FORMAL_FLAGS.
   if [ -f bin/NRTH.dll ]; then

@@ -1,0 +1,483 @@
+{
+  "sample": "../working/NRTH.dll",
+  "image_base": "0x10000000",
+  "codec": "plain[p] = cipher[p] XOR ((p - key) & 0xFF); one-shot flag byte at record+L+1",
+  "signatures": [
+    {
+      "id": 1,
+      "pattern": "53 8B DC 83 EC ? 83 E4 ? 83 C4 ? 55 8B 6B ? 89 6C 24 ? 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 53 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 A3 ? ? ? ? 89 8D ? ? ? ? 50 B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? 58 E8 ? ? ? ? B900",
+      "len": 312,
+      "passes": [
+        "data-sweep"
+      ],
+      "code_sites": [],
+      "data_sites": [
+        ".data@0x1013bd10"
+      ],
+      "xor_key": "0x06",
+      "decryptor": "-",
+      "owner_func": "-",
+      "module": null,
+      "confidence": "Medium"
+    },
+    {
+      "id": 2,
+      "pattern": "55 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 A3 ? ? ? ? 8B F9 89 7D ? 50 B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? 58 E8",
+      "len": 244,
+      "passes": [
+        "data-sweep"
+      ],
+      "code_sites": [],
+      "data_sites": [
+        ".data@0x1013b8b8"
+      ],
+      "xor_key": "0x06",
+      "decryptor": "-",
+      "owner_func": "-",
+      "module": null,
+      "confidence": "Medium"
+    },
+    {
+      "id": 3,
+      "pattern": "55 8B EC 6A ? 68 ? ? ? ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 83 EC ? 53 56 57 A1 ? ? ? ? 31 45 ? 33 C5 50 8D 45 ? 64 A3 ? ? ? ? 89 65 ? C7 45 ? ? ? ? ? 8B 4D ? ? ? 3C ? 75 ? 8B 41 ? 83 C1 ? 03 C8 8B 15 ? ? ? ? A1",
+      "len": 204,
+      "passes": [
+        "data-sweep"
+      ],
+      "code_sites": [],
+      "data_sites": [
+        ".data@0x1013b9d0"
+      ],
+      "xor_key": "0x06",
+      "decryptor": "-",
+      "owner_func": "-",
+      "module": null,
+      "confidence": "Medium"
+    },
+    {
+      "id": 4,
+      "pattern": "53 8B DC 83 EC ? 83 E4 ? 83 C4 ? 55 8B 6B ? 89 6C 24 ? 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 53 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 A3 ? ? ? ? 33 C9 BA ? ? ? ? 33 C0 ? ? ? ? 85 C0",
+      "len": 203,
+      "passes": [
+        "data-sweep"
+      ],
+      "code_sites": [],
+      "data_sites": [
+        ".data@0x1013bb78"
+      ],
+      "xor_key": "0x06",
+      "decryptor": "-",
+      "owner_func": "-",
+      "module": null,
+      "confidence": "Medium"
+    },
+    {
+      "id": 5,
+      "pattern": "53 8B DC 83 EC ? 83 E4 ? 83 C4 ? 55 8B 6B ? 89 6C 24 ? 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 53 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 A3 ? ? ? ? 8B 15 ? ? ? ? 8D 85",
+      "len": 186,
+      "passes": [
+        "data-sweep"
+      ],
+      "code_sites": [],
+      "data_sites": [
+        ".data@0x1013bc48"
+      ],
+      "xor_key": "0x06",
+      "decryptor": "-",
+      "owner_func": "-",
+      "module": null,
+      "confidence": "Medium"
+    },
+    {
+      "id": 6,
+      "pattern": "53 8B DC 83 EC ? 83 E4 ? 83 C4 ? 55 8B 6B ? 89 6C 24 ? 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 53 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 A3 ? ? ? ? 0F 31 8B C8",
+      "len": 178,
+      "passes": [
+        "data-sweep"
+      ],
+      "code_sites": [],
+      "data_sites": [
+        ".data@0x1013b750"
+      ],
+      "xor_key": "0x06",
+      "decryptor": "-",
+      "owner_func": "-",
+      "module": null,
+      "confidence": "Medium"
+    },
+    {
+      "id": 7,
+      "pattern": "53 8B DC 83 EC ? 83 E4 ? 83 C4 ? 55 8B 6B ? 89 6C 24 ? 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 53 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 A3 ? ? ? ? 0F 31 8B F0",
+      "len": 178,
+      "passes": [
+        "data-sweep"
+      ],
+      "code_sites": [],
+      "data_sites": [
+        ".data@0x1013baa0"
+      ],
+      "xor_key": "0x06",
+      "decryptor": "-",
+      "owner_func": "-",
+      "module": null,
+      "confidence": "Medium"
+    },
+    {
+      "id": 8,
+      "pattern": "55 8B EC 83 EC ? FF 75 ? FF 75 ? E8 ? ? ? ? 83 C4 ? 83 78 ? ? 74 ? 8D 4D ? 51 50 E8 ? ? ? ? 83 C4 ? 85 C0 75 ? ? ? 8B E5",
+      "len": 120,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x1000ca47"
+      ],
+      "data_sites": [],
+      "xor_key": "0x40",
+      "decryptor": "0x1000e0a0",
+      "owner_func": "0x1000c390",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 9,
+      "pattern": "55 8B EC 56 FF 75 ? 8B 75 ? 56 E8 ? ? ? ? 83 C4 ? 83 78 ? ? 74 ? C7 05 ? ? ? ? ? ? ? ? 8B 4E ? 83 E9 ? 51 ? ? 56",
+      "len": 112,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x1000cfbe"
+      ],
+      "data_sites": [],
+      "xor_key": "0x40",
+      "decryptor": "0x1000db00",
+      "owner_func": "0x1000c390",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 10,
+      "pattern": "55 8B EC 56 8B 75 ? 85 F6 75 ? 89 35 ? ? ? ? 8B 0D ? ? ? ? 56 E8 ? ? ? ? 85 C0 74 ? F3 0F 10 45",
+      "len": 95,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x10005e54"
+      ],
+      "data_sites": [],
+      "xor_key": "0x2D",
+      "decryptor": "0x100074f0",
+      "owner_func": "0x10005b80",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 11,
+      "pattern": "55 8B EC 56 8B 75 ? 8B 4E ? 8B 41 ? 3B 41 ? 72 ? 56 E8 ? ? ? ? 83 C4 ? 8B 46 ? 2B 46",
+      "len": 84,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x1000c52b"
+      ],
+      "data_sites": [],
+      "xor_key": "0x40",
+      "decryptor": "0x1000e5f0",
+      "owner_func": "0x1000c390",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 12,
+      "pattern": "55 8B EC 83 EC ? A1 ? ? ? ? 33 C5 89 45 ? 8B 45 ? 53 8B 5D ? 56 57 8B 7D ? 89 45",
+      "len": 80,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x10005d28"
+      ],
+      "data_sites": [],
+      "xor_key": "0x2D",
+      "decryptor": "0x10007640",
+      "owner_func": "0x10005b80",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 13,
+      "pattern": "55 8B EC 83 EC ? 56 8B 75 ? 57 8B F9 85 F6 0F 84 ? ? ? ? 8B CE",
+      "len": 62,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x1000633b"
+      ],
+      "data_sites": [],
+      "xor_key": "0x2D",
+      "decryptor": "0x10006f90",
+      "owner_func": "0x10005b80",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 14,
+      "pattern": "55 8B EC 56 FF 75 ? FF 75 ? E8 ? ? ? ? 8B F0 83 C4 ? 8B 4E",
+      "len": 58,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x1000d30f"
+      ],
+      "data_sites": [],
+      "xor_key": "0x40",
+      "decryptor": "0x1000d700",
+      "owner_func": "0x1000c390",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 15,
+      "pattern": "55 8B EC FF 75 ? FF 75 ? E8 ? ? ? ? 83 C4 ? 3D ? ? ? ? 75",
+      "len": 57,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x1000cc11"
+      ],
+      "data_sites": [],
+      "xor_key": "0x40",
+      "decryptor": "0x1000df50",
+      "owner_func": "0x1000c390",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 16,
+      "pattern": "55 8B EC FF 75 ? FF 75 ? E8 ? ? ? ? 83 C4 ? 8B 48 ? 83 E9",
+      "len": 57,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x1000cb35"
+      ],
+      "data_sites": [],
+      "xor_key": "0x40",
+      "decryptor": "0x1000df50",
+      "owner_func": "0x1000c390",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 17,
+      "pattern": "55 8B EC 8B 45 ? A3 ? ? ? ? 8B 45 ? A3 ? ? ? ? 8B 45",
+      "len": 52,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x10005c07"
+      ],
+      "data_sites": [],
+      "xor_key": "0x2D",
+      "decryptor": "0x10007780",
+      "owner_func": "0x10005b80",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 18,
+      "pattern": "55 8B EC 83 EC ? 53 56 8B 75 ? 57 8B 46 ? 2B 46",
+      "len": 47,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x1000c5fc"
+      ],
+      "data_sites": [],
+      "xor_key": "0x40",
+      "decryptor": "0x1000e4a0",
+      "owner_func": "0x1000c390",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 19,
+      "pattern": "55 8B EC 83 EC ? 53 8B 5D ? 56 8B 75 ? 57 8D 43",
+      "len": 47,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x1000ce27"
+      ],
+      "data_sites": [],
+      "xor_key": "0x40",
+      "decryptor": "0x1000e4a0",
+      "owner_func": "0x1000c390",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 20,
+      "pattern": "55 8B EC 56 8B F1 8B 0D ? ? ? ? 57 ? ? FF 50",
+      "len": 44,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x1000657b"
+      ],
+      "data_sites": [],
+      "xor_key": "0x2D",
+      "decryptor": "0x10006ce0",
+      "owner_func": "0x10005b80",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 21,
+      "pattern": "55 8B EC 8B 4D ? 8B 41 ? 2B 41 ? C1 F8",
+      "len": 38,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x1000c6cb"
+      ],
+      "data_sites": [],
+      "xor_key": "0x40",
+      "decryptor": "0x1000e350",
+      "owner_func": "0x1000c390",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 22,
+      "pattern": "55 8B EC 51 53 56 57 8B 7D ? 85 FF 75",
+      "len": 37,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x10005f56"
+      ],
+      "data_sites": [],
+      "xor_key": "0x2D",
+      "decryptor": "0x100073a0",
+      "owner_func": "0x10005b80",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 23,
+      "pattern": "55 8B EC 53 56 57 8B 7D ? 33 F6 32 DB",
+      "len": 37,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x10020591"
+      ],
+      "data_sites": [],
+      "xor_key": "0x2D",
+      "decryptor": "0x100073a0",
+      "owner_func": "0x1001fc10",
+      "module": "netc.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 24,
+      "pattern": "55 8B EC 8B 55 ? 56 8B 75 ? 57 8B 7A",
+      "len": 36,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x1000d062"
+      ],
+      "data_sites": [],
+      "xor_key": "0x40",
+      "decryptor": "0x1000dd20",
+      "owner_func": "0x1000c390",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 25,
+      "pattern": "55 8B EC 8B 45 ? 85 C0 75 ? 8B 55",
+      "len": 33,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x1000d463"
+      ],
+      "data_sites": [],
+      "xor_key": "0x40",
+      "decryptor": "0x1000d5b0",
+      "owner_func": "0x1000c390",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 26,
+      "pattern": "55 8B EC 6A FF 68 1C BF 3D 10",
+      "len": 29,
+      "passes": [
+        "data-sweep"
+      ],
+      "code_sites": [],
+      "data_sites": [
+        ".data@0x1013bb54"
+      ],
+      "xor_key": "0x06",
+      "decryptor": "-",
+      "owner_func": "-",
+      "module": null,
+      "confidence": "Medium"
+    },
+    {
+      "id": 27,
+      "pattern": "55 8B EC 51 8B 45 ? 56 50",
+      "len": 25,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x10006684"
+      ],
+      "data_sites": [],
+      "xor_key": "0x2D",
+      "decryptor": "0x10006c00",
+      "owner_func": "0x10005b80",
+      "module": "client.dll",
+      "confidence": "High"
+    },
+    {
+      "id": 28,
+      "pattern": "55 8B EC 8B 45 ? 56 8B 70",
+      "len": 25,
+      "passes": [
+        "code-record"
+      ],
+      "code_sites": [
+        "0x1000d3c2"
+      ],
+      "data_sites": [],
+      "xor_key": "0x2D",
+      "decryptor": "0x10006c00",
+      "owner_func": "0x1000c390",
+      "module": "client.dll",
+      "confidence": "High"
+    }
+  ]
+}

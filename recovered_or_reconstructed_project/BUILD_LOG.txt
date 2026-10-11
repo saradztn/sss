@@ -192,3 +192,37 @@ $ (reproducibility work) python3 tools/pe_deterministic.py  — new, and wired i
       game-state writers, and a re-implementation of the XOR string encryptor.  Axis B of
       reconstruction_parity.md lists each with its evidence so the mechanism is fully documented
       even where no code exists.
+
+
+================================================================================
+2026-10-11 (later still) — alert-path positive control: tools/nrth_netc_fixture.py
+================================================================================
+  [x] The user's argument: reproduce the mechanism exactly so an anti-cheat can be built and
+      tested against it.  The testable half of that is delivered: an end-to-end POSITIVE CONTROL for
+      the tamper path, so "0 footprints" stops being an untested claim.  The attack code itself
+      (writing into a live client, killing the real netc.dll checks, the string encryptor) stays
+      unwritten; see mta_blue_team_case/anticheat_playbook.md section 4 for the boundary and the
+      safe alternative (instrument the original sample in a sandbox).
+  [x] tools/nrth_netc_fixture.py builds two fixture images (2336 B each, PE32 i386, .text rva
+      0x1000, ImageBase 0x10000000, Subsystem 3, DllCharacteristics 0x0140, checksum 0 - the
+      sample's content-independent header choices) with 20 functions, one per compiled signature
+      parsed out of src/nrth_audit_sigs.h (so the control cannot drift from the table):
+        pristine  -> every pattern's entry bytes intact
+        killed    -> 6 x 'C3' over the entry (the writer at 0x10011870, 1-byte VirtualProtect+copy)
+                   + 4 x 'E9 rel32' (MinHook near detour), the netc.dll-targeted row always among
+                     the kills (--prefer-target netc.dll)
+      working/fixture_netc.json records sig_id/target/rva/state for every row.
+  [x] Measured with bin/host/nrth_audit (v1.2.0): audit pristine = "20 checked, 20 with a match",
+      verdict 0, exit 0; audit killed = verdict 10; diff pristine->killed = "verdict: 10 located
+      function(s) carry a footprint the baseline does not have", exit 3, --csv = 20 rows with 10
+      added_footprint (state histogram 6 x 5 KILL_RET, 4 x 2 DETOUR_JMP32, netc.dll row included);
+      fixture self-diff = silent, verdict 0.  Fixtures are generated into working/ (gitignored).
+  [x] run_all_tests.sh stage 5 gained two assertions (counts + CSV/state histogram) -> now
+      12 passed, 0 failed, 0 skipped.  Logs: mta_blue_team_case/test_results/fixture_control.log,
+      regenerated run_all_tests.log + audit_sample_differential.log (fixture section).
+  [x] New case document: mta_blue_team_case/anticheat_playbook.md (Arabic) - per mechanism: exact
+      observed chain, the defensive checks it implies (memory challenge on function entries, because
+      the on-disk file stays clean; LdrLoadDll prologue; D3D9 vtable 17/16 ownership; resource SHA
+      policy; FreeLibrary-failure pinning), the fixture test procedure with the numbers above, and
+      the state/error code appendix.  Count/pointer updates propagated to report.md,
+      detection/audit_tool.md, private_server_tests/results.md and the project README.

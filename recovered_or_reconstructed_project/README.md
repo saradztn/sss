@@ -62,6 +62,11 @@ investigation (`../mta_blue_team_case/`).
   header/section fields ("form") and every function mapped in `../mta_blue_team_case/function_map.csv`
   ("function"). `--out FILE` writes a markdown table; the conclusions live in
   `../mta_blue_team_case/reconstruction_parity.md`. Measured today: 18/26 fields, 9/20 functions.
+- `tools/nrth_netc_fixture.py` — positive control for the ALERT path: builds two fixture images whose functions are
+  generated from `src/nrth_audit_sigs.h` itself, one pristine and one carrying exactly the footprint bytes the sample
+  writes (6 x `C3` kill, 4 x `E9` detour). Measured: pristine 0 patched / killed 10 patched / `diff` verdict 10 and
+  exit 3 / CSV 20 rows with 10 alerts. Asserted by `run_all_tests.sh` stage 5; see
+  `../mta_blue_team_case/anticheat_playbook.md` and `../mta_blue_team_case/test_results/fixture_control.log`.
 - `tools/pe_deterministic.py` — zeroes the per-link entropy of our own PE outputs (TimeDateStamp,
   CodeView PDB GUID, build id) so the delivered hashes are pinnable; `--check` reports what is left.
   Run by `build.sh` and `build_audit.sh`; relocations and code bytes are untouched.
