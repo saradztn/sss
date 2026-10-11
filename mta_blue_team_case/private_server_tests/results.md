@@ -14,7 +14,7 @@ Per the investigation policy, a simulation/mock must NOT be presented as proof o
 ### Addendum 2026-10-10 (later run): what *is* executable without a Windows/MTA host
 
 Two of the case's claims no longer need a runtime environment, and both were run on the Linux
-analysis host (full log: `../test_results/run_all_tests.log` — `14 passed, 0 failed, 0 skipped`):
+analysis host (full log: `../test_results/run_all_tests.log` — `15 passed, 0 failed, 0 skipped`):
 
 | Check | Command | Result |
 |---|---|---|

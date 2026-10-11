@@ -180,6 +180,18 @@ if [ -n "$SAMPLE" ] && [ -x "$OUT/cli" ]; then
   else
     bad "tools/nrth_netc_fixture.py could not build the control images (see $OUT/t5f.log)"
   fi
+  # (5c) loader console-contract parity: every transcript line NORTH LOADER.exe prints must also be
+  #      printed by our src/north_loader.cpp, byte for byte, with no undeclared extra. Measured, not
+  #      asserted - the CRT's own formats are excluded on the sample side by the tool itself.
+  if [ -f "../working/NORTH LOADER.exe" ]; then
+    if python3 tools/nrth_loader_msg_parity.py --json "$OUT/t5c.json" > "$OUT/t5c.log" 2>&1; then
+      nm=$(sed -n 's/.*matched exactly: \([0-9]*\).*/\1/p' "$OUT/t5c.log")
+      ok "loader console-contract parity: ${nm:-0} transcript lines matched byte-exactly, no extras/missing"
+    else
+      bad "loader console-contract parity mismatch (see $OUT/t5c.log)"; tail -8 "$OUT/t5c.log"
+    fi
+  fi
+
   # form parity: the reconstruction keeps the optional-header fields that a linker flag can align
   # (Subsystem=3 in particular).  Regression guard for build.sh's FORMAL_FLAGS.
   if [ -f bin/NRTH.dll ]; then

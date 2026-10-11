@@ -62,6 +62,9 @@ investigation (`../mta_blue_team_case/`).
   header/section fields ("form") and every function mapped in `../mta_blue_team_case/function_map.csv`
   ("function"). `--out FILE` writes a markdown table; the conclusions live in
   `../mta_blue_team_case/reconstruction_parity.md`. Measured today: 18/26 fields, 9/20 functions.
+- `tools/nrth_loader_msg_parity.py` - measures the loader's console contract: every transcript format string in
+  `NORTH LOADER.exe`'s `.rdata` vs every `printf` literal in `src/north_loader.cpp` (24/24 matched byte-for-byte,
+  CRT-internal formats excluded explicitly rather than silently). Suite stage **5c**.
 - `tools/nrth_pe_catalog.py` - stdlib-only PE parser that regenerates the case's
   `imports_exports.txt` and `strings_catalog.txt` for all five artifacts (sections, all 16 data directories,
   export ordinals/RVA/VA/forwarder, per-DLL import lists, ASCII+UTF-16 strings with off/section/VA). It needs no

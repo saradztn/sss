@@ -98,6 +98,29 @@ Documented from evidence but deliberately **not** implemented (the case's scope 
 
 Not covered: 0 — every mapped row is either implemented or explicitly accounted for above.
 
+## Axis C — loader console contract (measured, added 2026-10-11)
+
+`tools/nrth_loader_msg_parity.py` extracts every transcript-format string from `NORTH LOADER.exe`'s `.rdata`
+(dropping the Debug-CRT's own formats, which are listed by the tool rather than silently counted) and every
+`printf`/`fputs` literal in `src/north_loader.cpp`, then diffs them literally.
+
+| Metric | Measured |
+|---|---|
+| original transcript lines | 24 |
+| matched byte-for-byte by our loader | **24 / 24** |
+| extra lines in ours (declared allowlist) | 4 (`=== NORTH Loader ===`, `DLL : %s`, `APP : %s`, `Pulsa ENTER para salir...`) |
+| undeclared extras / missing | **0 / 0** |
+| CRT-internal formats excluded from the sample side | 2 (`%s%s%p%s%zd…`, `Run-Time Check Failure #%d - %s`) |
+| suite wiring | `run_all_tests.sh` stage **5c**, exit 0/3, json sidecar via `--json` |
+
+Why this axis exists: the loader's only user-visible output *is* this transcript, so an operator can tell a
+reconstruction from the original by what it prints and in what order — and the two lines that triggered this
+measurement (`[*] Export NVXHookProc en RVA 0x%08lX`, `[*] Hook instalado, despertando el hilo del juego...`)
+are matched exactly. Note the ordering consequence too: `[*] Export …` is printed only on the
+`LoadLibraryExA(DONT_RESOLVE_DLL_REFERENCES)` fallback branch, so seeing it on screen tells the defender the
+classic `CreateRemoteThread` path had already failed — an IOC-grade statement about the attack's progress,
+usable in `detection/telemetry.md` without touching the client.
+
 ## Honest bottom line
 
 - **Contract:** identical (x86 PE32, ImageBase 0x10000000, one export `NVXHookProc` @1, DllCharacteristics `0x0140`).

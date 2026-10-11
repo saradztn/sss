@@ -103,7 +103,7 @@ screenshot / transgression reports) لا فحوص سلامة داخلية. لذ�
 | `nrth_audit diff pristine killed --csv out.csv` | **verdict 10**، exit **3**، 20 صفا | ✅ 10 صفوف `added_footprint=1`: `6 × state 5 (KILL_RET)` + `4 × state 2 (DETOUR_JMP32)` |
 | `nrth_audit diff pristine pristine` | صامت، exit 0 | ✅ `(no differing located function)` |
 | `nrth_audit diff working/NRTH.dll bin/NRTH.dll` | صامت (بناء مختلف ≠ غشّ) | ✅ verdict 0 |
-| `./run_all_tests.sh` | كل المراحل | ✅ `14 passed, 0 failed, 0 skipped` |
+| `./run_all_tests.sh` | كل المراحل | ✅ `15 passed, 0 failed, 0 skipped` |
 
 **التكرار:**
 

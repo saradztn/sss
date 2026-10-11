@@ -22,9 +22,10 @@
   [PASS] fixture positive control: pristine 0 patched (exit 0) / killed 10 patched / diff verdict 10 (exit 3)
   [PASS] fixture csv: 20 located rows, 10 alerts = 6 KILL_RET + 4 DETOUR_JMP32, netc.dll row included
   [PASS] report-path health check: killed fixture 10 flagged (exit 3), pristine exit 0, sample 6/6 staging pairs
+  [PASS] loader console-contract parity: 24 transcript lines matched byte-exactly, no extras/missing
   [PASS] PE form parity: rebuild matches the sample's Subsystem=3 (console-subsystem DLL)
 
 === 6/6  YARA rules compile and fire as documented
   [PASS] yara: rules compile, sample -> 3 rule(s), NRTH_audit.dll clean, nrth_audit.exe clean
 
-=== summary: 14 passed, 0 failed, 0 skipped (logs in /tmp/nrth_tests.8241)
+=== summary: 15 passed, 0 failed, 0 skipped (logs in /tmp/nrth_tests.3027)

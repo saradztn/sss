@@ -340,3 +340,48 @@ NOT DONE, deliberately (track 4 in the procedure's terms; gap table in ../mta_bl
   Their evidence (VAs, keys, patterns, hook inventory, patch primitive) is documented and machine-checkable by
   nrth_audit + nrth_report_path_check instead. No claim of "identical" or "fully recovered" is made anywhere.
 ================================================================================
+
+================================================================================
+[2026-10-11] operator-reported console lines -> loader call-order + console-contract parity (stage 5c)
+================================================================================
+
+INPUT (from the user, this turn): the original prints
+    [*] Export NVXHookProc en RVA 0x0000B9E0
+    [*] Hook instalado, despertando el hilo del juego...
+Both were located in the sample: they are NOT in NRTH.dll, they are .rdata literals of NORTH LOADER.exe
+at off 0x87e8 -> VA 0x00419de8 and off 0x86c -> VA 0x00419e6c (full literals include the "[*] " prefix,
+which is why a search for the visible text alone finds no xref: the referenced address is the string start).
+
+WHAT THAT ENABLED (new measurement, not a re-presentation of old notes)
+  - xref of both messages resolves inside the documented InjectHook body, function @0x00412470 (RVA 0x12470).
+  - IAT resolution of every call around them (slots base+0x1d038/0x1d144/0x1d148/0x1d14c ...):
+      LoadLibraryA(0x41d078) -> GetProcAddress(0x41d070, "NVXHookProc"@0x419cc4) -> on NULL: FreeLibrary
+      + "[!] El DLL no exporta NVXHookProc (usa el NRTH.dll recien compilado)."
+      -> else GetLastError(0x41d074) + "[*] LoadLibrary local fallo (%lu); mapeando sin ejecutar..."(0x419d30)
+      -> loader-internal file export parser 0x411ff0(hFile-ish, "NVXHookProc", &rva) -> on fail
+         "[!] No se hallo el export NVXHookProc en el archivo."(0x419d7c)
+      -> LoadLibraryExA(0x41d0bc) with flags = 1 (DONT_RESOLVE_DLL_REFERENCES)
+      -> pfn = hModule + rva  (the printed value is the *RVA*, 0x0000B9E0 for this payload - the same number
+         run_all_tests.sh stage 4 asserts from the DLL's export directory: two independent derivations agree)
+      -> SetWindowsHookExA(0x41d14c, WH_GETMESSAGE=3) -> PostThreadMessageA(0x41d148, WM_NULL) x10 with
+         Sleep(0x41d03c) -> UnhookWindowsHookEx(0x41d144) -> FreeLibrary -> "[+] Inyectado OK por hook
+         (modulo verificado en el proceso)."(0x419eac). No OpenProcess in this path (classic path only).
+  - NEW TOOL tools/nrth_loader_msg_parity.py: extracts the original's transcript-format strings from .rdata
+    (Debug-CRT's own formats excluded by an explicit, printed allowlist) and every printf/fputs literal in
+    src/north_loader.cpp, then diffs them literally. Result: 24 original transcript lines, 24 matched
+    byte-for-byte, 0 missing, 0 undeclared extras (4 declared operator-guidance lines). Exit 0.
+  - Suite: stage 5c added -> ./run_all_tests.sh now 15 passed, 0 failed, 0 skipped (measured; with bin/
+    removed: 13 passed, 1 skipped). Artifacts: mta_blue_team_case/test_results/loader_msg_parity.{log,json}.
+  - Docs updated: behavior_timeline.md (instruction-level confirmation of stage 1.7),
+    reconstruction_parity.md (new "Axis C - loader console contract"), report.md (proven list + validation line).
+
+SCOPE NOTE (unchanged, stated because the request that came with this observation asked otherwise)
+  Reproducing the payload's tampering behaviour (client.dll detours, the six netc 0xC3 report writes, foreign
+  lua_State execution, report suppression, the string encryptor) is still out of scope; nothing in this entry
+  moves that line. What this entry adds is measurable equivalence on the two axes where equivalence is a
+  contract question rather than a capability: what the loader prints, and in which call order.
+
+BUILD
+  bin/NRTH.dll rebuilt after an environment reset: sha256 4f6640c29d57faac0e6f41ae9705d392e5be7922dbf3ae752e20e5170b90c0af
+  - byte-identical to the pre-reset build (reproducibility re-proven across a full workspace reset).
+================================================================================

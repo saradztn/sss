@@ -45,6 +45,15 @@ Legend: [O] Observed · [SI] Strongly inferred · [T] Tentative · [U] Unknown
    - `FindExportRvaInFile` (VA 0x411ff0 / RVA 0x11ff0) + `rva2off` (VA 0x411960 / RVA 0x11960): maps the file (`CreateFileA`/`CreateFileMappingA`/`MapViewOfFile`), validates `IMAGE_DOS_SIGNATURE`/`IMAGE_NT_SIGNATURE`, walks `IMAGE_EXPORT_DIRECTORY` for the name `NVXHookProc` (string VA 0x4196c4), prints `[*] Export NVXHookProc en RVA 0x%08lX`.
    - `FindThreadInProcess` (VA 0x411d80 / RVA 0x11d80): `CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD)` → first thread of the target PID.
    - `SetWindowsHookExA(WH_GETMESSAGE=3, hookProc=NVXHookProc, hMod=payload, tid)`; then 10 × `PostThreadMessageA(tid, WM_NULL)` to wake the target thread into the hook. Console: `[*] Hook instalado, despertando el hilo del juego...`
+   - **Confirmed at instruction granularity 2026-10-11** after an operator reported the live console text `[*] Export NVXHookProc en RVA 0x0000B9E0` /
+     `[*] Hook instalado, despertando el hilo del juego...`. Both are `.rdata` literals of the loader (VA 0x00419de8 and 0x00419e6c), and the IAT slots
+     called around them resolve to: `LoadLibraryA`(0x41d078) → `GetProcAddress`(0x41d070, `"NVXHookProc"` @0x419cc4) → on failure `GetLastError`(0x41d074)
+     + `[*] LoadLibrary local fallo (%lu); mapeando sin ejecutar...`(0x419d30) → local export parse (loader-internal 0x411ff0, "NVXHookProc", &rva) →
+     on failure `[!] No se hallo el export NVXHookProc en el archivo.`(0x419d7c) → `LoadLibraryExA`(0x41d0bc) with **flags=1 = DONT_RESOLVE_DLL_REFERENCES**
+     → `pfn = hModule + rva` (hence the printed `RVA 0x%08lX`, which for this sample is `0x0000B9E0` — the same value `run_all_tests.sh` stage 4 asserts on the
+     DLL) → `SetWindowsHookExA`(0x41d14c) → `PostThreadMessageA`(0x41d148) + `Sleep`(0x41d03c) poll → `UnhookWindowsHookEx`(0x41d144) → `FreeLibrary`(0x41d064).
+     No `OpenProcess` appears in this path (that belongs to `InjectClassic`). Our `src/north_loader.cpp` `InjectHook()` performs the same calls in the same
+     order with the same literals — verified by `tools/nrth_loader_msg_parity.py` (24/24 transcript lines) and by this decode.
    - `UnhookWindowsHookEx` immediately after; `IsModuleLoadedInProcess` (VA 0x412dc0 / RVA 0x12dc0) verifies via `K32EnumProcessModules`/`K32GetModuleBaseNameA` that `NRTH.dll` is now mapped into the target. Console: `[+] Inyectado OK por hook (modulo verificado en el proceso).`
    - Final hint: `[*] Hook completado. Entra al juego y pulsa INSERT: si sale el menu, quedo.` ("enter the game and press INSERT; if the menu appears, it worked").
 8. [SI] Mechanism note: `SetWindowsHookEx` forces the Windows subsystem to `LoadLibrary` the payload into the target GUI thread's process — this is why the DLL exports a trivial `NVXHookProc` (see Stage 4.1).

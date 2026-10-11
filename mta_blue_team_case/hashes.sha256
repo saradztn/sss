@@ -84,3 +84,11 @@ b115b5655eee9ececa81c726d6048d54654fad7123793b78eb788ffec22b3c2d  mta_blue_team_
     (length-4 string floor + five-artifact coverage), so their hashes are restated here as final.
 27dfa7c2234616305c856816fffec88f64e6785409fd2a198a4e8adf2843e7fb  mta_blue_team_case/imports_exports.txt  (17391 bytes)
 27adcb88200f597d61162c3e422e2ae5ee3edb3d5741b30ecf5d2f3d2f5192f9  mta_blue_team_case/strings_catalog.txt  (1364269 bytes)
+--- 2026-10-11 (later): loader console-contract tooling ---
+02cad5cffbafcf792a824383ec48bccd03a2cdb96f75b6e00861b946082b8db6  recovered_or_reconstructed_project/tools/nrth_loader_msg_parity.py  (6460 bytes)
+3f9733f4f13779ac2d7145e28125a99a7ddbf0bf62f9f73011b894c634d08002  recovered_or_reconstructed_project/src/north_loader.cpp  (15301 bytes)
+51c9928e9b6cb80e6793a3249c4a977b4dc880c226eeafbeb62cb33a1c140efd  recovered_or_reconstructed_project/run_all_tests.sh  (12676 bytes)
+4dc7b55ff5ea23ed8543ee2ee82655dfcfe1849adf42d11768ec5cd6cf9ef400  mta_blue_team_case/test_results/loader_msg_parity.log  (3129 bytes)
+f27f22867c9bace249c230282bf0679d0c3a6718f93b2f23ea93ca4a88ac2f41  mta_blue_team_case/test_results/loader_msg_parity.json  (1471 bytes)
+12bea756b0638280e20d99e48f0c69bab8bd56a69ae827b6aea4be539e7cf70c  mta_blue_team_case/test_results/run_all_tests.log  (1794 bytes)
+4f6640c29d57faac0e6f41ae9705d392e5be7922dbf3ae752e20e5170b90c0af  recovered_or_reconstructed_project/bin/NRTH.dll  (1427968 bytes)

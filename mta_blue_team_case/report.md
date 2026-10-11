@@ -14,14 +14,18 @@
 | **Result class** | **R2** — behavioral reconstruction of both artifacts (`recovered_or_reconstructed_project/`), built and tested; **D2** — decompiled/decoded listings documented under `analysis/`; **T1** — detection tooling (`nrth_audit` v1.2.0, YARA set, report-path health check, validation kit). Not R3/R4: no original source, no byte-exact twin. |
 | **Exact original source recovered** | **No.** The authors' comments, identifiers and project structure are not recoverable from the compiled images. Everything labelled "recovered" here is *behavior* + *data* (63 encrypted string records, 28 signature records, 20 audit signatures), not source. |
 | **Build status** | **Built and reproducible** on 2026-10-11 (Linux host, Zig 0.17.0 `x86_64-windows-gnu` sysroot, MinHook + Dear ImGui 1.92.9 + Lua 5.4.6 vendored, `build.sh`): `bin/NRTH.dll` 1,427,968 B `sha256 4f6640c29d57faac0e6f41ae9705d392e5be7922dbf3ae752e20e5170b90c0af`, `bin/NORTH_LOADER.exe` 280,064 B `5e2eddac…60668`, `bin/NRTH_audit.dll` 293,376 B `c1316766…08fe9f`, `bin/nrth_audit.exe` 304,640 B `1c24702a…fcdf0a`. Relink from a fresh clone was byte-identical. |
-| **Validation status** | **14 passed, 0 failed, 0 skipped** via `recovered_or_reconstructed_project/run_all_tests.sh` (full log `test_results/run_all_tests.log`): 30 audit unit checks, 21 sample-derived self-test vectors, 4 CLI cases, **21 config-record checks (new stage 3b)**, export-contract differential, 0-false-positive control, `sweep` 8/8 records, self/cross diff silence, hash-pinnability, fixture positive control (pristine 0 / killed 10 / diff exit 3 / 6+4 alert split), **report-path health check (new stage 5b)**, PE form parity 18/26, YARA 3 rules on sample + 0 on our artifacts. |
+| **Validation status** | **15 passed, 0 failed, 0 skipped** via `recovered_or_reconstructed_project/run_all_tests.sh` (full log `test_results/run_all_tests.log`): 30 audit unit checks, 21 sample-derived self-test vectors, 4 CLI cases, **21 config-record checks (new stage 3b)**, export-contract differential, 0-false-positive control, `sweep` 8/8 records, self/cross diff silence, hash-pinnability, fixture positive control (pristine 0 / killed 10 / diff exit 3 / 6+4 alert split), **report-path health check (new stage 5b)**, **loader console-contract parity 24/24 (new stage 5c)**, PE form parity 18/26, YARA 3 rules on sample + 0 on our artifacts. |
 
 **What is proven** (each item reproducible from this repo): the classification chain; the codec
 `plain[p] = cipher[p] ^ ((p-K)&0xFF)` with a one-shot gate and its 82 decryptors / 63 records; the 11-hook
 `client.dll` arming function `0x10005b80`; the 20-scan `0x1000c390`; the netc cluster (6 scans, 4 hooks,
 6 one-byte `0xC3` report-path kills, staged `mov byte ptr [ebp-disp8],0xC3` exactly 11 bytes before each
 writer `call`); the writer `0x10011870` (`VirtualProtect(ptr,1,0x40,&old)`, target list `0x101493e4`); the
-Lua-VM surface (registry `0x1013bf04` stride 0x1C, `default_L 0x1013c95c`, exec `0x1013c94c`); the config
+Lua-VM surface (registry `0x1013bf04` stride 0x1C, `default_L 0x1013c95c`, exec `0x1013c94c`); the loader's hook-injection
+call order resolved to import names inside RVA 0x12470 (`LoadLibraryA` -> `GetProcAddress("NVXHookProc")` -> `GetLastError` ->
+local file export parse -> `LoadLibraryExA(DONT_RESOLVE_DLL_REFERENCES)` -> `pfn = hModule + rva` -> `SetWindowsHookExA(WH_GETMESSAGE)`
+-> `PostThreadMessageA(WM_NULL)` x10 + `Sleep` poll -> `UnhookWindowsHookEx` -> `FreeLibrary`); and its console contract, **24 of 24**
+transcript lines reproduced byte-for-byte by `src/north_loader.cpp` (measured by `tools/nrth_loader_msg_parity.py`, suite stage 5c); the config
 tokens ` no_spoofer=%d` / ` menu_key=%d` beside `C:\Overwack\loader_config.cfg`; the export-directory
 module name literally reading **`nvx.dll`**.
 **Reconstructed or uncertain**: which Win32 API writes that config file and when (not traced); the identity
@@ -92,7 +96,7 @@ Classification by component:
 - **Build status: BUILT** — cross-compiled to Windows PE32 x86 artifacts with Zig 0.17.0's MinGW sysroot (`build.sh`, rebuilt 2026-10-11): `bin/NORTH_LOADER.exe` (280,064 B, SHA-256 `5e2eddac…60668`) and `bin/NRTH.dll` (1,427,968 B, SHA-256 `4f6640c29d57faac0e6f41ae9705d392e5be7922dbf3ae752e20e5170b90c0af`), export contract verified (`NVXHookProc` @ ordinal 1, RVA 0x1000). Full log: `test_results/build_cross.log`. Windows MSVC path (`build.ps1`) documented but not executed here.
 - **Delivered detector (built + tested): `NRTH_audit.dll` / `nrth_audit.exe`** — `build_audit.sh`, PE32 x86,
   ImageBase 0x10000000, 23 exports (ordinals @1–@23, incl. `NrthAuditDiff` @22 / `NrthAuditDiffFiles` @23), DYNAMICBASE+NX_COMPAT;
-  `bin/NRTH_audit.dll` SHA-256 `c1316766…e408fe9f`, `bin/nrth_audit.exe` `1c24702a…b3fcdf0a`.  Full suite (every claim in this case, one command): `run_all_tests.sh` → `14 passed, 0 failed, 0 skipped` — and `12 passed, 0 failed, 1 skipped` in a tree with `bin/` removed (measured both ways 2026-10-11)
+  `bin/NRTH_audit.dll` SHA-256 `c1316766…e408fe9f`, `bin/nrth_audit.exe` `1c24702a…b3fcdf0a`.  Full suite (every claim in this case, one command): `run_all_tests.sh` → `15 passed, 0 failed, 0 skipped` — and `12 passed, 0 failed, 1 skipped` in a tree with `bin/` removed (measured both ways 2026-10-11)
   (log: `test_results/run_all_tests.log`).
   It implements the recovered codec, the 20-signature catalogue, the PE reader and the patch-footprint
   classifier; 30/30 unit tests and 21/21 self-test vectors pass on the host, and `audit` returns
