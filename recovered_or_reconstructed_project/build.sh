@@ -11,6 +11,7 @@
 #   vendor/imgui    — Dear ImGui v1.92.9 (sample embeds 1.92.9 WIP (19283))
 #
 # Scope: authorized MTA:SA blue-team private-server validation ONLY.
+# Args:  --no-formal  skip the PE form-parity linker flags (see FORMAL_FLAGS below).
 # ============================================================================
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -20,6 +21,19 @@ TARGET="-target x86-windows-gnu"
 OUT=bin
 OBJ="$OUT/obj"
 mkdir -p "$OBJ"
+
+# --- form parity with the original PE -------------------------------------
+# Pass --no-formal to get the plain clang/lld layout instead. The original NRTH.dll is an
+# MSVC-linked DLL whose optional header says Subsystem=3 (console) and which carries no symbol
+# or debug tables, so:
+#   -Wl,--subsystem,console   reproduces Subsystem=3 byte-for-byte
+#   -Wl,--strip-all           removes lld's `.buildid` container and the `/4` symbol/string
+#                             table: 9 sections / 1,692,160 B  ->  7 sections / 1,425,408 B
+#                             (the sample has 5 sections / 1,318,400 B)
+# The two remaining extra sections (.eh_fram, .gcc_exc) come from the mingw-w64 CRT objects and
+# would need the CRT rebuilt; see mta_blue_team_case/reconstruction_parity.md.
+FORMAL_FLAGS="-Wl,--subsystem,console -Wl,--strip-all"
+for _a in "$@"; do [ "$_a" = "--no-formal" ] && FORMAL_FLAGS=""; done
 
 echo "[*] Compiling MinHook (x86)..."
 for f in buffer hook trampoline; do
@@ -55,7 +69,8 @@ $ZIG c++ $TARGET -shared -o "$OUT/NRTH.dll" \
   "$OBJ/imgui.o" "$OBJ/imgui_draw.o" "$OBJ/imgui_tables.o" "$OBJ/imgui_widgets.o" \
   "$OBJ/imgui_impl_dx9.o" "$OBJ/imgui_impl_win32.o" \
   src/nrth_dll.def \
-  -luser32 -lgdi32 -ladvapi32 -ldwmapi -limm32
+  -luser32 -lgdi32 -ladvapi32 -ldwmapi -limm32 \
+  $FORMAL_FLAGS
 
 echo "[*] Compiling NORTH_LOADER.exe reconstruction (src/north_loader.cpp)..."
 $ZIG c++ $TARGET -O2 -o "$OUT/NORTH_LOADER.exe" src/north_loader.cpp \

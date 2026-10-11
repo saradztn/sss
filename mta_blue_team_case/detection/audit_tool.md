@@ -24,7 +24,7 @@ actually needs.
 | `.../tools/pe_summary.py` | dependency-free PE header/export verifier used by the build |
 | `.../tools/gen_nrth_audit_sigs_h.py` | regenerates the table from `working/sigs.json` |
 | `.../tests/test_nrth_audit.cpp` | 27 host unit tests |
-| `.../run_all_tests.sh` | one command that re-runs every test claim in this case (6 stages / 9 checks: unit tests, self-test, loader CLI, export differential vs the ORIGINAL sample, detector controls incl. the cross-build diff and artifact-entropy hygiene, YARA) |
+| `.../run_all_tests.sh` | one command that re-runs every test claim in this case (6 stages / 10 checks: unit tests, self-test, loader CLI, export differential vs the ORIGINAL sample, detector controls incl. the cross-build diff, artifact-entropy hygiene and PE form parity, YARA) |
 | `.../tools/pe_deterministic.py` | makes the delivered PE artifacts hash-pinnable (timestamp / CodeView GUID / build id zeroed); run by the build scripts |
 | `.../tools/nrth_string_va.py` | verifies any `"<string>" ... 0xADDR` claim in this folder's docs against the packed image (`--find`, `--check`, `--audit-docs`) |
 | `.../build_audit.sh` | host tests first, then the PE32 x86 cross build |
@@ -52,7 +52,7 @@ Last verified run (2026-10-10, Linux host, g++ 12.2 + ziglang 0.17.0):
 [*] 30/30 checks passed                       # unit tests
 result: all checks passed                     # NrthAuditSelfTest: 21 checks, all sample-derived
 $ ./run_all_tests.sh
-=== summary: 9 passed, 0 failed, 0 skipped (a clone without bin/ gives 8 passed + 1 skipped)        # incl. the YARA check and both sample differentials
+=== summary: 10 passed, 0 failed, 0 skipped (a clone without bin/ gives 9 passed + 1 skipped)       # incl. the YARA check, both sample differentials and the form-parity guard
 [+] Built:
   bin/NRTH_audit.dll   293,376 B  sha256 c13167666a0a3e16ed870e7b74871410eb848063d71a7682c6773b40e408fe9f
   bin/nrth_audit.exe   304,640 B  sha256 1c24702ac10df6fc1f07cd74f193d36f1aa3ffc7ae9c343881d9ebe6b3fcdf0a
@@ -93,8 +93,11 @@ That rule came from a measurement against our own repository: diffing the origin
 (baseline) against this project's reconstruction (a different build of a similar module) produced
 `[18] 0/0 -> 0/1 DETOUR_JMP32 @0x0d9f91` — a jump thunk in *our* binary that happens to match a
 `client.dll` pattern. Alerting on that would flood any build comparison, so 1.2.0's looser rule was
-replaced; the same run now reports `verdict: 0` plus one informational row, and `run_all_tests.sh`
-group 5 keeps it as a regression test.
+replaced and the run reported `verdict: 0` plus one informational row. After the 2026-10-11 form-parity
+relink of `bin/NRTH.dll` the same command prints `(no differing located function)` — the colliding
+thunk no longer exists at a located RVA — and the verdict is unchanged; `run_all_tests.sh` stage 5
+keeps the silent form as the regression test (it also asserts the rebuild still matches the sample's
+`Subsystem=3`, which is what the relink was for).
 
 Row semantics (`--csv` columns with the same names):
 

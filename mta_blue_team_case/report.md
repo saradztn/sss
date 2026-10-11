@@ -45,7 +45,7 @@ Classification by component:
 - **Build status: BUILT** — cross-compiled to Windows PE32 x86 artifacts with Zig 0.17.0's MinGW sysroot (`build.sh`): `bin/NORTH_LOADER.exe` (SHA-256 `75a3dc17...fdd2b3dd`) and `bin/NRTH.dll` (SHA-256 `452c5848...d6e383f`), export contract verified (`NVXHookProc` @ ordinal 1). Full log: `test_results/build_cross.log`. Windows MSVC path (`build.ps1`) documented but not executed here.
 - **Delivered detector (built + tested): `NRTH_audit.dll` / `nrth_audit.exe`** — `build_audit.sh`, PE32 x86,
   ImageBase 0x10000000, 23 exports (ordinals 1–21), DYNAMICBASE+NX_COMPAT;
-  `bin/NRTH_audit.dll` SHA-256 `c1316766…e408fe9f`, `bin/nrth_audit.exe` `1c24702a…b3fcdf0a`.  Full suite (every claim in this case, one command): `run_all_tests.sh` → `9 passed, 0 failed, 0 skipped (8 + 1 skip without bin/)`
+  `bin/NRTH_audit.dll` SHA-256 `c1316766…e408fe9f`, `bin/nrth_audit.exe` `1c24702a…b3fcdf0a`.  Full suite (every claim in this case, one command): `run_all_tests.sh` → `10 passed, 0 failed, 0 skipped (9 + 1 skip without bin/)`
   (log: `test_results/run_all_tests.log`).
   It implements the recovered codec, the 20-signature catalogue, the PE reader and the patch-footprint
   classifier; 30/30 unit tests and 21/21 self-test vectors pass on the host, and `audit` returns
@@ -160,13 +160,19 @@ file offsets can no longer be read as VAs.  (2) `nrth_audit` gained the alignmen
 false "new detour" row.
 
 The reconstruction itself was rebuilt after these doc/code corrections (`fetch_vendor.sh` + `build.sh`,
-exit 0): `bin/NRTH.dll` 1,692,160 B `sha256 42b1ea204d27ff4c9f4be34152d5129632548cc3a198136897505b88b12dd646`
-(single export `NVXHookProc` @ ordinal 1, PE32 x86) and `bin/NORTH_LOADER.exe` 280,064 B
+exit 0; rebuilt again on 2026-10-11 from a fresh clone, byte-identical): `bin/NRTH.dll` 1,425,408 B
+`sha256 955b3d348ee543cf1f3384720e9b65dbce2832bc2ebf630acbb470340c69e1f6` (single export `NVXHookProc` @
+ordinal 1, PE32 x86, Subsystem=3 like the sample) and `bin/NORTH_LOADER.exe` 280,064 B
 `sha256 5e2eddaccdb9444ceb10c911771160f204158eaf0ca519205f5f720df1960668`. The size differs from the
 2026-10-10 entry above because the current tree links 46 objects (Dear ImGui 1.92.9 + Lua 5.4.6 + MinHook)
-into `NRTH.dll`; the export contract is unchanged and re-verified by `tools/pe_summary.py`.
+into `NRTH.dll`; the 2026-10-11 relink is 266,752 B *smaller* than the previous build because `build.sh`
+now adds form-parity linker flags (`-Wl,--subsystem,console -Wl,--strip-all`, opt out with `--no-formal`).
+How close that leaves the result, per header field and per mapped function, is measured - not asserted - in
+`reconstruction_parity.md`: 18/26 optional/file-header fields equal, `.text`/`.rdata`/`.data` equal by
+index, 9/20 mapped functions implemented and 11 documented-but-declined; the export contract is
+re-verified by `tools/pe_summary.py` and by `run_all_tests.sh` stage 4.
 
-Logs: `test_results/audit_build.log`, `test_results/audit_sample_differential.log`, `test_results/run_all_tests.log`,
+Logs: `test_results/audit_build.log`, `test_results/audit_sample_differential.log`, `test_results/run_all_tests.log`, `test_results/reconstruction_parity.md` (field-by-field parity table),
 `test_results/yara_check.log` (4 rules compile; `NRTH.dll` → 3 rules, loader → 1 rule; the two
 audit binaries we ship match none).
 
@@ -226,3 +232,4 @@ Windows build script for the reconstruction (`recovered_or_reconstructed_project
 | | `audit_sample_differential.log`, `build_cross.log`, `yara_check.log`, and `doc_address_audit.log` |
 | `mechanism_overview_ar.md` | Arabic mechanism brief: what the sample does, evidence per claim, §9 scope | 
 | `mechanism_vm_injection.md` | Lua-VM / exec-trampoline path, address by address, with the reconstruction's stub note |
+| `reconstruction_parity.md` | measured parity of the reconstruction against the sample: 26 PE header fields (form) and 20 mapped functions (function), with every residual gap tagged fixable / toolchain-bound / declined |

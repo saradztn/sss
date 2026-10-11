@@ -1,6 +1,5 @@
-# NRTH_audit build + verification log — 2026-10-11 (Linux host, g++ 12.2 + ziglang 0.17.0) — module v1.2.0, normalised artifacts
+# NRTH_audit build + verification log — 2026-10-11 (Linux host, ziglang 0.17.0) — module v1.2.0, normalised artifacts, reproduced after a fresh clone
 
-$ ./build_audit.sh   (excerpt, full flow: host tests -> cross build -> PE normalisation -> header/export check)
 [*] Host build: unit tests + CLI (g++, -std=c++17)
 [*] Running the unit tests...
 [*] nrth_audit unit tests
@@ -15,25 +14,64 @@ $ ./build_audit.sh   (excerpt, full flow: host tests -> cross build -> PE normal
   [ ok ] audit: detour target RVA captured for triage
   [ ok ] audit: FF 25 detour -> one patched match
   [ ok ] audit: far-jump target converted to an RVA
-  ...
+  [ ok ] audit: coincidental tail match with a normal prologue is not reported
+  [ ok ] predicate: tamper states only
+  [ ok ] diff: one located function changed state
+  [ ok ] diff: per-row hit counts split correctly
+  [ ok ] diff: footprint state and RVA reported
+  [ ok ] diff: identical images produce no delta
+  [ ok ] diff: undersized row buffer rejected
+  [ ok ] diff: missing target is reported separately from tampering
+  [ ok ] diff: footprint at an unlocated RVA is informational, not an alert
+  [ ok ] diff: the unlocated footprint is described, not hidden
+  [ ok ] diff: same located function still alerts
+  [ ok ] codec: key-rotated record still decodes (variant triage)
+  [ ok ] sweep: hidden pattern located in .data by prologue anchoring
+  [ ok ] PE: tiny buffer rejected
+  [ ok ] PE: bogus section pointer handled without crash
+  [ ok ] PE: bad DOS magic rejected
+  [ ok ] pattern: NULL hit buffer tolerated
+  [ ok ] codec: short input safe
+  [ ok ] catalogue: 20 rows, each with sample evidence VA
 [*] 30/30 checks passed
+[*] Running the module self-test through the CLI...
+nrth_audit self-test (1.2.0)
+  [ ok ] codec: 'client.dll' record (key 0x2D)
+  [ ok ] codec: 'netc.dll' record (key 0x20)
+  [ ok ] codec: '@auto_inject' chunk name
+  [ ok ] codec: hook signature #1 head block
+  [ ok ] predicate: only detour/kill/stub states count as tampering
+  [ ok ] codec: transform is symmetric
+  [ ok ] pattern: wildcard, lower-case hex and ?? token
+  [ ok ] pattern: sample hook signature #1 matches its target prologue
+  [ ok ] pattern: absent pattern returns 0 hits
+  [ ok ] pattern: head widening (kill-switch variant) keeps the tail
+  [ ok ] pattern: head substitution writes the footprint over the entry
+  [ ok ] pattern: 5-token substitution for a near detour
+  [ ok ] footprint: C3 = check kill (the sample's 0x10011870 write)
+  [ ok ] footprint: C2 imm16
+  [ ok ] footprint: E9 rel32 near detour
+  [ ok ] footprint: FF 25 absolute detour
+  [ ok ] footprint: nop padding
+  [ ok ] catalogue: generated signature rows are well formed
+  [ ok ] PE: malformed header rejected
+  [ ok ] PE: malformed image rejected by audit
+  [ ok ] codec: empty input rejected
 result: all checks passed
+[+] selftest: 0 check(s) failed
+[*] Cross-compiling NRTH_audit.dll (x86-windows-gnu, PE32)...
+[*] Cross-compiling nrth_audit.exe (console CLI, same module)...
 [+] bin/NRTH_audit.dll: 3 entropy source(s) removed
-    sha256 1d5d05f05272c068d011ebada9d0a23cb441340e069dbe83d6af070e1d689761 -> c13167666a0a3e16ed870e7b74871410eb848063d71a7682c6773b40e408fe9f
+      - TimeDateStamp 0x6acb7ade -> 0
+      - debug directory at rva 0x45000 (28 B, type 2) -> zeroed, entry cleared
+      - .buildid (512 B, 47 non-zero) -> zeroed
+    sha256 59bb1fdd7a96d1b8c10503697555cde54b35d6aadad53fd21caf3b4134e63144 -> c13167666a0a3e16ed870e7b74871410eb848063d71a7682c6773b40e408fe9f
 [+] bin/nrth_audit.exe: 3 entropy source(s) removed
-    sha256 63b6aa83b5554acde9cd7359d6554fa6386d09ca619d6425585d7a0011bc730a -> 1c24702ac10df6fc1f07cd74f193d36f1aa3ffc7ae9c343881d9ebe6b3fcdf0a
-  exports         : 23 name(s) / 23 function(s)  internal name NRTH_audit.dll
-  exports         : (none)
-[+] Built:
-[*] Reproducibility: the two binaries above are normalised (timestamp/CodeView GUID/build id
-
-$ python3 tools/pe_deterministic.py --check bin/NRTH_audit.dll bin/nrth_audit.exe
-[*] bin/NRTH_audit.dll: 0 entropy source(s)
-      (none: already deterministic)
-[*] bin/nrth_audit.exe: 0 entropy source(s)
-      (none: already deterministic)
-
-$ python3 tools/pe_summary.py bin/NRTH_audit.dll
+      - TimeDateStamp 0x684e87d6 -> 0
+      - debug directory at rva 0x47000 (56 B, type 2) -> zeroed, entry cleared
+      - .buildid (512 B, 52 non-zero) -> zeroed
+    sha256 d2d2b2494eedb7c7592a47e1245a950b54336685f1cf8ecb94118100a0cf6f6d -> 1c24702ac10df6fc1f07cd74f193d36f1aa3ffc7ae9c343881d9ebe6b3fcdf0a
+[*] Headers + export table (dependency-free parser, no objdump/dumpbin needed):
 bin/NRTH_audit.dll
   size            : 293376 bytes
   timestamp       : 0x00000000
@@ -44,36 +82,75 @@ bin/NRTH_audit.dll
   size of image   : 0x4e000
   subsystem       : WINDOWS_GUI
   DLL flags       : 0x0140  DYNAMICBASE NX_COMPAT
-  exports         : 23 name(s) / 23 function(s), ordinals 1..23 exactly as pinned in src/nrth_audit.def
+  file chars      : 0x2102  [EXECUTABLE_IMAGE]
+  sections        :
+      .text    rva=0x0001000 vsize=0x0380e7 raw=0x000400 rsize=0x038200
+      .rdata   rva=0x003a000 vsize=0x00a001 raw=0x038600 rsize=0x00a200
+      .buildid rva=0x0045000 vsize=0x000043 raw=0x042800 rsize=0x000200
+      .data    rva=0x0046000 vsize=0x001090 raw=0x042a00 rsize=0x000200
+      .tls     rva=0x0048000 vsize=0x000008 raw=0x042c00 rsize=0x000200
+      .reloc   rva=0x0049000 vsize=0x000ff0 raw=0x042e00 rsize=0x001000
+      /4       rva=0x004a000 vsize=0x003914 raw=0x043e00 rsize=0x003a00
+  exports         : 23 name(s) / 23 function(s)  internal name NRTH_audit.dll
+      @1   NrthAuditVersion             rva=0x001000
+      @2   NrthSigCount                 rva=0x001010
+      @3   NrthSigAt                    rva=0x001020
+      @4   NrthPrologueStateName        rva=0x001040
+      @5   NrthPrologueIsTamper         rva=0x002aa0
+      @6   NrthXorTransform             rva=0x001060
+      @7   NrthXorCrack                 rva=0x0012d0
+      @8   NrthXorDecodeRecordAt        rva=0x001920
+      @9   NrthPatCompile               rva=0x002130
+      @10  NrthPatScan                  rva=0x0022c0
+      @11  NrthPatWidenHead             rva=0x002640
+      @12  NrthPatPatchHead             rva=0x002420
+      @13  NrthClassifyPrologue         rva=0x002660
+      @14  NrthPeMap                    rva=0x002800
+      @15  NrthPeSectionData            rva=0x0029d0
+      @16  NrthPeRvaToPtr               rva=0x0020b0
+      @17  NrthPeTextRva                rva=0x002a50
+      @18  NrthAuditImage               rva=0x002ac0
+      @19  NrthAuditImageFile           rva=0x0033c0
+      @20  NrthFindHiddenSignatures     rva=0x0034c0
+      @21  NrthAuditSelfTest            rva=0x003b90
+      @22  NrthAuditDiff                rva=0x003980
+      @23  NrthAuditDiffFiles           rva=0x003af0
+bin/nrth_audit.exe
+  size            : 304640 bytes
+  timestamp       : 0x00000000
+  machine         : 0x014c  IMAGE_FILE_MACHINE_I386 (x86)
+  magic           : 0x10b (PE32)
+  image base      : 0x00400000
+  entry point RVA : 0x000062b0
+  size of image   : 0x52000
+  subsystem       : WINDOWS_CUI (console)
+  DLL flags       : 0x8140  DYNAMICBASE NX_COMPAT
+  file chars      : 0x0102  [EXECUTABLE_IMAGE]
+  sections        :
+      .text    rva=0x0001000 vsize=0x039552 raw=0x000400 rsize=0x039600
+      .rdata   rva=0x003b000 vsize=0x00b333 raw=0x039a00 rsize=0x00b400
+      .buildid rva=0x0047000 vsize=0x00005f raw=0x044e00 rsize=0x000200
+      .data    rva=0x0048000 vsize=0x0010e4 raw=0x045000 rsize=0x000200
+      .eh_fram rva=0x004a000 vsize=0x000078 raw=0x045200 rsize=0x000200
+      .tls     rva=0x004b000 vsize=0x000008 raw=0x045400 rsize=0x000200
+      .reloc   rva=0x004c000 vsize=0x00118c raw=0x045600 rsize=0x001200
+      /4       rva=0x004e000 vsize=0x003aac raw=0x046800 rsize=0x003c00
+  exports         : (none)
 
-$ sha256sum bin/NRTH_audit.dll bin/nrth_audit.exe
+[+] Built:
+-rwxr-xr-x 1 user user 293376 Oct 11 12:02 bin/NRTH_audit.dll
+-rwxr-xr-x 1 user user 304640 Oct 11 12:02 bin/nrth_audit.exe
 c13167666a0a3e16ed870e7b74871410eb848063d71a7682c6773b40e408fe9f  bin/NRTH_audit.dll
 1c24702ac10df6fc1f07cd74f193d36f1aa3ffc7ae9c343881d9ebe6b3fcdf0a  bin/nrth_audit.exe
+[*] Regression check against the sample itself (expect 0 tamper footprints):
+      [*] signatures  : 20 checked, 0 with a match
+      [*] verdict: 0 signature(s) found with a replaced prologue
+[*] Reproducibility: the two binaries above are normalised (timestamp/CodeView GUID/build id
+    zeroed), so re-running this script reproduces the same SHA-256 *with this toolchain*.
+    A different zig/gcc version changes code bytes - then compare size + the 23 exports, and
+    re-run the unit tests and self-test, which is what actually gates the release.
 
-$ (two full rebuilds, 3 s apart, then) sha256sum -c on the recorded hashes
-    bin/NRTH_audit.dll: OK
-    bin/nrth_audit.exe: OK          <- byte-identical across rebuilds; hashes are pinnable
-
-$ ./run_all_tests.sh
-=== 1/6  audit module: unit tests
-  [PASS] [*] 30/30 checks passed
-
-=== 2/6  audit module: self-test against sample-derived evidence vectors
-  [PASS] 21 checks passed (codec, patterns, footprints, PE reader, catalogue)
-
-=== 3/6  loader reconstruction: CLI parser tests
-  [PASS] 4/4 CLI parsing cases
-
-=== 4/6  export-contract differential against the ORIGINAL sample
-  [PASS] NVXHookProc located at RVA 0x0000B9E0 in ../working/NRTH.dll + negative case
-
-=== 5/6  detector controls: false-positive + A/B negative on the sample
-  [PASS] audit of the cheat module itself reports 0 footprints (patterns target client.dll/netc.dll)
-  [PASS] sweep rediscovered 8 hidden .data records (expected 8, matches tools/nrth_sig_export.py)
-  [PASS] self-diff and cross-build diff report no tamper alert (bin/NRTH.dll)
-  [PASS] delivered DLL is hash-pinnable (no timestamp / CodeView GUID / build id left)
-
-=== 6/6  YARA rules compile and fire as documented
-  [PASS] yara: rules compile, sample -> 3 rule(s), NRTH_audit.dll clean, nrth_audit.exe clean
-
-=== summary: 9 passed, 0 failed, 0 skipped (logs in /tmp/nrth_tests.5746)
+[!] Honest caveat: step 1 proves the logic on the host; the x86 binaries are
+    built and their headers/exports are verified here, but they are *not* executed
+    in this sandbox (no Windows). Run 'nrth_audit.exe selftest' on a Windows host
+    before trusting a detection verdict from it.

@@ -58,6 +58,10 @@ investigation (`../mta_blue_team_case/`).
   drift from the evidence.
 - `tools/nrth_case_strings.py` — regenerates `../mta_blue_team_case/detection/recovered_strings.txt`.
 - `tools/pe_summary.py` — dependency-free PE header/section/export verifier (used by `build_audit.sh`).
+- `tools/nrth_parity.py` — measures how close the reconstruction is to the original on two axes: 26 PE
+  header/section fields ("form") and every function mapped in `../mta_blue_team_case/function_map.csv`
+  ("function"). `--out FILE` writes a markdown table; the conclusions live in
+  `../mta_blue_team_case/reconstruction_parity.md`. Measured today: 18/26 fields, 9/20 functions.
 - `tools/pe_deterministic.py` — zeroes the per-link entropy of our own PE outputs (TimeDateStamp,
   CodeView PDB GUID, build id) so the delivered hashes are pinnable; `--check` reports what is left.
   Run by `build.sh` and `build_audit.sh`; relocations and code bytes are untouched.
@@ -72,8 +76,14 @@ investigation (`../mta_blue_team_case/`).
   (the latter differentially validates export `NVXHookProc` @ RVA `0x0000B9E0`
   against the ORIGINAL sample `working/NRTH.dll`).
 - `build.sh` — reproducible cross-build (Linux → Windows PE32 x86) via Zig's bundled
-  MinGW sysroot. `build.ps1` — MSVC x86 alternative. `BUILD_LOG.txt` — last build
-  and verification results.
+  MinGW sysroot. Links `bin/NRTH.dll` with form-parity flags by default
+  (`-Wl,--subsystem,console -Wl,--strip-all`, so Subsystem=3 and no lld `.buildid`/symbol tables;
+  pass `--no-formal` for the plain layout). `build.ps1` — MSVC x86 alternative.
+  `BUILD_LOG.txt` — last build and verification results.
+- Artifacts (2026-10-11 form-parity build, reproduced across two consecutive runs and a fresh clone):
+  `bin/NRTH.dll` 1,425,408 B `sha256 955b3d348ee543cf1f3384720e9b65dbce2832bc2ebf630acbb470340c69e1f6`
+  (export `NVXHookProc` @1 rva 0x001000), `bin/NORTH_LOADER.exe` 280,064 B
+  `sha256 5e2eddaccdb9444ceb10c911771160f204158eaf0ca519205f5f720df1960668`.
 
 ## Build (cross, from Linux — this is the path that was executed)
 

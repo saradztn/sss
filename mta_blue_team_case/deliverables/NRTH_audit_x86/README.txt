@@ -59,7 +59,9 @@ FIRST RUN ON A WINDOWS HOST (always start with these)
              sus_unlocated    a footprint at an RVA the baseline never locates
          both mean "different build / unrelated code", and 1.2.0 exists precisely so neither can
          page anyone (measured: baseline=original NRTH.dll vs this repository's own reconstruction
-         shows a DETOUR_JMP32 at 0x0d9f91 that is a thunk of the other build - verdict stays 0).
+         showed a DETOUR_JMP32 at 0x0d9f91 that is a thunk of the other build - verdict stayed 0;
+         after the 2026-10-11 form-parity relink the same run prints '(no differing located function)'
+         and the verdict is still 0).
       -> --csv columns: sig_id,target,clean_full,clean_patched,sus_full,sus_patched,
          added_footprint,target_lost,sus_unlocated,state,sus_rva,detail
       -> PRISTINE means the located function's entry bytes are intact *in that image*: for the

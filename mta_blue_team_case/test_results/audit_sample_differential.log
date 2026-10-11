@@ -1,70 +1,103 @@
-# audit differential + build controls — 2026-10-11 (module v1.2.0, normalised artifacts)
+# audit differential + build/parity controls — 2026-10-11 (module v1.2.0; form-parity rebuild of bin/NRTH.dll)
 
-$ ./bin/host/nrth_audit audit working/NRTH.dll
+$ ./bin/host/nrth_audit audit ../working/NRTH.dll
 [*] nrth_audit 1.2.0
 [*] target file : ../working/NRTH.dll
 [*] signatures  : 20 checked, 0 with a match
     columns: full = complete pattern found (target present, prologue intact)
              patched = tail found but prologue replaced (detour / kill footprint)
 
+id   full       patched full@rva     patched@rva  state
+[ 1] -          -       not found    not found    target function not located by this signature in this image
+[ 2] -          -       not found    not found    target function not located by this signature in this image
+[ 3] -          -       not found    not found    target function not located by this signature in this image
+[ 4] -          -       not found    not found    target function not located by this signature in this image
+[ 5] -          -       not found    not found    target function not located by this signature in this image
+[ 6] -          -       not found    not found    target function not located by this signature in this image
+[ 7] -          -       not found    not found    target function not located by this signature in this image
+[ 8] -          -       not found    not found    target function not located by this signature in this image
+[ 9] -          -       not found    not found    target function not located by this signature in this image
+[10] -          -       not found    not found    target function not located by this signature in this image
+[11] -          -       not found    not found    target function not located by this signature in this image
+[12] -          -       not found    not found    target function not located by this signature in this image
+[13] -          -       not found    not found    target function not located by this signature in this image
+[14] -          -       not found    not found    target function not located by this signature in this image
+[15] -          -       not found    not found    target function not located by this signature in this image
+[16] -          -       not found    not found    target function not located by this signature in this image
+[17] -          -       not found    not found    target function not located by this signature in this image
+[18] -          -       not found    not found    target function not located by this signature in this image
+[19] -          -       not found    not found    target function not located by this signature in this image
+[20] -          -       not found    not found    target function not located by this signature in this image
 [*] verdict: 0 signature(s) found with a replaced prologue
 [*] only recognised footprints (E9, FF 25, 68 .. C3, C3, C2, C7 05) are counted as
     patched; a tail match on an ordinary function prologue is ignored on purpose
     (measured on NRTH.dll itself: 5 of the 20 patterns collide with unrelated code
     that way, and none of them is a cheat footprint).
+[*] reminder: live detours/patches live in memory; run this on a read-only dump
+    of the loaded module for live evidence, and keep the file check as the
+    tamper-on-disk check. Corroborate with the other layers in the case report.
 
-$ ./bin/host/nrth_audit audit "working/NORTH LOADER.exe"
+$ ./bin/host/nrth_audit audit "../working/NORTH LOADER.exe"
 [*] signatures  : 20 checked, 0 with a match
 [*] verdict: 0 signature(s) found with a replaced prologue
 
-$ ./bin/host/nrth_audit sweep working/NRTH.dll --min 24 --vas
+$ ./bin/host/nrth_audit sweep ../working/NRTH.dll --min 24 --vas
 [*] ../working/NRTH.dll: 8 hidden pattern candidate(s) (>= 24 chars)
+rva 0x13b750 key 0x06 53 8B DC 83 EC ? 83 E4 ? 83 C4 ? 55 8B 6B ? 89 6C 24 ? 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 53 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 A3 ? ? ? ? 0F 31 8B C8
+rva 0x13b8b8 key 0x06 55 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 A3 ? ? ? ? 8B F9 89 7D ? 50 B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? 58 E8
+rva 0x13b9d0 key 0x06 55 8B EC 6A ? 68 ? ? ? ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 83 EC ? 53 56 57 A1 ? ? ? ? 31 45 ? 33 C5 50 8D 45 ? 64 A3 ? ? ? ? 89 65 ? C7 45 ? ? ? ? ? 8B 4D ? ? ? 3C ? 75 ? 8B 41 ? 83 C1 ? 03 C8 8B 15 ? ? ? ? A1
+rva 0x13baa0 key 0x06 53 8B DC 83 EC ? 83 E4 ? 83 C4 ? 55 8B 6B ? 89 6C 24 ? 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 53 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 A3 ? ? ? ? 0F 31 8B F0
+rva 0x13bb54 key 0x06 55 8B EC 6A FF 68 1C BF 3D 10
+rva 0x13bb78 key 0x06 53 8B DC 83 EC ? 83 E4 ? 83 C4 ? 55 8B 6B ? 89 6C 24 ? 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 53 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 A3 ? ? ? ? 33 C9 BA ? ? ? ? 33 C0 ? ? ? ? 85 C0
+rva 0x13bc48 key 0x06 53 8B DC 83 EC ? 83 E4 ? 83 C4 ? 55 8B 6B ? 89 6C 24 ? 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 53 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 A3 ? ? ? ? 8B 15 ? ? ? ? 8D 85
+rva 0x13bd10 key 0x06 53 8B DC 83 EC ? 83 E4 ? 83 C4 ? 55 8B 6B ? 89 6C 24 ? 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 53 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 A3 ? ? ? ? 89 8D ? ? ? ? 50 B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? B8 ? ? ? ? 58 E8 ? ? ? ? B900
   candidate rva 0x0013b750
   candidate rva 0x0013b8b8
   candidate rva 0x0013b9d0
-  candidate rva 0x0013baa0
-  candidate rva 0x0013bb54
-  candidate rva 0x0013bb78
-  candidate rva 0x0013bc48
-  candidate rva 0x0013bd10
-[*] note: candidates from a raw sweep are unverified until they match a
-        decryptor call site (tools/nrth_strings_recover.py does that).
 
-$ ./bin/host/nrth_audit diff working/NRTH.dll working/NRTH.dll        (self-diff negative control)
+$ ./bin/host/nrth_audit diff ../working/NRTH.dll ../working/NRTH.dll     (self-diff negative control)
      (no differing located function)
 [*] verdict: 0 located function(s) carry a footprint the baseline does not have
 exit=0
 
-$ ./bin/host/nrth_audit diff working/NRTH.dll bin/NRTH.dll   (A/B across DIFFERENT builds - 1.2.0 regression case)
-[*] nrth_audit 1.2.0 — A/B module comparison
-[*] baseline (known good) : ../working/NRTH.dll
-[*] compared image        : bin/NRTH.dll
-[*] rows are aligned by the located function's RVA, so the two files do not need the
-    same image base - but they should be the same build: a footprint at an RVA the
-    baseline never located is reported as 'unlocated' information, never as tampering.
+$ ./bin/host/nrth_audit diff ../working/NRTH.dll bin/NRTH.dll   (A/B across DIFFERENT builds - 1.2.0 regression case)
 
 id   clean f/p      loaded f/p     change                 footprint @rva / target
-[18]    0/0           0/1        unlocated footprint (other build) 0x0d9f91 (detail 0xc4909f9b)
-     module=client.dll pattern=55 8B EC 8B 45 ? 85 C0 75 ? 8B 55
+     (no differing located function)
 
 [*] verdict: 0 located function(s) carry a footprint the baseline does not have
-[*] note: 1 pattern(s) matched a function the baseline does not locate at all — different build or unrelated code, NOT tampering (alert on the verdict line only).
-exit=0  <- 0 although a footprint is visible: it is not on a function the baseline locates
+exit=0  <- silent: no located function differs, no informational row either
 
-$ ./bin/host/nrth_audit audit bin/NRTH_audit.dll   (our own normalised artifact still parses with our PE reader)
+$ ./bin/host/nrth_audit audit bin/NRTH_audit.dll      (our own normalised artifact still parses with our PE reader)
 [*] signatures  : 20 checked, 0 with a match
 [*] verdict: 0 signature(s) found with a replaced prologue
 
-$ ./bin/host/nrth_audit decode working/NRTH.dll --rva 0x13bd10 --len 156
-[*] ../working/NRTH.dll  imagebase=0x10000000  rva=0x13bd10  len=156
-[*] raw            : cf c8 dc c5 bc df 44 42 22 3b 37 25 43 44 28 36 2a 33 3f 2d 4b 3b 30 2e 32 2b 27 35 55 23 38 26 
-[+] decoded (key 0x06): 53 8B DC 83 EC ? 83 E4 ? 83 C4 ? 55 8B 6B ? 89 6C 24 ? 8B EC 6A ? 68 ? ? ? ? 64 A1 ? ? ? ? 50 53 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 ? 56 57 50 8D 45 ? 64 
+$ python3 tools/pe_deterministic.py --check bin/NRTH.dll bin/NRTH_audit.dll bin/nrth_audit.exe bin/NORTH_LOADER.exe
+[*] bin/NRTH.dll: 0 entropy source(s)
+      (none: already deterministic)
+[*] bin/NRTH_audit.dll: 0 entropy source(s)
+      (none: already deterministic)
+[*] bin/nrth_audit.exe: 0 entropy source(s)
+      (none: already deterministic)
+[*] bin/NORTH_LOADER.exe: 0 entropy source(s)
+      (none: already deterministic)
+
+$ python3 tools/nrth_parity.py ../working/NRTH.dll bin/NRTH.dll      (form + function parity; full table in reconstruction_parity.md)
+[*] structure match: 18/26
+[*] closable with build flags: entry RVA, size of image
+[*] toolchain-bound (cannot be matched without forging compiler identity): sections, linker version, data directories, section names, section[3] flags, section[4] flags
+[*] implemented 9/20; documented-but-declined 11; not covered 0
+
+$ sha256sum of two consecutive ./build.sh runs (form-parity layout, post-normalisation)
+  955b3d348ee543cf1f3384720e9b65dbce2832bc2ebf630acbb470340c69e1f6  bin/NRTH.dll        (run 1)
+  955b3d348ee543cf1f3384720e9b65dbce2832bc2ebf630acbb470340c69e1f6  bin/NRTH.dll        (run 2)  <- identical
+  5e2eddaccdb9444ceb10c911771160f204158eaf0ca519205f5f720df1960668  bin/NORTH_LOADER.exe (both runs)
 
 [*] interpretation:
     - audit on the cheat module reports 0 footprints by construction (its patterns target
       client.dll/netc.dll); the positive control for the tamper path is the unit-test group
       (synthetic images with C3 / E9 / FF 25 footprints at located functions): 30/30.
     - sweep reproduces exactly the 8 .data records found independently by tools/nrth_sig_export.py.
-    - the cross-build diff case is what 1.2.0 was written for: a footprint the baseline never
-      locates is informational (sus_unlocated) and does not alert.
+    - the cross-build diff case is what 1.2.0 was written for; the form-parity relink removed the
+      single informational row it used to print, which is the expected direction of travel.
     - ASan+UBSan over both samples: no findings.

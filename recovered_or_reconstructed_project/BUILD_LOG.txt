@@ -149,3 +149,46 @@ $ (reproducibility work) python3 tools/pe_deterministic.py  — new, and wired i
       (new group-5 control: `pe_deterministic.py --check bin/NRTH_audit.dll` must be clean, so an
        un-normalised artifact fails the suite instead of silently moving hashes)
   note: README.md line "reproducible cross-build" was an overclaim before this; it is now measured.
+
+================================================================================
+2026-10-11 (later) — form parity: build.sh FORMAL_FLAGS + tools/nrth_parity.py
+================================================================================
+  [x] sandbox was reset; state recovered from origin/arena/b0e26020-sss (tip 0fdf4d9), NORTH.zip
+      re-extracted (both sha256 match the case record), ziglang/capstone/pefile/yara-python
+      reinstalled, vendor re-fetched.  The rebuild from that fresh tree reproduced the previously
+      published hashes byte-for-byte (NRTH.dll 42b1ea20…, loader 5e2eddac…, audit DLL c1316766…,
+      CLI 1c24702a…) -> the reproducibility claim survives a clean machine.
+  [x] wrote tools/nrth_parity.py: measures "same form / same function" instead of asserting it —
+      26 file+optional-header, data-directory and section-table fields, plus every NRTH.dll row of
+      ../mta_blue_team_case/function_map.csv cross-checked against src/.  Baseline: 16/26 fields.
+  [x] build.sh now links the DLL with FORMAL_FLAGS="-Wl,--subsystem,console -Wl,--strip-all"
+      (--no-formal opts out).  Measured: Subsystem 2 -> 3 (equals the sample), 9 -> 7 sections
+      (.buildid and the /4 symbol/string table gone), 1,692,160 -> 1,425,408 B (sample 1,318,400),
+      .text/.rdata/.data now match the sample by section index (name + characteristics).  18/26.
+  [x] residual differences are toolchain-bound and documented, not hidden: MSVC 14.51 vs lld 14.0
+      linker version, .rsrc + debug data directories, .eh_fram/.gcc_exc from the mingw-w64 CRT, and
+      the 64 RTTI records / 143 __SEH_prolog4 sites that only MSVC emits.  -fno-unwind-tables
+      -fno-asynchronous-unwind-tables was tested on imgui.cpp and changed nothing, so it was not
+      carried into the build (verified by listing the COFF section table of both .o variants).
+  [x] --strip-all also removes the CodeView PDB path and .buildid: pe_deterministic.py --check now
+      reports "0 entropy source(s)" on the linked file (only the 4-byte TimeDateStamp is rewritten),
+      and two consecutive ./build.sh runs produced identical sha256.
+  [x] bin/NRTH.dll        1,425,408 B  955b3d348ee543cf1f3384720e9b65dbce2832bc2ebf630acbb470340c69e1f6
+      bin/NORTH_LOADER.exe  280,064 B  5e2eddaccdb9444ceb10c911771160f204158eaf0ca519205f5f720df1960668
+      export contract re-verified: @1 NVXHookProc rva 0x001000 (tools/pe_summary.py + stage 4).
+  [x] run_all_tests.sh stage 5 gained a form-parity guard (the parity tool must report the
+      Subsystem=3 match) -> 10 passed, 0 failed, 0 skipped.  30/30 unit checks, 21-check self-test.
+  [x] cross-build diff control after the relink: `diff ../working/NRTH.dll bin/NRTH.dll` prints
+      '(no differing located function)' with verdict 0 (the earlier informational row at 0x0d9f91
+      disappeared because that thunk is no longer at a located RVA); audit of both samples still
+      0 footprints; sweep still 8 hidden .data records; YARA still 3 rules on the sample, 0 on ours.
+  [x] regenerated test_results/{audit_sample_differential,run_all_tests,audit_build}.log and
+      test_results/reconstruction_parity.md; propagated into report.md, detection/audit_tool.md,
+      private_server_tests/results.md, deliverables/NRTH_audit_x86/README.txt, project README,
+      hashes.sha256 (appended), and new mta_blue_team_case/reconstruction_parity.md.
+  [x] deliberately NOT done (case scope line, unchanged by the "same functional work" request): the
+      live Lua-VM exec hijack (0x10005b80 chain), the six netc.dll 0xC3 integrity kills
+      (0x10020640 chain, sites 0x100206f0/208aa/20927/20f46/214bd/215f1), the per-feature
+      game-state writers, and a re-implementation of the XOR string encryptor.  Axis B of
+      reconstruction_parity.md lists each with its evidence so the mechanism is fully documented
+      even where no code exists.

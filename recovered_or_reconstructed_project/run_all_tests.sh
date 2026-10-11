@@ -127,6 +127,16 @@ if [ -n "$SAMPLE" ] && [ -x "$OUT/cli" ]; then
   else
     skip "no bin/NRTH_audit.dll to check for per-link entropy (run ./build_audit.sh)"
   fi
+  # form parity: the reconstruction keeps the optional-header fields that a linker flag can align
+  # (Subsystem=3 in particular).  Regression guard for build.sh's FORMAL_FLAGS.
+  if [ -f bin/NRTH.dll ]; then
+    if python3 tools/nrth_parity.py "$SAMPLE" bin/NRTH.dll 2>/dev/null \
+         | grep -qE '^subsystem +3 +3 +Y'; then
+      ok "PE form parity: rebuild matches the sample's Subsystem=3 (console-subsystem DLL)"
+    else
+      bad "rebuild no longer matches the sample subsystem - build.sh FORMAL_FLAGS changed?"
+    fi
+  fi
   fi
 else
   skip "needs the sample and the audit CLI"
